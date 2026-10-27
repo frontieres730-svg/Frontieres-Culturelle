@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Comment les œuvres d’art traversent-elles les frontières ?</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#000;color:#fff;font-family:Helvetica,"Helvetica Neue",Arial,sans-serif}
+header{position:fixed;top:0;left:0;right:0;height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:20;background:#000;border-bottom:1px solid #fff;font-size:13px}
+header b{font-size:14px}
+.ctl{display:flex;gap:26px;align-items:center}
+.ctl a,.sw{cursor:pointer;user-select:none;display:flex;gap:8px;align-items:center}
+.ctl a:hover{text-decoration:underline}
+.sw i{width:34px;height:16px;border:1px solid #fff;border-radius:8px;position:relative}
+.sw i:after{content:"";position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;background:#fff;transition:left .2s}
+.sw.on i:after{left:20px}
+#map{position:fixed;top:48px;left:0;width:100%;height:calc(100% - 48px);cursor:grab;touch-action:none}
+.pipe{fill:none;stroke:#fff;stroke-width:5;stroke-linejoin:round;transition:opacity .45s}
+.node{cursor:pointer;transition:opacity .45s}
+.node .in{transition:transform .15s;transform-box:fill-box;transform-origin:center}
+.node:hover .in{transform:scale(1.07)}
+.node rect{fill:#fff}
+.node.open rect{fill:#fff;stroke:#fff;stroke-width:5}
+.node div{width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:13px;line-height:1.25;color:#000;padding:8px 14px;pointer-events:none}
+.sat{cursor:pointer;transition:opacity .45s}
+.sat .dot{fill:#fff;transition:transform .15s;transform-box:fill-box;transform-origin:center}
+.sat:hover .dot{transform:scale(1.5)}
+.sat text{fill:#fff;font-size:20px;text-anchor:middle;opacity:0;transition:opacity .15s;pointer-events:none}
+.sat:hover text{opacity:1}
+.hid{opacity:0;pointer-events:none}
+#hint{position:fixed;bottom:14px;left:24px;font-size:12px;background:#000;padding:4px 8px}
+#sel{position:fixed;bottom:14px;right:24px;font-size:13px;background:#fff;color:#000;padding:8px 14px;display:none;gap:16px;align-items:center;max-width:60vw}
+#sel.show{display:flex}
+#sel button{font:inherit;background:#000;color:#fff;border:0;padding:6px 12px;cursor:pointer}
+#pg{position:fixed;inset:0;background:#fff;color:#000;z-index:30;overflow:auto;padding:76px 8vw 80px;display:none}
+#pg.show{display:block;animation:in .35s}
+@keyframes in{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0)}}
+#pg .bar{position:fixed;top:0;left:0;right:0;height:48px;background:#000;color:#fff;display:flex;align-items:center;gap:18px;padding:0 24px;font-size:13px}
+#pg a{cursor:pointer}#pg a:hover{text-decoration:underline}
+#pg .bar .cr{opacity:.8}
+#pg h1{font-size:44px;line-height:1.05;margin:20px 0 14px;max-width:15em;letter-spacing:-.02em}
+#pg .tag{display:inline-block;border:1px solid #000;padding:2px 8px;font-size:12px}
+#pg p{max-width:64ch;line-height:1.5;font-size:15px;margin:0 0 4px}
+#pg h2{font-size:15px;margin:34px 0 8px;border-top:1px solid #000;padding-top:10px;max-width:900px}
+#pg .ph{border:1px dashed #000;max-width:900px;height:180px;display:flex;align-items:center;justify-content:center;font-size:13px;text-align:center;padding:20px}
+#pg svg{width:100%;max-width:900px;background:#000}
+#pg .doc{max-width:900px;margin:10px 0 18px}
+#pg .btn{display:inline-block;background:#000;color:#fff;padding:6px 12px;font-size:13px;margin:6px 8px 10px 0;text-decoration:none}
+#pg .doc object{width:100%;height:640px;border:1px solid #000;display:block}
+#pg ul{list-style:none;padding:0;margin:0;max-width:640px}
+#pg li{padding:9px 0;border-bottom:1px solid #000;font-size:15px;cursor:pointer}
+#pg li:hover{padding-left:10px}
+</style></head><body>
+<header><b id="ti"></b>
+<div class="ctl"><a id="ix"></a><a id="rs"></a><div class="sw" id="sl"><span>FR</span><i></i><span>EN</span></div></div></header>
+<svg id="map"><g id="L"></g></svg>
+<div id="hint"></div><div id="sel"></div><div id="pg"></div>
+<script>
+/* ================= DATA — edit here =================
+ Nodes: id:[x,y,group,"FR|EN"]  (x,y = centre; group 0 root · 1 private purchase · 2 museum loan · 3 private owner loaning to museum)
+ SZ overrides the default size [170,70]. Edges "from-to" read top to bottom. */
+const N={
+root:[1300,80,0,"Comment les œuvres d’art traversent-elles les frontières ?|How do artworks cross borders?"],
+priv:[480,270,1,"Achat d’une œuvre d’art par un privé|Private purchase of an artwork"],
+achat:[480,420,1,"Achat d’une œuvre d’art|Purchase of an artwork"],
+intl:[350,550,1,"à l’international|international"],
+dom:[610,550,1,"à domicile|domestic"],
+autre:[350,690,1,"Achat d’une œuvre d’art dans une autre région fiscale|Purchase in another tax region"],
+meme:[610,690,1,"Achat d’une œuvre d’art dans la même région fiscale|Purchase within the same tax region"],
+stock:[480,850,1,"Stockage d’art|Art storage"],
+t1:[90,1020,1,"taxable à l’achat|taxable at purchase"],
+t2:[350,1020,1,"non taxable à l’achat|not taxable at purchase"],
+t3:[610,1020,1,"taxable après l’achat|taxable after purchase"],
+t4:[870,1020,1,"non taxable après l’achat|not taxable after purchase"],
+pret:[1300,270,2,"Prêt d’une œuvre d’art d’un musée à un musée|Loan of an artwork from museum to museum"],
+fac:[1300,420,2,"Facility report|Facility report"],
+d2:[1620,420,2,"Passage de la douane de sortie, carnet ATA|Exit customs, ATA carnet"],
+ass:[1300,550,2,"Assurance «\u00a0clou\u00a0à\u00a0clou\u00a0»|“Nail to nail” insurance"],
+aut:[1300,690,2,"Autorisation du prêt|Loan authorisation"],
+intl2:[1180,840,2,"À l’internationale|International"],
+eneu:[1420,840,2,"En EU|Within the EU"],
+aus:[1180,970,2,"Autorisations de sortie|Export authorisations"],
+d1:[1180,1100,2,"Passage de la douane de sortie, carnet ATA|Exit customs, ATA carnet"],
+exp:[1300,1250,2,"Exportation|Export"],
+expo:[1300,1400,2,"Exposition|Exhibition"],
+re1:[1300,1560,2,"Re-exportation pays d’origine|Re-export to country of origin"],
+priv2:[2080,270,3,"Achat d’œuvres d’art par un privé, pour les prêter à un musée|Private purchase of artworks, to loan to a museum"],
+pa:[1880,420,3,"Prêt à l’achat|Loan at purchase"],
+pb:[2280,420,3,"Prêt après l’achat|Loan after purchase"],
+x1:[1780,550,3,"Prêt dans une région exonérée d’impôts|Loan in a tax-exempt region"],
+i2:[1980,550,3,"Prêt dans une région imposée|Loan in a taxed region"],
+x2:[2180,550,3,"Prêt dans une région exonérée d’impôts|Loan in a tax-exempt region"],
+i1:[2380,550,3,"Prêt dans une région imposée|Loan in a taxed region"],
+re2:[2080,800,3,"Re-exportation au propriétaire|Re-export to the owner"]};
+const SZ={ass:[240,70],root:[340,140],priv:[270,115],pret:[300,120],priv2:[330,130],stock:[250,105],aut:[255,105],exp:[255,105],expo:[255,105],re1:[300,105],re2:[300,105],t1:[240,105],t2:[240,105],t3:[240,105],t4:[240,105],autre:[210,84],meme:[210,84],d1:[210,76],d2:[210,76],x1:[180,70],x2:[180,70],i1:[180,70],i2:[180,70]};
+/* Hierarchy: root = largest text, T2 = important nodes (larger box and text), all others = base size */
+const T2=["priv","pret","priv2","stock","aut","exp","expo","re1","re2","t1","t2","t3","t4"],fs=k=>k=="root"?26:T2.includes(k)?19:13;
+const E="root-priv root-pret root-priv2 priv-achat achat-intl achat-dom intl-autre dom-meme autre-stock meme-stock stock-t1 stock-t2 stock-t3 stock-t4 pret-fac pret-d2 fac-ass ass-aut aut-intl2 aut-eneu intl2-aus aus-d1 d1-exp eneu-exp exp-expo expo-re1 d2-re1 priv2-pa priv2-pb pa-x1 pa-i2 pb-x2 pb-i1 x1-re2 i2-re2 x2-re2 i1-re2 re2-priv2".split(" ").map(e=>e.split("-"));
+const BACK="re2-priv2";
+/* Satellite dots: appear next to a node once it has been clicked. SAT[nodeId] = {x,y = dot position, f = page to open (new tab), t = hover label "FR|EN"} */
+const SAT={pret:{x:1050,y:270,f:"provenances/index.html",t:"provenances|provenances"}};
+/* ================= PAGE STRUCTURE — edit here =================
+ Every page uses SECTIONS. Write real text in C[id] = {sum:"FR|EN", s:["FR|EN", …one per section…], diagram:"<svg…>"} */
+const SECTIONS=["Définition|Definition","Règles et conditions|Rules and conditions","Documents requis|Required documents","Acteurs|Actors","Exemple de cas|Case example","Diagramme|Diagram","Sources|Sources"];
+const TODO="[À rédiger]|[To be written]";
+const C={/* example:  t1:{sum:"…|…", s:["texte|text","","","","","",""], diagram:"<svg viewBox='0 0 600 300'>…</svg>"} */};
+/* ================= DOCUMENTS — add PDFs here =================
+ DOCS[nodeId] = [{f:"documents/file.pdf", t:"FR title|EN title", lang:"fr"}]  — put the PDF in the documents/ folder next to index.html. lang = language of the PDF. */
+const DOCS={aus:[{f:"documents/cerfa-02-0083-autorisation-sortie-temporaire.pdf",t:"Cerfa n° 02-0083 : Demande d’autorisation de sortie temporaire d’un bien culturel|Cerfa no. 02-0083: Application for temporary export authorisation of a cultural good",lang:"fr"},{f:"documents/cerfa-11033-autorisation-exportation-ue.pdf",t:"Cerfa n° 11033*03 : Demande d’autorisation d’exportation d’un bien culturel (Communauté européenne)|Cerfa no. 11033*03: Application for export authorisation of a cultural good (European Community)",lang:"fr"}],fac:[{f:"documents/facility-report-questionnaire-fr.pdf",t:"Questionnaire du Service des Musées de France relatif aux conditions offertes par les lieux d’exposition|Questionnaire of the Service des Musées de France on the conditions offered by exhibition venues",lang:"fr"}],d1:[{f:"documents/fac-simile-ata.pdf",t:"Fac-similé du carnet A.T.A. (Chambre de commerce et d’industrie de Paris)|Facsimile of the A.T.A. carnet (Paris Chamber of Commerce and Industry)",lang:"fr-en"}],d2:[{f:"documents/fac-simile-ata.pdf",t:"Fac-similé du carnet A.T.A. (Chambre de commerce et d’industrie de Paris)|Facsimile of the A.T.A. carnet (Paris Chamber of Commerce and Industry)",lang:"fr-en"}]};
+const GN=["Question de départ|Starting question","Achat par un privé|Private purchase","Prêt de musée à musée|Museum-to-museum loan","Privé qui prête à un musée|Private owner loaning to a museum"];
+const U={ti:"Comment les œuvres d’art traversent-elles les frontières ?|How do artworks cross borders?",ix:"Index|Index",rs:"Réinitialiser|Reset",
+hint:"Cliquer sur une case : dévoiler la suite — Molette : zoom — Glisser : déplacer|Click a box: reveal what follows — Wheel: zoom — Drag: pan",
+open:"Ouvrir la page →|Open page →",back:"← Diagramme|← Diagram",nx:"Suite|Next",pv:"Précédent|Previous",cn:"Relations dans le diagramme|Connections in the diagram",
+dph:"Diagramme détaillé à venir — à insérer dans C[id].diagram|Detailed diagram to come — insert in C[id].diagram",idx:"Index des étapes|Index of steps",dop:"Ouvrir dans un nouvel onglet|Open in a new tab",ddl:"Télécharger le PDF|Download the PDF",dnote:"Document original en français.|Original document in French.",dfb:"Votre navigateur n’affiche pas le PDF ; utilisez les boutons ci-dessus.|Your browser cannot display the PDF; use the buttons above."};
+/* ================= ENGINE ================= */
+let L=0,vb=[0,0,1000,700],cur=null,sel=null,exp=new Set(["root"]),NE=[],ND={},SATS={};
+const t=s=>s.split("|")[L],$=id=>document.getElementById(id),m=$("map"),NS="http://www.w3.org/2000/svg";
+const sz=k=>SZ[k]||[170,70],kids=k=>E.filter(e=>e[0]==k&&e.join("-")!=BACK).map(e=>e[1]);
+const inc=k=>E.filter(e=>e[1]==k&&e.join("-")!=BACK).map(e=>e[0]);
+const merge=new Set(Object.keys(N).filter(k=>inc(k).length>1));
+const vis=k=>k=="root"||inc(k).some(p=>exp.has(p)&&vis(p));
+function rp(p,c){let d=`M${p[0]}`;for(let i=1;i<p.length-1;i++){const a=p[i-1],b=p[i],n=p[i+1],l1=Math.hypot(b[0]-a[0],b[1]-a[1]),l2=Math.hypot(n[0]-b[0],n[1]-b[1]),k=Math.min(c,l1/2,l2/2),u=[(b[0]-a[0])/l1,(b[1]-a[1])/l1],w=[(n[0]-b[0])/l2,(n[1]-b[1])/l2];d+=`L${b[0]-u[0]*k} ${b[1]-u[1]*k}L${b[0]+w[0]*k} ${b[1]+w[1]*k}`}return d+`L${p[p.length-1]}`}
+function route(a,b){const A=N[a],B=N[b],[aw,ah]=sz(a),[bw,bh]=sz(b);let p;
+ if(a+"-"+b==BACK)p=[[A[0]+aw/2,A[1]],[2600,A[1]],[2600,B[1]],[B[0]+bw/2,B[1]]];
+ else if(a=="d2"&&b=="re1")p=[[A[0],A[1]+ah/2],[A[0],B[1]],[B[0]+bw/2,B[1]]];
+ else{const sy=A[1]+ah/2,ty=B[1]-bh/2,yb=merge.has(b)?ty-24:sy+24;p=A[0]==B[0]?[[A[0],sy],[B[0],ty]]:[[A[0],sy],[A[0],yb],[B[0],yb],[B[0],ty]]}
+ return rp(p,22)}
+function build(){const l=$("L");l.innerHTML="";NE=[];ND={};SATS={};
+ E.forEach(([a,b])=>{const p=document.createElementNS(NS,"path");p.setAttribute("class","pipe");p.setAttribute("d",route(a,b));l.appendChild(p);NE.push([a,b,p])});
+ for(const k in N){const[x,y,,lb]=N[k],[w,h]=sz(k),n=document.createElementNS(NS,"g");n.setAttribute("class","node");n.dataset.k=k;n.setAttribute("transform",`translate(${x-w/2} ${y-h/2})`);
+  n.innerHTML=`<g class="in"><rect width="${w}" height="${h}"/><foreignObject width="${w}" height="${h}"><div xmlns="http://www.w3.org/1999/xhtml" style="font-size:${fs(k)}px">${t(lb)}</div></foreignObject></g>`;l.appendChild(n);ND[k]=n}
+ for(const k in SAT){const a=SAT[k],[w]=sz(k),x0=N[k][0]-w/2,ln=document.createElementNS(NS,"path"),g=document.createElementNS(NS,"g");
+  ln.setAttribute("class","pipe");ln.setAttribute("d",`M${x0} ${a.y}L${a.x} ${a.y}`);g.setAttribute("class","sat");g.dataset.f=a.f;
+  g.innerHTML=`<circle r="28" cx="${a.x}" cy="${a.y}" fill="transparent"/><circle class="dot" r="14" cx="${a.x}" cy="${a.y}"/><text x="${a.x}" y="${a.y-30}">${t(a.t)}</text>`;
+  l.insertBefore(ln,l.firstChild);l.appendChild(g);SATS[k]=[ln,g]}
+ refresh(0)}
+function refresh(fitIt=1){const v={};for(const k in N)v[k]=vis(k);
+ for(const k in N){ND[k].classList.toggle("hid",!v[k]);ND[k].classList.toggle("open",exp.has(k)&&k!="root"&&kids(k).length>0)}
+ NE.forEach(([a,b,p])=>p.classList.toggle("hid",!(v[a]&&(a+"-"+b==BACK?true:exp.has(a)))));
+ for(const k in SATS)SATS[k].forEach(el=>el.classList.toggle("hid",!(v[k]&&exp.has(k))));if(fitIt===2)return;if(fitIt)fit(v);else fit(v,1)}
+let raf;function fit(v,now){let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const k in N)if(v[k]){const[w,h]=sz(k);x0=Math.min(x0,N[k][0]-w/2);x1=Math.max(x1,N[k][0]+w/2);y0=Math.min(y0,N[k][1]-h/2);y1=Math.max(y1,N[k][1]+h/2)}
+ if(v["re2"]){x1=Math.max(x1,2610)}
+ const r=m.getBoundingClientRect(),pad=90;let w=x1-x0+2*pad,h=y1-y0+2*pad;const ar=r.width/r.height;if(w/h<ar)w=h*ar;else h=w/ar;
+ const to=[(x0+x1)/2-w/2,(y0+y1)/2-h/2,w,h],fr=[...vb],s=performance.now();cancelAnimationFrame(raf);
+ const step=n=>{const q=now?1:Math.min(1,(n-s)/550),e=1-Math.pow(1-q,3);vb=fr.map((a,i)=>a+(to[i]-a)*e);vw();if(q<1)raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step)}
+const vw=()=>m.setAttribute("viewBox",vb.join(" "));
+function ui(){for(const k in U)if($(k))$(k).textContent=t(U[k]);document.documentElement.lang=L?"en":"fr";build();showSel();if(cur)route2()}
+function showSel(){const b=$("sel");if(!sel){b.classList.remove("show");return}b.classList.add("show");b.innerHTML=`<span>${t(N[sel][3])}</span><button onclick="location.hash='#/${sel}'">${t(U.open)}</button>`}
+/* pan & zoom & click */
+let d=null;const sc=()=>{const r=m.getBoundingClientRect();return Math.max(vb[2]/r.width,vb[3]/r.height)};
+m.addEventListener("pointerdown",e=>{cancelAnimationFrame(raf);const n=e.target.closest(".node");d={x:e.clientX,y:e.clientY,v:[...vb],k:n?.dataset.k,s:e.target.closest(".sat")?.dataset.f,mv:0}});
+addEventListener("pointermove",e=>{if(!d)return;const dx=e.clientX-d.x,dy=e.clientY-d.y;if(Math.abs(dx)+Math.abs(dy)>5)d.mv=1;if(!d.mv)return;const s=sc();vb[0]=d.v[0]-dx*s;vb[1]=d.v[1]-dy*s;vw()});
+addEventListener("pointerup",()=>{if(d&&!d.mv&&d.s)window.open(d.s,"_blank");if(d&&!d.mv&&d.k){const k=d.k;if(kids(k).length){if(exp.has(k))location.hash="#/"+k;else{exp.add(k);sel=k;showSel();refresh(2)}}else location.hash="#/"+k}d=null});
+m.addEventListener("wheel",e=>{e.preventDefault();cancelAnimationFrame(raf);const r=m.getBoundingClientRect(),f=e.deltaY>0?1.12:.89,s=sc(),px=vb[0]+(e.clientX-r.left)*s,py=vb[1]+(e.clientY-r.top)*s,nw=vb[2]*f;if(nw>4000||nw<300)return;vb=[px-(px-vb[0])*f,py-(py-vb[1])*f,nw,vb[3]*f];vw()},{passive:false});
+/* pages */
+const par=k=>inc(k)[0];
+function crumbs(k){const a=[];let c=k;while(c){a.unshift(c);c=par(c)}return a}
+function mini(k){const ins=inc(k),outs=kids(k),H=Math.max(220,Math.max(ins.length,outs.length)*64+40),cy=H/2;
+ const bx=(id,x,y)=>`<a onclick="location.hash='#/${id}'"><rect x="${x}" y="${y}" width="170" height="48" fill="#fff"/><foreignObject x="${x}" y="${y}" width="170" height="48"><div xmlns="http://www.w3.org/1999/xhtml" style="height:48px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;color:#000;padding:4px 8px">${t(N[id][3])}</div></foreignObject></a>`;
+ let s=`<svg viewBox="0 0 700 ${H}"><path d="M265 ${cy}H435" stroke="#fff" stroke-width="5"/>`;
+ ins.forEach((id,i)=>s+=`<path d="M170 ${44+i*64}H218V${cy}" stroke="#fff" stroke-width="5" fill="none"/>`);
+ outs.forEach((id,i)=>s+=`<path d="M435 ${cy}H482V${44+i*64}H530" stroke="#fff" stroke-width="5" fill="none"/>`);
+ ins.forEach((id,i)=>s+=bx(id,0,20+i*64));outs.forEach((id,i)=>s+=bx(id,530,20+i*64));
+ return s+`<rect x="265" y="${cy-34}" width="170" height="68" fill="#fff"/><foreignObject x="265" y="${cy-34}" width="170" height="68"><div xmlns="http://www.w3.org/1999/xhtml" style="height:68px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;font-weight:700;color:#000;padding:4px 10px">${t(N[k][3])}</div></foreignObject></svg>`}
+const docs=k=>(DOCS[k]||[]).map(d=>`<div class="doc"><p><b>${t(d.t)}</b></p>${L==1&&d.lang=="fr"?`<p>${t(U.dnote)}</p>`:""}<a class="btn" href="${d.f}" target="_blank">${t(U.dop)}</a><a class="btn" href="${d.f}" download>${t(U.ddl)}</a><object data="${d.f}#view=FitH" type="application/pdf"><p>${t(U.dfb)}</p></object></div>`).join("");
+function page(k){const n=N[k],c=C[k]||{},cr=crumbs(k),nx=kids(k),pv=par(k);
+ const lk=(a,lbl)=>`<a onclick="location.hash='#/${a}'">${lbl}</a>`;
+ const sec=SECTIONS.map((h,i)=>`<h2>${t(h)}</h2>`+(i==5?(c.diagram||`<div class="ph">${t(U.dph)}</div>`):`<p>${t((c.s&&c.s[i])||TODO)}</p>`)+(i==2?docs(k):"")).join("");
+ $("pg").innerHTML=`<div class="bar"><a onclick="location.hash=''">${t(U.back)}</a><span class="cr">${cr.map(x=>x==k?t(N[x][3]):lk(x,t(N[x][3]))).join(" &nbsp;/&nbsp; ")}</span></div>
+ <span class="tag">${t(GN[n[2]])}</span><h1>${t(n[3])}</h1><p>${t(c.sum||TODO)}</p>${sec}
+ <h2>${t(U.cn)}</h2>${mini(k)}
+ <h2>${t(U.pv)} / ${t(U.nx)}</h2>${pv?`<p>${lk(pv,"← "+t(N[pv][3]))}</p>`:""}${nx.map(x=>`<p>${lk(x,"→ "+t(N[x][3]))}</p>`).join("")}`}
+function index(){$("pg").innerHTML=`<div class="bar"><a onclick="location.hash=''">${t(U.back)}</a></div><h1>${t(U.idx)}</h1>`+[1,2,3].map(g=>`<h2>${t(GN[g])}</h2><ul>${Object.keys(N).filter(k=>N[k][2]==g).map(k=>`<li onclick="location.hash='#/${k}'">${t(N[k][3])}</li>`).join("")}</ul>`).join("")}
+function route2(){const k=location.hash.replace("#/","");cur=null;
+ if(k=="index"){cur=k;index()}else if(N[k]){cur=k;page(k)}
+ $("pg").classList.toggle("show",!!cur);if(cur)$("pg").scrollTop=0}
+addEventListener("hashchange",route2);
+$("ix").onclick=()=>location.hash="#/index";
+$("rs").onclick=()=>{exp=new Set(["root"]);sel=null;showSel();refresh()};
+$("sl").onclick=e=>{L=1-L;e.currentTarget.classList.toggle("on");ui()};
+addEventListener("keydown",e=>{if(e.key=="Escape")location.hash=""});
+addEventListener("resize",()=>refresh());
+exp.add("root");ui();route2();
+</script></body></html>

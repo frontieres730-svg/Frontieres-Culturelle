@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Art Basel – d’où viennent les œuvres ?</title>
+<style>
+:root{--bg:#000;--ink:#fff;--mut:#bdbdbd;--land:#1f1f1f;--on:#6a6a6a;--maybe:#6a6a6a;--line:#000;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:clamp(20px,3.4vw,30px);font-weight:600;letter-spacing:-.01em;margin:0 0 4px}
+.sub{color:var(--mut);margin:0 0 16px;font-size:14px}
+nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+nav button{font:inherit;background:none;color:var(--ink);border:1px solid var(--ink);padding:6px 14px;cursor:pointer}
+nav button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+#map{position:relative;width:100%;aspect-ratio:10/6;border:1px solid var(--ink);overflow:hidden}
+#map svg{display:block}
+.arc{fill:none;stroke:#000;stroke-width:1.5;stroke-dasharray:4 3;animation:f .6s both}
+@keyframes f{from{opacity:0}}
+.pin{cursor:pointer}
+.pin circle{fill:#000}
+.lbl{font-size:11px;fill:var(--ink);pointer-events:none;paint-order:stroke;stroke:var(--bg);stroke-width:3px}
+.dst{fill:var(--ink)}
+.dst.maybe{fill:var(--bg);stroke:var(--ink);stroke-width:1}
+section{margin-top:20px;display:grid;gap:20px;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr)}
+@media (max-width:720px){section{grid-template-columns:1fr}}
+h2{font-size:18px;margin:0 0 4px}
+.meta{color:var(--mut);margin:0 0 10px}
+.stat{font-size:14px;border-top:1px solid var(--ink);padding-top:8px}
+ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+li{border:1px solid var(--ink);padding:2px 9px;font-size:13px}
+li.m{border-style:dotted;color:var(--mut);border-color:var(--mut)}
+.key{margin-top:12px;font-size:12.5px;color:var(--mut)}
+.key b{color:var(--ink);font-weight:600}
+.about{border:1px solid var(--ink);padding:12px 14px;margin:0 0 14px;font-size:14px}
+.about h2{font-size:15px;margin:0 0 6px}
+.about p{margin:6px 0 0}
+[hidden]{display:none!important}
+.cards{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:8px}
+.card{font:inherit;text-align:left;background:none;color:var(--ink);border:1px solid var(--ink);padding:22px 18px;cursor:pointer;display:flex;flex-direction:column;gap:6px}
+.card b{font-size:20px;font-weight:600}.card span{color:var(--mut);font-size:14px}
+.card:hover{background:var(--ink);color:var(--bg)}.card:hover span{color:var(--bg)}
+.bk{font:inherit;background:none;border:0;color:var(--ink);cursor:pointer;padding:0;margin:0 0 12px;text-decoration:underline}
+body{font-family:Arial,Helvetica,sans-serif;font-size:14px}
+header{height:57px;border-bottom:1px solid #fff;padding:0 29px;display:flex;align-items:center}
+h1{font-size:18px;font-weight:700;margin:0;letter-spacing:0}
+main{max-width:none;padding:18px 29px 40px}
+.sub{font-size:14px;color:#fff;margin:0 0 16px}
+.bk{position:fixed;top:env(safe-area-inset-top,0px);right:29px;height:57px;display:flex;align-items:center;text-decoration:none;font-size:15px;z-index:5}
+.bk:hover{text-decoration:underline}
+#map{border:0}
+.pin circle{fill:#fff}
+nav button{background:#fff;color:#000;border:1px solid #fff;padding:7px 14px;font-size:13px}
+nav button[aria-pressed="true"]{background:#000;color:#fff}
+.card{background:#fff;color:#000;border:1px solid #fff}
+.card span{color:#444}
+.card:hover{background:#000;color:#fff}.card:hover span{color:#ddd}
+.about{border:1px solid #fff}
+li{background:#fff;color:#000;border:1px solid #fff;font-size:12.5px}
+li.m{background:transparent;color:#fff;border:1px dotted #fff}
+.stat{border-top:1px solid #fff}
+.key{color:#bdbdbd}.key b{color:#fff}
+</style>
+</head>
+<body>
+<header><h1 id="ttl">D’où viennent les œuvres ?</h1></header>
+<main>
+<p class="sub" id="sub">Choisissez un sujet pour afficher sa carte.</p>
+<div id="home"><div class="cards"><button class="card" data-m="basel"><b>Art Basel</b><span>D’où viennent les galeries des cinq foires</span></button><button class="card" data-m="louvre"><b>Musée du Louvre</b><span>Dans quels pays le Louvre a prêté des œuvres (2023, 2024, 2025)</span></button></div></div>
+<div id="app" hidden><button id="back" class="bk">← Accueil</button>
+<div class="about" id="aboutB"><h2>Art Basel, c’est quoi ?</h2>
+<p>Art Basel est une <b>foire d’art contemporain et moderne</b> : un grand salon où des <b>galeries</b> du monde entier viennent présenter et vendre des œuvres à des collectionneurs, des musées et au public. Ce ne sont pas les artistes qui exposent directement, mais leurs galeries, choisies par un comité de sélection.</p>
+<p>Elle a été <b>créée en 1970 à Bâle (Suisse)</b> par trois galeristes bâlois : Ernst Beyeler, Trudl Bruckner et Balz Hilt. Elle est aujourd’hui organisée par le groupe suisse <b>MCH Group</b>, qui l’a déclinée dans d’autres villes : <b>Miami Beach</b> (2002), <b>Hong Kong</b> (2013), <b>Paris</b> (2022) et <b>Doha</b> (2026). Cela fait cinq foires.</p>
+<p>Ici, la « provenance » d’une œuvre est le <b>pays de la galerie</b> qui l’apporte, pas forcément la nationalité de l’artiste.</p></div>
+<div class="about" id="aboutL" hidden><h2>Les prêts du Louvre</h2>
+<p>Le Louvre prête des œuvres de ses collections à des musées de France et du monde entier, pour des expositions temporaires. Cette carte montre les <b>œuvres prêtées à l’étranger</b>, d’après le tableau « Les prêts par ville à l’étranger » du rapport d’activité annuel du Louvre (2023, 2024 et 2025).</p>
+<p>Un prêt est compté <b>par ville d’exposition</b> : une exposition itinérante compte à chaque étape. Les œuvres que le Louvre reçoit d’autres musées ne sont pas représentées.</p></div>
+<nav id="tabs" aria-label="Choix"></nav>
+<div id="map"></div>
+<section>
+<div id="info"></div>
+<div><ul id="list"></ul><p class="key" id="key"></p></div>
+</section>
+</div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datamaps/0.5.9/datamaps.world.min.js"></script>
+<script>
+var C={FRA:["France",46.6,2.4],USA:["États-Unis",39.8,-98.6],GBR:["Royaume-Uni",53,-1.5],DEU:["Allemagne",51,10.4],ITA:["Italie",42.8,12.5],ESP:["Espagne",40.2,-3.7],BEL:["Belgique",50.6,4.6],CHE:["Suisse",46.8,8.2],AUT:["Autriche",47.6,14.1],NLD:["Pays-Bas",52.2,5.3],DNK:["Danemark",56,9.5],GRC:["Grèce",39,22],ROU:["Roumanie",45.9,25],CHN:["Chine",35,103],HKG:["Hong Kong",22.3,114.2],TWN:["Taïwan",23.7,121],JPN:["Japon",36,138],KOR:["Corée du Sud",36.5,127.8],IND:["Inde",22,79],IDN:["Indonésie",-2.5,118],THA:["Thaïlande",15.5,101],AUS:["Australie",-25,134],GEO:["Géorgie",42,43.5],CAN:["Canada",52,-96],MEX:["Mexique",23.6,-102.5],BRA:["Brésil",-12,-52],ARG:["Argentine",-34,-64],PER:["Pérou",-9.2,-75],COL:["Colombie",4.6,-74],CUB:["Cuba",21.7,-79],UKR:["Ukraine",49,31.5],SAU:["Arabie saoudite",24,45],ARE:["Émirats arabes unis",24.3,54.4],QAT:["Qatar",25.3,51.2],TUR:["Turquie",39,35],LBN:["Liban",33.9,35.9],EGY:["Égypte",26.8,30.8],MAR:["Maroc",31.8,-7],TUN:["Tunisie",34,9],ZAF:["Afrique du Sud",-29,24],NGA:["Nigéria",9,8],CIV:["Côte d’Ivoire",7.5,-5.5]};
+Object.assign(C,{POL:["Pologne",52,19.4],MCO:["Monaco",43.7,7.4],HUN:["Hongrie",47,19.5],IRL:["Irlande",53.2,-8],FIN:["Finlande",64,26],MLT:["Malte",35.9,14.4],LUX:["Luxembourg",49.8,6.1],MNG:["Mongolie",46.9,103.8],PRT:["Portugal",39.6,-8],CZE:["Tchéquie",49.8,15.5],ISR:["Israël",31.5,35],ISL:["Islande",64.9,-18.6],ARM:["Arménie",40.2,45]});
+var LV={"2025": {"CHN": 575, "ARE": 104, "ITA": 66, "DEU": 32, "NLD": 22, "BEL": 22, "ESP": 21, "ARM": 17, "USA": 16, "GBR": 13, "AUT": 7, "POL": 4, "HUN": 2, "DNK": 1, "SAU": 1, "MCO": 1}, "2024": {"ARE": 89, "ITA": 78, "DEU": 51, "CZE": 50, "USA": 44, "GBR": 25, "NLD": 23, "BEL": 21, "HUN": 12, "SAU": 11, "ESP": 8, "MNG": 8, "IRL": 7, "LUX": 7, "POL": 6, "CHE": 5, "FIN": 4, "CHN": 4, "AUT": 4, "MLT": 1, "PRT": 1, "CAN": 1, "JPN": 1}, "2023": {"BEL": 168, "JPN": 144, "ITA": 55, "USA": 54, "ARE": 52, "GBR": 16, "NLD": 13, "ESP": 13, "DEU": 10, "AUT": 8, "DNK": 6, "POL": 6, "CHE": 6, "CAN": 5, "ISR": 2, "SAU": 1, "IRL": 1, "AUS": 1, "ISL": 1}},CAM={"2025": 22, "2024": 1, "2023": 1};
+var CT={};
+[["Europe","FRA GBR DEU ITA ESP BEL CHE AUT NLD DNK GRC ROU UKR POL HUN IRL FIN MLT LUX PRT CZE ISL"],["Asie","CHN HKG TWN JPN KOR IND IDN THA GEO TUR SAU ARE QAT LBN MNG ISR ARM"],["Afrique","EGY MAR TUN ZAF NGA CIV"],["Amérique du Nord","USA CAN MEX CUB"],["Amérique du Sud","BRA ARG PER COL"],["Océanie","AUS"]].forEach(function(a){a[1].split(" ").forEach(function(c){CT[c]=a[0]})});
+var S=function(s){return s.split(" ")};
+var F={
+bale:{n:"Bâle",ll:[47.56,7.59],o:[8,14,"start"],t:"Art Basel · Bâle",d:"18–21 juin 2026 · Messe Basel",g:"290 galeries",off:43,
+ s:S("CHE USA CIV LBN SAU TUR"),m:S("GBR DEU FRA ITA ESP BEL AUT NLD CHN HKG JPN KOR MEX BRA ARE")},
+paris:{n:"Paris",ll:[48.86,2.35],o:[-8,-8,"end"],t:"Art Basel Paris",d:"23–25 octobre 2026 · Grand Palais",g:"211 exposants",off:41,
+ s:S("FRA USA CHN HKG JPN KOR CAN BRA MEX SAU ARE TUR LBN IDN ZAF NGA CIV TUN GBR DEU ITA ESP BEL AUT DNK ROU"),m:S("CHE NLD GRC")},
+miami:{n:"Miami Beach",ll:[25.79,-80.13],o:[8,4,"start"],t:"Art Basel Miami Beach",d:"5–7 décembre 2025 · Miami Beach Convention Center",g:"285 galeries",off:44,
+ s:S("USA MEX BRA ARG PER CUB UKR GBR FRA DEU ITA ESP KOR HKG CHN JPN"),m:S("CAN COL ARE ZAF CHE")},
+hk:{n:"Hong Kong",ll:[22.32,114.17],o:[9,-6,"start"],t:"Art Basel Hong Kong",d:"27–29 mars 2026 · HKCEC",g:"240 galeries",off:41,
+ s:S("HKG CHN AUS JPN KOR TUR FRA GEO DEU NLD ESP USA"),m:S("GBR ITA TWN IND IDN THA")},
+doha:{n:"Doha",ll:[25.29,51.53],o:[-8,16,"end"],t:"Art Basel Qatar",d:"5–7 février 2026 · M7 et Doha Design District (1re édition)",g:"87 galeries",off:31,
+ s:S("QAT ARE SAU LBN TUR EGY MAR TUN IND USA"),m:S("GBR FRA CHE DEU ITA")}
+};
+var cur=null,map,proj,lit=[];
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()}
+function build(){
+ var el=document.getElementById("map");el.innerHTML="";lit=[];
+ map=new Datamap({element:el,scope:"world",
+  fills:{defaultFill:css("--land"),on:css("--on"),maybe:css("--maybe")},
+  geographyConfig:{borderColor:css("--line"),borderWidth:.5,popupOnHover:false,highlightOnHover:false},
+  setProjection:function(e){var w=e.offsetWidth,h=e.offsetHeight;
+   proj=d3.geo.mercator().center([10,25]).scale(w/6.5).translate([w/2,h/2]);
+   return{path:d3.geo.path().projection(proj),projection:proj}}});
+ render();
+}
+var run=0,H={bale:"CHE",paris:"FRA",miami:"USA",hk:"CHN",doha:"QAT"};
+function hosts(){return Object.keys(H).map(function(k){return H[k]})}
+function render(){
+ if(mode==="louvre")return renderL();
+ var f=cur?F[cur]:null,g,upd={},k=++run;
+ lit.forEach(function(c){upd[c]={fillKey:"defaultFill"}});
+ lit=[];lit.forEach(function(c){upd[c]={fillKey:"on"}});
+ try{map.updateChoropleth(upd)}catch(e){}
+ function lite(c){if(k!==run)return;if(lit.indexOf(c)<0)lit.push(c);var u={};u[c]={fillKey:"on"};try{map.updateChoropleth(u)}catch(e){}}
+ d3.select("#map svg g.ov").remove();
+ g=map.svg.append("g").attr("class","ov");
+ if(f){
+  var o=proj([f.ll[1],f.ll[0]]),i=0;lite(H[cur]);
+  f.s.concat(f.m).forEach(function(c){
+   var p=proj([C[c][2],C[c][1]]),dx=p[0]-o[0],dy=p[1]-o[1],d=Math.sqrt(dx*dx+dy*dy);
+   if(d<=14||c===H[cur]){lite(c);return}
+   var cx=(o[0]+p[0])/2,cy=(o[1]+p[1])/2-d*.25;
+   g.append("path").attr("class","arc").style("fill","none").style("stroke","#fff").style("stroke-width","1.5px").style("stroke-dasharray","4 3").style("opacity",1).style("animation","none").attr("d","M"+p+"L"+p)
+    .transition().delay(i*70).duration(1500).ease("quad-in-out")
+    .attrTween("d",function(){return function(t){var u=1-t,qx=p[0]+t*(cx-p[0]),qy=p[1]+t*(cy-p[1]),ex=u*u*p[0]+2*u*t*cx+t*t*o[0],ey=u*u*p[1]+2*u*t*cy+t*t*o[1];return"M"+p+"Q"+qx+","+qy+" "+ex+","+ey}})
+    .each("start",function(){lite(c)});
+   i++;
+  });
+ }
+ Object.keys(F).forEach(function(id){
+  var q=F[id],p=proj([q.ll[1],q.ll[0]]),pg=g.append("g").attr("class","pin").on("click",function(){pick(id)});
+  pg.append("title").text(q.t);
+  pg.append("circle").attr("cx",p[0]).attr("cy",p[1]).attr("r",16).style("fill","transparent");
+  pg.append("circle").attr("cx",p[0]).attr("cy",p[1]).attr("r",id===cur?7:5);
+  pg.append("text").attr("class","lbl").attr("x",p[0]+q.o[0]).attr("y",p[1]+q.o[1]).attr("text-anchor",q.o[2]).text(q.n);
+ });
+ document.querySelectorAll("#tabs button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.id===cur)});
+ if(!f){
+  document.getElementById("info").innerHTML="<h2>Les cinq villes d’Art Basel</h2><p class='meta'>Bâle, Paris, Miami Beach, Hong Kong et Doha. Tous les pays sont en gris clair : ils se colorent en gris foncé quand des œuvres venant de chez eux sont exposées lors d’une foire (le pointillé montre leur trajet).</p><p class='stat'>Cliquez sur une ville pour voir d’où viennent les galeries de sa dernière édition.</p>";
+  document.getElementById("list").innerHTML="";
+  document.getElementById("key").innerHTML="";
+  return;
+ }
+ var n=f.s.length,m=f.m.length,r=Math.max(0,f.off-n-m);
+ function km(a,b){var R=6371,q=Math.PI/180,dl=(b[1]-a[1])*q,dp=(b[0]-a[0])*q,h=Math.sin(dp/2)*Math.sin(dp/2)+Math.cos(a[0]*q)*Math.cos(b[0]*q)*Math.sin(dl/2)*Math.sin(dl/2);return 2*R*Math.asin(Math.sqrt(h))}
+ var ds=f.s.concat(f.m).filter(function(c){return c!==H[cur]}).map(function(c){return km(f.ll,[C[c][1],C[c][2]])}),av=Math.round(ds.reduce(function(x,y){return x+y},0)/ds.length/100)*100;
+ var gn={bale:290,paris:211,miami:285,hk:240,doha:87}[cur],lo=Math.round(gn*13/100)*100,hi=Math.round(gn*19/100)*100,ar={doha:84}[cur],cc={},all=f.s.concat(f.m),cs;
+ all.forEach(function(c){cc[CT[c]]=(cc[CT[c]]||0)+1});
+ cs=Object.keys(cc).sort(function(a,b){return cc[b]-cc[a]}).map(function(k){return k+" "+Math.round(100*cc[k]/all.length)+" %"}).join(" · ");
+ document.getElementById("info").innerHTML="<h2>"+f.t+"</h2><p class='meta'>"+f.d+"<br>"+f.g+"<br>Œuvres exposées (estimation) : <b>environ "+lo.toLocaleString("fr-FR")+" à "+hi.toLocaleString("fr-FR")+"</b></p><p class='stat'><b>"+f.off+" pays et territoires</b> selon Art Basel ("+n+" identifiés, "+m+" probables, "+r+" non identifiés).<br><b>"+Object.keys(cc).length+" continents</b> d’origine : "+cs+".<br>Distance moyenne parcourue : <b>≈ "+av.toLocaleString("fr-FR")+" km</b> à vol d’oiseau.</p><p class='meta' style='font-size:12.5px;margin-top:8px'>Art Basel ne publie pas le nombre d’œuvres. L’estimation des œuvres = nombre de galeries × 13 à 19 œuvres, d’après d’anciens chiffres de presse (environ 4 000 à 5 000 œuvres pour 260 à 300 galeries à Bâle) ; elle est moins fiable pour Doha (première édition, sans stands). Les pourcentages comptent les pays identifiés (un pays = une part), pas les œuvres. La distance est mesurée entre la ville de la foire et le centre de chaque pays : c’est une estimation.</p>";
+ document.getElementById("list").innerHTML=f.s.map(function(c){return"<li>"+C[c][0]+"</li>"}).concat(f.m.map(function(c){return"<li class='m'>"+C[c][0]+"</li>"})).join("");
+ document.getElementById("key").innerHTML="<b>Gris foncé</b> : pays qui accueille la foire, puis pays d’où viennent des galeries, dès que le pointillé en part vers la ville de la foire. <b>Gris clair</b> : aucun pays identifié. Les pays à bordure pointillée dans la liste sont probables, à confirmer. Art Basel publie le nombre de pays mais pas leur liste complète.";
+}
+function pick(id){cur=(cur===id)?null:id;render()}
+var mode=null;
+function kmd(a,b){var R=6371,q=Math.PI/180,dl=(b[1]-a[1])*q,dp=(b[0]-a[0])*q,h=Math.sin(dp/2)*Math.sin(dp/2)+Math.cos(a[0]*q)*Math.cos(b[0]*q)*Math.sin(dl/2)*Math.sin(dl/2);return 2*R*Math.asin(Math.sqrt(h))}
+function litG(c,k){if(k!==run)return;if(lit.indexOf(c)<0)lit.push(c);var u={};u[c]={fillKey:"on"};try{map.updateChoropleth(u)}catch(e){}}
+function renderL(){
+ var y=cur,D=y?LV[y]:null,k=++run,upd={},g,o=proj([2.34,48.86]);
+ lit.forEach(function(c){upd[c]={fillKey:"defaultFill"}});lit=[];
+ try{map.updateChoropleth(upd)}catch(e){}
+ d3.select("#map svg g.ov").remove();
+ g=map.svg.append("g").attr("class","ov");
+ if(D){var i=0;Object.keys(D).forEach(function(c){
+  var p=proj([C[c][2],C[c][1]]),dx=p[0]-o[0],dy=p[1]-o[1],d=Math.sqrt(dx*dx+dy*dy);
+  if(d<=14){litG(c,k);return}
+  var cx=(o[0]+p[0])/2,cy=(o[1]+p[1])/2-d*.25;
+  g.append("path").attr("class","arc").style("fill","none").style("stroke","#fff").style("stroke-width","1.5px").style("stroke-dasharray","4 3").style("opacity",1).style("animation","none").attr("d","M"+o+"L"+o)
+   .transition().delay(i*70).duration(1500).ease("quad-in-out")
+   .attrTween("d",function(){return function(t){var u=1-t,qx=o[0]+t*(cx-o[0]),qy=o[1]+t*(cy-o[1]),ex=u*u*o[0]+2*u*t*cx+t*t*p[0],ey=u*u*o[1]+2*u*t*cy+t*t*p[1];return"M"+o+"Q"+qx+","+qy+" "+ex+","+ey}})
+   .each("end",function(){litG(c,k)});
+  i++;})}
+ var pg=g.append("g").attr("class","pin");
+ pg.append("circle").attr("cx",o[0]).attr("cy",o[1]).attr("r",6);
+ pg.append("text").attr("class","lbl").attr("x",o[0]-9).attr("y",o[1]-9).attr("text-anchor","end").text("Le Louvre");
+ document.querySelectorAll("#tabs button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.id===cur)});
+ if(!D){
+  document.getElementById("info").innerHTML="<h2>Musée du Louvre</h2><p class='meta'>Les prêts à l’étranger, année par année.</p><p class='stat'>Cliquez sur une année pour voir dans quels pays le Louvre a prêté des œuvres. Un pays passe en gris foncé quand un pointillé l’atteint. Un second clic sur la même année ramène à l’écran de départ.</p>";
+  document.getElementById("list").innerHTML="";document.getElementById("key").innerHTML="";return}
+ var cs=Object.keys(D),N=0,W=0,cc={},ct;
+ cs.forEach(function(c){var n=D[c];N+=n;W+=n*kmd([48.86,2.34],[C[c][1],C[c][2]]);cc[CT[c]]=(cc[CT[c]]||0)+n});
+ ct=Object.keys(cc).sort(function(a,b){return cc[b]-cc[a]}).map(function(q){return q+" "+Math.round(100*cc[q]/N)+" %"}).join(" · ");
+ var cam=CAM[y],avg=Math.round(W/N/100)*100;
+ document.getElementById("info").innerHTML="<h2>Musée du Louvre · "+y+"</h2><p class='meta'>Œuvres prêtées à l’étranger (rapport d’activité "+y+")</p><p class='stat'><b>"+(N+cam).toLocaleString("fr-FR")+" œuvres prêtées</b> ; "+N.toLocaleString("fr-FR")+" placées sur la carte, dans <b>"+cs.length+" pays</b>.<br><b>"+Object.keys(cc).length+" continents</b> : "+ct+".<br>Distance moyenne parcourue : <b>≈ "+avg.toLocaleString("fr-FR")+" km</b> à vol d’oiseau.</p><p class='meta' style='font-size:12.5px;margin-top:8px'>"+(cam?cam+" œuvre"+(cam>1?"s":"")+" prêtée"+(cam>1?"s":"")+" à Cambridge ne figure"+(cam>1?"nt":"")+" pas sur la carte : le rapport ne précise pas le pays. ":"")+"Les pourcentages et la distance moyenne tiennent compte du nombre d’œuvres de chaque pays. Les prêts sont comptés par ville d’exposition (une exposition itinérante compte à chaque étape). Les prêts à Abu Dhabi relèvent du partenariat avec le Louvre Abu Dhabi.</p>";
+ document.getElementById("list").innerHTML=cs.map(function(c){return"<li>"+C[c][0]+" · "+D[c].toLocaleString("fr-FR")+"</li>"}).join("");
+ document.getElementById("key").innerHTML="<b>Gris foncé</b> : pays où le Louvre a prêté des œuvres. <b>Gris clair</b> : aucun prêt cette année-là. Source : tableau « Les prêts par ville à l’étranger » du rapport d’activité du Louvre.";
+}
+function setTabs(){var t=document.getElementById("tabs");t.innerHTML="";(mode==="louvre"?["2025","2024","2023"]:Object.keys(F)).forEach(function(id){var b=document.createElement("button");b.textContent=mode==="louvre"?id:F[id].n;b.dataset.id=id;b.onclick=function(){pick(id)};t.appendChild(b)})}
+function go(m){
+ mode=m;cur=null;
+ document.getElementById("home").hidden=!!m;document.getElementById("app").hidden=!m;
+ document.getElementById("aboutB").hidden=m!=="basel";document.getElementById("aboutL").hidden=m!=="louvre";
+ document.getElementById("ttl").textContent=m==="louvre"?"Où le Louvre prête-t-il ses œuvres ?":m==="basel"?"D’où viennent les galeries d’Art Basel ?":"D’où viennent les œuvres ?";
+ document.getElementById("sub").textContent=m==="louvre"?"Cliquez sur une année : des pointillés partent du Louvre vers les pays où il a prêté des œuvres.":m==="basel"?"Cliquez sur une ville : des pointillés partent des pays des galeries participantes et rejoignent la ville de la foire (dernière édition de chaque ville).":"Choisissez un sujet pour afficher sa carte.";
+ if(m){setTabs();build()}
+}
+(function(){
+ document.querySelectorAll(".card").forEach(function(b){b.onclick=function(){go(b.dataset.m)}});
+ document.getElementById("back").onclick=function(){go(null)};
+ var h=location.hash.slice(1);if(h==="basel"||h==="louvre")go(h);
+ var to;window.addEventListener("resize",function(){clearTimeout(to);to=setTimeout(function(){if(mode)build()},250)});
+})();
+</script>
+</body>
+</html>
