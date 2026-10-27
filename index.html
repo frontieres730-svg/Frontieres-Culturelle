@@ -144,4 +144,185 @@ const PATHS = {
   "pa-x1": "M270 680 L200 730 L160 780",
   "pa-i2": "M270 680 L250 750 L220 900",
   "pb-x2": "M410 680 L440 730 L440 780",
-  "pb-i1": "M410 68
+  "pb-i1": "M410 680 L350 780 L230 1020",
+  "x1-re2": "M160 780 L160 980 L620 980 L700 880",
+  "i2-re2": "M220 900 L220 980 L620 980 L700 880",
+  "x2-re2": "M440 780 L440 850 L600 980 L700 880",
+  "i1-re2": "M230 1020 L680 1020 L700 880",
+  "re2-priv2": "M700 880 L700 1200" 
+};
+
+const SAT={pret:{x:450,y:480,f:"provenances/index.html",t:"provenances|provenances"}};
+const SECTIONS=["Définition|Definition","Règles et conditions|Rules and conditions","Documents requis|Required documents","Acteurs|Actors","Exemple de cas|Case example","Diagramme|Diagram","Sources|Sources"];
+const TODO="[À rédiger]|[To be written]";
+const C={};
+const DOCS={aus:[{f:"documents/cerfa-02-0083-autorisation-sortie-temporaire.pdf",t:"Cerfa n° 02-0083 : Demande d’autorisation de sortie temporaire d’un bien culturel|Cerfa no. 02-0083: Application for temporary export authorisation of a cultural good",lang:"fr"},{f:"documents/cerfa-11033-autorisation-exportation-ue.pdf",t:"Cerfa n° 11033*03 : Demande d’autorisation d’exportation d’un bien culturel (Communauté européenne)|Cerfa no. 11033*03: Application for export authorisation of a cultural good (European Community)",lang:"fr"}],fac:[{f:"documents/facility-report-questionnaire-fr.pdf",t:"Questionnaire du Service des Musées de France relatif aux conditions offertes par les lieux d’exposition|Questionnaire of the Service des Musées de France on the conditions offered by exhibition venues",lang:"fr"}],d1:[{f:"documents/fac-simile-ata.pdf",t:"Fac-similé du carnet A.T.A. (Chambre de commerce et d’industrie de Paris)|Facsimile of the A.T.A. carnet (Paris Chamber of Commerce and Industry)",lang:"fr-en"}],d2:[{f:"documents/fac-simile-ata.pdf",t:"Fac-similé du carnet A.T.A. (Chambre de commerce et d’industrie de Paris)|Facsimile of the A.T.A. carnet (Paris Chamber of Commerce and Industry)",lang:"fr-en"}]};
+const GN=["Question de départ|Starting question","Achat par un privé|Private purchase","Prêt de musée à musée|Museum-to-museum loan","Privé qui prête à un musée|Private owner loaning to a museum"];
+const U={ti:"Comment les œuvres d’art traversent-elles les frontières ?|How do artworks cross borders?",ix:"Index|Index",rs:"Réinitialiser|Reset",hint:"Cliquer sur une case : dévoiler la suite — Molette : zoom — Glisser : déplacer|Click a box: reveal what follows — Wheel: zoom — Drag: pan",open:"Ouvrir la page →|Open page →",back:"← Diagramme|← Diagram",nx:"Suite|Next",pv:"Précédent|Previous",cn:"Relations dans le diagramme|Connections in the diagram",dph:"Diagramme détaillé à venir — à insérer dans C[id].diagram|Detailed diagram to come — insert in C[id].diagram",idx:"Index des étapes|Index of steps",dop:"Ouvrir dans un nouvel onglet|Open in a new tab",ddl:"Télécharger le PDF|Download the PDF",dnote:"Document original en français.|Original document in French.",dfb:"Votre navigateur n’affiche pas le PDF ; utilisez les boutons ci-dessus.|Your browser cannot display the PDF; use the buttons above."};
+
+/* ================= ROBUST ENGINE ================= */
+let L=0,vb=[0,0,1500,1000],cur=null,sel=null,exp=new Set(["root"]),NE=[],ND={},SATS={};
+
+// Safe text parser
+const t = (s) => {
+  if (!s) return "";
+  const parts = s.split("|");
+  const str = parts[L] !== undefined ? parts[L] : parts[0];
+  return str.replace(/\n/g, "<br/>");
+};
+const strip = (s) => s.replace(/<br\/>/g, " ");
+
+const $=id=>document.getElementById(id), m=$("map"), NS="http://www.w3.org/2000/svg";
+const sz=k=>SZ[k]||[170,70], kids=k=>E.filter(e=>e[0]==k&&e.join("-")!=BACK).map(e=>e[1]);
+const inc=k=>E.filter(e=>e[1]==k&&e.join("-")!=BACK).map(e=>e[0]);
+const vis=k=>k=="root"||inc(k).some(p=>exp.has(p)&&vis(p));
+
+function route(a,b){
+  const key1 = `${a}-${b}`;
+  const key2 = `${b}-${a}`;
+  if(PATHS[key1]) return PATHS[key1];
+  if(PATHS[key2]) return PATHS[key2];
+  if(N[a] && N[b]) return `M${N[a][0]} ${N[a][1]} L${N[b][0]} ${N[b][1]}`;
+  return "M0 0 L0 0"; // Fallback to prevent crash
+}
+
+function build(){
+  const l=$("L"); l.innerHTML=""; NE=[]; ND={}; SATS={};
+  E.forEach(([a,b])=>{
+    if(!N[a] || !N[b]) return; // Skip if somehow undefined
+    const p=document.createElementNS(NS,"path");
+    p.setAttribute("class","pipe");
+    p.setAttribute("d",route(a,b));
+    l.appendChild(p); NE.push([a,b,p]);
+  });
+  
+  for(const k in N){
+    const[x,y,,lb]=N[k], [w,h]=sz(k), n=document.createElementNS(NS,"g");
+    n.setAttribute("class","node"); n.dataset.k=k; n.setAttribute("transform",`translate(${x-w/2} ${y-h/2})`);
+    n.innerHTML=`<g class="in"><rect width="${w}" height="${h}"/><foreignObject width="${w}" height="${h}"><div xmlns="http://www.w3.org/1999/xhtml" style="font-size:${fs(k)}px">${t(lb)}</div></foreignObject></g>`;
+    l.appendChild(n); ND[k]=n;
+  }
+  
+  for(const k in SAT){
+    if(!N[k]) continue;
+    const a=SAT[k], [w]=sz(k), x0=N[k][0]-w/2, ln=document.createElementNS(NS,"path"), g=document.createElementNS(NS,"g");
+    ln.setAttribute("class","pipe"); ln.setAttribute("d",`M${x0} ${a.y}L${a.x} ${a.y}`);
+    g.setAttribute("class","sat"); g.dataset.f=a.f;
+    g.innerHTML=`<circle r="28" cx="${a.x}" cy="${a.y}" fill="transparent"/><circle class="dot" r="14" cx="${a.x}" cy="${a.y}"/><text x="${a.x}" y="${a.y-30}">${strip(t(a.t))}</text>`;
+    l.insertBefore(ln,l.firstChild); l.appendChild(g); SATS[k]=[ln,g];
+  }
+  refresh(0);
+}
+
+function refresh(fitIt=1){
+  const v={}; for(const k in N) v[k]=vis(k);
+  for(const k in N){ND[k].classList.toggle("hid",!v[k]); ND[k].classList.toggle("open",exp.has(k)&&k!="root"&&kids(k).length>0);}
+  NE.forEach(([a,b,p])=>p.classList.toggle("hid",!(v[a]&&(a+"-"+b==BACK?true:exp.has(a)))));
+  for(const k in SATS) SATS[k].forEach(el=>el.classList.toggle("hid",!(v[k]&&exp.has(k))));
+  if(fitIt===2) return;
+  if(fitIt) fit(v); else fit(v,1);
+}
+
+let raf;
+function fit(v,now){
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+  for(const k in N)if(v[k]){
+    const[w,h]=sz(k);
+    x0=Math.min(x0,N[k][0]-w/2); x1=Math.max(x1,N[k][0]+w/2);
+    y0=Math.min(y0,N[k][1]-h/2); y1=Math.max(y1,N[k][1]+h/2);
+  }
+  if(v["re2"]){y1=Math.max(y1,1200);}
+  
+  const r=m.getBoundingClientRect(), pad=90;
+  let w=x1-x0+2*pad, h=y1-y0+2*pad;
+  
+  // Safe math fallback to prevent SVG NaN crash
+  if (w <= 0 || isNaN(w)) w = 1500;
+  if (h <= 0 || isNaN(h)) h = 1000;
+  const ar = (r.width || 1000) / (r.height || 700);
+  if(w/h<ar) w=h*ar; else h=w/ar;
+  
+  const to=[(x0+x1)/2-w/2, (y0+y1)/2-h/2, w, h];
+  if(to.some(isNaN)) return; // Prevent breaking the viewbox
+  
+  const fr=[...vb], s=performance.now(); cancelAnimationFrame(raf);
+  const step=n=>{
+    const q=now?1:Math.min(1,(n-s)/550), e=1-Math.pow(1-q,3);
+    vb=fr.map((a,i)=>a+(to[i]-a)*e); vw();
+    if(q<1) raf=requestAnimationFrame(step);
+  };
+  raf=requestAnimationFrame(step);
+}
+
+const vw=()=>{
+  if(vb.some(isNaN)) vb=[0,0,1500,1000];
+  m.setAttribute("viewBox",vb.join(" "));
+};
+
+function ui(){
+  for(const k in U) if($(k)) $(k).textContent=strip(t(U[k]));
+  document.documentElement.lang=L?"en":"fr";
+  build(); showSel(); if(cur) route2();
+}
+
+function showSel(){
+  const b=$("sel"); if(!sel){b.classList.remove("show"); return;}
+  b.classList.add("show");
+  b.innerHTML=`<span>${strip(t(N[sel][3]))}</span><button onclick="location.hash='#/${sel}'">${strip(t(U.open))}</button>`;
+}
+
+/* pan & zoom & click */
+let d=null; const sc=()=>{const r=m.getBoundingClientRect(); return Math.max(vb[2]/(r.width||1), vb[3]/(r.height||1));};
+m.addEventListener("pointerdown",e=>{cancelAnimationFrame(raf); const n=e.target.closest(".node"); d={x:e.clientX,y:e.clientY,v:[...vb],k:n?.dataset.k,s:e.target.closest(".sat")?.dataset.f,mv:0};});
+addEventListener("pointermove",e=>{if(!d)return; const dx=e.clientX-d.x,dy=e.clientY-d.y; if(Math.abs(dx)+Math.abs(dy)>5)d.mv=1; if(!d.mv)return; const s=sc(); vb[0]=d.v[0]-dx*s; vb[1]=d.v[1]-dy*s; vw();});
+addEventListener("pointerup",()=>{if(d&&!d.mv&&d.s)window.open(d.s,"_blank"); if(d&&!d.mv&&d.k){const k=d.k; if(kids(k).length){if(exp.has(k))location.hash="#/"+k; else{exp.add(k);sel=k;showSel();refresh(2);}}else location.hash="#/"+k;} d=null;});
+m.addEventListener("wheel",e=>{e.preventDefault(); cancelAnimationFrame(raf); const r=m.getBoundingClientRect(), f=e.deltaY>0?1.12:.89, s=sc(), px=vb[0]+(e.clientX-(r.left||0))*s, py=vb[1]+(e.clientY-(r.top||0))*s, nw=vb[2]*f; if(nw>4000||nw<300)return; vb=[px-(px-vb[0])*f,py-(py-vb[1])*f,nw,vb[3]*f]; vw();},{passive:false});
+
+/* pages */
+const par=k=>inc(k)[0];
+function crumbs(k){const a=[];let c=k;while(c){a.unshift(c);c=par(c)}return a}
+function mini(k){
+  const ins=inc(k),outs=kids(k),H=Math.max(220,Math.max(ins.length,outs.length)*64+40),cy=H/2;
+  const bx=(id,x,y)=>`<a onclick="location.hash='#/${id}'"><rect x="${x}" y="${y}" width="170" height="48" fill="#fff"/><foreignObject x="${x}" y="${y}" width="170" height="48"><div xmlns="http://www.w3.org/1999/xhtml" style="height:48px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;color:#000;padding:4px 8px">${strip(t(N[id][3]))}</div></foreignObject></a>`;
+  let s=`<svg viewBox="0 0 700 ${H}"><path d="M265 ${cy}H435" stroke="#fff" stroke-width="5"/>`;
+  ins.forEach((id,i)=>s+=`<path d="M170 ${44+i*64}H218V${cy}" stroke="#fff" stroke-width="5" fill="none"/>`);
+  outs.forEach((id,i)=>s+=`<path d="M435 ${cy}H482V${44+i*64}H530" stroke="#fff" stroke-width="5" fill="none"/>`);
+  ins.forEach((id,i)=>s+=bx(id,0,20+i*64));outs.forEach((id,i)=>s+=bx(id,530,20+i*64));
+  return s+`<rect x="265" y="${cy-34}" width="170" height="68" fill="#fff"/><foreignObject x="265" y="${cy-34}" width="170" height="68"><div xmlns="http://www.w3.org/1999/xhtml" style="height:68px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;font-weight:700;color:#000;padding:4px 10px">${strip(t(N[k][3]))}</div></foreignObject></svg>`;
+}
+const docs=k=>(DOCS[k]||[]).map(d=>`<div class="doc"><p><b>${strip(t(d.t))}</b></p>${L==1&&d.lang=="fr"?`<p>${strip(t(U.dnote))}</p>`:""}<a class="btn" href="${d.f}" target="_blank">${strip(t(U.dop))}</a><a class="btn" href="${d.f}" download>${strip(t(U.ddl))}</a><object data="${d.f}#view=FitH" type="application/pdf"><p>${strip(t(U.dfb))}</p></object></div>`).join("");
+
+function page(k){
+  const n=N[k], c=C[k]||{}, cr=crumbs(k), nx=kids(k), pv=par(k);
+  const lk=(a,lbl)=>`<a onclick="location.hash='#/${a}'">${strip(lbl)}</a>`;
+  const sec=SECTIONS.map((h,i)=>`<h2>${t(h)}</h2>`+(i==5?(c.diagram||`<div class="ph">${t(U.dph)}</div>`):`<p>${strip(t((c.s&&c.s[i])||TODO))}</p>`)+(i==2?docs(k):"")).join("");
+  $("pg").innerHTML=`<div class="bar"><a onclick="location.hash=''">${t(U.back)}</a><span class="cr">${cr.map(x=>x==k?strip(t(N[x][3])):lk(x,t(N[x][3]))).join(" &nbsp;/&nbsp; ")}</span></div>
+  <span class="tag">${t(GN[n[2]])}</span><h1>${strip(t(n[3]))}</h1><p>${strip(t(c.sum||TODO))}</p>${sec}
+  <h2>${t(U.cn)}</h2>${mini(k)}
+  <h2>${t(U.pv)} / ${t(U.nx)}</h2>${pv?`<p>${lk(pv,"← "+t(N[pv][3]))}</p>`:""}${nx.map(x=>`<p>${lk(x,"→ "+t(N[x][3]))}</p>`).join("")}`;
+}
+
+function index(){
+  $("pg").innerHTML=`<div class="bar"><a onclick="location.hash=''">${t(U.back)}</a></div><h1>${t(U.idx)}</h1>`+[1,2,3].map(g=>`<h2>${t(GN[g])}</h2><ul>${Object.keys(N).filter(k=>N[k][2]==g).map(k=>`<li onclick="location.hash='#/${k}'">${strip(t(N[k][3]))}</li>`).join("")}</ul>`).join("");
+}
+
+function route2(){
+  const k=location.hash.replace("#/",""); cur=null;
+  if(k=="index"){cur=k; index();} else if(N[k]){cur=k; page(k);}
+  $("pg").classList.toggle("show",!!cur); if(cur) $("pg").scrollTop=0;
+}
+
+addEventListener("hashchange",route2);
+$("ix").onclick=()=>location.hash="#/index";
+$("rs").onclick={()=>{exp=new Set(["root"]);sel=null;showSel();refresh();}};
+$("sl").onclick=e=>{L=1-L; e.currentTarget.classList.toggle("on"); ui();};
+addEventListener("keydown",e=>{if(e.key=="Escape")location.hash="";});
+addEventListener("resize",()=>refresh());
+
+// Initialize
+try {
+  exp.add("root"); ui(); route2();
+} catch (e) {
+  console.error("Initialization Error:", e);
+}
+</script></body></html>
