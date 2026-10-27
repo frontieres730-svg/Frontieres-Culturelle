@@ -4,7 +4,7 @@
 <title>Comment les œuvres d’art traversent-elles les frontières ?</title>
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;background:#000;color:#fff;font-family:Helvetica,"Helvetica Neue",Arial,sans-serif}
+html,body{margin:0;height:100%;background:#000;color:#fff;font-family:Helvetica,"Helvetica Neue",Arial,sans-serif;overflow:hidden}
 header{position:fixed;top:0;left:0;right:0;height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:20;background:#000;border-bottom:1px solid #fff;font-size:13px}
 header b{font-size:14px}
 .ctl{display:flex;gap:26px;align-items:center}
@@ -15,35 +15,43 @@ header b{font-size:14px}
 .sw.on i:after{left:20px}
 #map{position:fixed;top:48px;left:0;width:100%;height:calc(100% - 48px);cursor:grab;touch-action:none}
 
-/* Seamless structural lines */
-.pipe{fill:none;stroke:#fff;stroke-width:30;stroke-linecap:square;stroke-linejoin:miter;transition:opacity .45s}
-.node{cursor:pointer;transition:opacity .45s}
+/* Architectural thick structural lines */
+.pipe{fill:none;stroke:#fff;stroke-width:24;stroke-linecap:square;stroke-linejoin:miter;transition:opacity .3s}
+.node{cursor:pointer;transition:opacity .3s}
 .node .in{transition:transform .15s;transform-box:fill-box;transform-origin:center}
-.node:hover .in{transform:scale(1.03)}
-/* Removed all borders for seamless blending with lines */
-.node rect{fill:#fff; stroke:none;}
-.node.open rect{fill:#fff; stroke:none;}
-.node div{width:100%;height:100%;display:flex;align-items:center;justify-content:flex-start;text-align:left;font-size:13px;line-height:1.2;color:#000;padding:12px;pointer-events:none}
+.node:hover .in{transform:scale(1.02)}
 
-.sat{cursor:pointer;transition:opacity .45s}
+/* Seamless white boxes blending into lines */
+.node rect{fill:#fff; stroke:none;}
+.node div{
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:flex-start;
+    text-align:left; font-size:13px; line-height:1.2; color:#000;
+    padding:10px 14px; pointer-events:none;
+    white-space: pre-line;
+}
+
+.sat{cursor:pointer;transition:opacity .3s}
 .sat .dot{fill:#fff;transition:transform .15s;transform-box:fill-box;transform-origin:center}
 .sat:hover .dot{transform:scale(1.5)}
-.sat text{fill:#fff;font-size:20px;text-anchor:middle;opacity:0;transition:opacity .15s;pointer-events:none}
+.sat text{fill:#fff;font-size:18px;text-anchor:middle;opacity:0;transition:opacity .15s;pointer-events:none}
 .sat:hover text{opacity:1}
 .hid{opacity:0;pointer-events:none}
-#hint{position:fixed;bottom:14px;left:24px;font-size:12px;background:#000;padding:4px 8px}
+
+#hint{position:fixed;bottom:14px;left:24px;font-size:12px;background:#000;padding:4px 8px;z-index:10}
 #sel{position:fixed;bottom:14px;right:24px;font-size:13px;background:#fff;color:#000;padding:8px 14px;display:none;gap:16px;align-items:center;max-width:60vw;z-index:40}
 #sel.show{display:flex}
 #sel button{font:inherit;background:#000;color:#fff;border:0;padding:6px 12px;cursor:pointer}
+
 #pg{position:fixed;inset:0;background:#fff;color:#000;z-index:50;overflow:auto;padding:76px 8vw 80px;display:none}
-#pg.show{display:block;animation:in .35s}
+#pg.show{display:block;animation:in .3s}
 @keyframes in{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0)}}
 #pg .bar{position:fixed;top:0;left:0;right:0;height:48px;background:#000;color:#fff;display:flex;align-items:center;gap:18px;padding:0 24px;font-size:13px}
 #pg a{cursor:pointer}#pg a:hover{text-decoration:underline}
 #pg .bar .cr{opacity:.8}
-#pg h1{font-size:44px;line-height:1.05;margin:20px 0 14px;max-width:15em;letter-spacing:-.02em}
+#pg h1{font-size:40px;line-height:1.05;margin:20px 0 14px;max-width:15em;letter-spacing:-.02em; white-space:pre-line;}
 #pg .tag{display:inline-block;border:1px solid #000;padding:2px 8px;font-size:12px}
-#pg p{max-width:64ch;line-height:1.5;font-size:15px;margin:0 0 4px}
+#pg p{max-width:64ch;line-height:1.5;font-size:15px;margin:0 0 4px; white-space:pre-line;}
 #pg h2{font-size:15px;margin:34px 0 8px;border-top:1px solid #000;padding-top:10px;max-width:900px}
 #pg .ph{border:1px dashed #000;max-width:900px;height:180px;display:flex;align-items:center;justify-content:center;font-size:13px;text-align:center;padding:20px}
 #pg svg{width:100%;max-width:900px;background:#000}
@@ -54,232 +62,248 @@ header b{font-size:14px}
 #pg li{padding:9px 0;border-bottom:1px solid #000;font-size:15px;cursor:pointer}
 #pg li:hover{padding-left:10px}
 </style></head><body>
+
 <header><b id="ti"></b>
 <div class="ctl"><a id="ix"></a><a id="rs"></a><div class="sw" id="sl"><span>FR</span><i></i><span>EN</span></div></div></header>
-<svg id="map"><g id="L"></g></svg>
+
+<svg id="map" viewBox="0 0 1800 1200"><g id="L"></g></svg>
+
 <div id="hint"></div><div id="sel"></div><div id="pg"></div>
+
 <script>
-/* ================= DATA & HARDCODED LAYOUT ================= */
-const N={
-root:[250,300,0,"Comment les oeuvres\nd'art traversent-elles\nles frontières ?|How do artworks\ncross borders?"],
-priv:[400,120,1,"Achat d’une\noeuvre d'art par\nun privé|Private purchase\nof an artwork"],
-achat:[550,115,1,"Achat d’une\noeuvre d'art|Purchase of\nan artwork"],
-intl:[650,50,1,"à l’international|international"],
-dom:[660,180,1,"à domicile|domestic"],
-autre:[720,290,1,"Achat d’une oeuvre\nd'art dans une autre\nrégion fiscale|Purchase in another\ntax region"],
-meme:[850,180,1,"Achat d’une oeuvre\nd'art dans la même\nrégion fiscale|Purchase within the\nsame tax region"],
-stock:[950,290,1,"Stockage\nd’art|Art storage"],
-t1:[1100,150,1,"taxable à\nl’achat|taxable at\npurchase"],
-t2:[1250,170,1,"non taxable\nà l'achat|not taxable\nat purchase"],
-t3:[1220,310,1,"taxable apres\nl’achat|taxable after\npurchase"],
-t4:[1250,370,1,"non taxable\napres l'achat|not taxable\nafter purchase"],
+/* ================= PRECISE BLUEPRINT COORDINATES ================= */
+const N = {
+  root:  [200, 150, 0, "Comment les oeuvres\nd'art traversent-elles\nles frontières ?|How do artworks\ncross borders?"],
+  priv:  [450,  80, 1, "Achat d’une oeuvre\nd'art par un privé|Private purchase of\nan artwork"],
+  achat: [650,  80, 1, "Achat d’une\noEuvre d'art|Purchase of\nan artwork"],
+  intl:  [800,  30, 1, "à l’international|international"],
+  dom:   [800, 130, 1, "à domicile|domestic"],
+  autre: [950, 200, 1, "Achat d’une oeuvre\nd'art dans une autre\nrégion fiscale|Purchase in another\ntax region"],
+  meme:  [1100,130, 1, "Achat d’une oeuvre\nd'art dans la même\nrégion fiscale|Purchase within the\nsame tax region"],
+  stock: [1250,200, 1, "Stockage\nd’art|Art storage"],
+  t1:    [1450, 80, 1, "taxable à\nl’achat|taxable at\npurchase"],
+  t2:    [1600,130, 1, "non taxable\nà l'achat|not taxable\nat purchase"],
+  t3:    [1550,230, 1, "taxable apres\nl’achat|taxable after\npurchase"],
+  t4:    [1600,300, 1, "non taxable\napres l'achat|not taxable\nafter purchase"],
 
-pret:[550,420,2,"Prêt d’une\noeuvre d'art\nd'un musée\nà un musée|Loan of an artwork\nfrom museum\nto museum"],
-fac:[710,425,2,"Facility\nreport|Facility\nreport"],
-ass:[830,425,2,"Assurance\n\"Clou à clou\"|“Nail to nail”\ninsurance"],
-aut:[980,425,2,"Autorisation\ndu prêt|Loan\nauthorisation"],
-intl2:[1020,520,2,"A\nl’internationale|International"],
-eneu:[890,560,2,"En EU|Within the EU"],
-aus:[1250,510,2,"Autorisations\nde sortie|Export\nauthorisations"],
-d1:[1250,640,2,"Passage de la\ndouane de sortie\nCarnet ATA|Exit customs,\nATA carnet"],
-exp:[1050,670,2,"Exportation|Export"],
-expo:[880,740,2,"Exposition|Exhibition"],
-d2:[720,580,2,"Passage de la\ndouane de sortie\nCarnet ATA|Exit customs,\nATA carnet"],
-re1:[750,730,2,"Re-exportation\npays d'origine|Re-export to\ncountry of origin"],
+  pret:  [550, 350, 2, "Prêt d’une oeuvre\nd'art d'un musée\nà un musée|Loan of an artwork\nfrom museum\nto museum"],
+  fac:   [750, 350, 2, "Facility\nreport|Facility\nreport"],
+  ass:   [900, 350, 2, "Assurance\n\"Clou à clou\"|“Nail to nail”\ninsurance"],
+  aut:   [1100,350, 2, "Autorisation\ndu prêt|Loan\nauthorisation"],
+  intl2: [1200,450, 2, "A\nl’internationale|International"],
+  eneu:  [1000,500, 2, "En EU|Within the EU"],
+  aus:   [1500,450, 2, "Autorisations\nde sortie|Export\nauthorisations"],
+  d1:    [1500,600, 2, "Passage de la\ndouane de sortie\nCarnet ATA|Exit customs,\nATA carnet"],
+  exp:   [1250,630, 2, "Exportation|Export"],
+  expo:  [1050,720, 2, "Exposition|Exhibition"],
+  d2:    [750, 550, 2, "Passage de la\ndouane de sortie\nCarnet ATA|Exit customs,\nATA carnet"],
+  re1:   [800, 720, 2, "Re-exportation\npays d'origine|Re-export to\ncountry of origin"],
 
-priv2:[380,530,3,"Achat d’oeuvres\nd'art par un privé,\npour la prêter à un\nmusée|Private purchase of\nartworks, to loan\nto a museum"],
-pa:[270,680,3,"Prêt à l’achat|Loan at purchase"],
-pb:[410,680,3,"Prêt apres l'achat|Loan after purchase"],
-x1:[160,780,3,"Prêt dans une région\nexonérée d'impôts|Loan in a\ntax-exempt region"],
-i2:[220,900,3,"Prêt dans une\nrégion imposée|Loan in a\ntaxed region"],
-x2:[440,780,3,"Prêt dans une région\nexonérée d'impôts|Loan in a\ntax-exempt region"],
-i1:[230,1020,3,"Prêt dans une\nrégion imposée|Loan in a\ntaxed region"],
-re2:[700,880,3,"Re-exportation\nau propriétaire|Re-export to\nthe owner"]};
-
-const SZ={
-  root:[420,130], priv:[180,90], achat:[160,70], intl:[160,40], dom:[140,40],
-  autre:[210,90], meme:[210,80], stock:[140,80], t1:[110,90], t2:[280,60],
-  t3:[280,50], t4:[280,60], pret:[140,110], fac:[110,60], ass:[140,60],
-  aut:[140,60], intl2:[130,70], eneu:[100,50], aus:[150,70], d1:[180,90],
-  exp:[140,40], expo:[160,40], d2:[180,90], re1:[160,80], priv2:[220,100],
-  pa:[140,40], pb:[180,40], x1:[200,70], i2:[160,70], x2:[200,70], i1:[160,70],
-  re2:[160,80]
+  priv2: [350, 500, 3, "Achat d’oeuvres d'art\npar un privé, pour la\nprêter à un musée|Private purchase of\nartworks, to loan to a museum"],
+  pa:    [250, 750, 3, "Prêt à l’achat|Loan at purchase"],
+  pb:    [500, 750, 3, "Prêt apres l'achat|Loan after purchase"],
+  x1:    [150, 880, 3, "Prêt dans une région\nexonérée d'impôts|Loan in a\ntax-exempt region"],
+  i2:    [300,1000, 3, "Prêt dans une\nrégion imposée|Loan in a\ntaxed region"],
+  x2:    [450, 880, 3, "Prêt dans une région\nexonérée d'impôts|Loan in a\ntax-exempt region"],
+  i1:    [600,1000, 3, "Prêt dans une\nrégion imposée|Loan in a\nsaxed region"],
+  re2:   [900, 950, 3, "Re-exportation\nau propriétaire|Re-export to\nthe owner"]
 };
 
-const T2=["root","priv","pret","priv2","stock","aut","exp","expo","re1","re2","t1","t2","t3","t4"];
-const fs=k=>k=="root"?28:16; 
-const E="root-priv root-pret root-priv2 priv-achat achat-intl achat-dom intl-autre dom-meme autre-stock meme-stock stock-t1 stock-t2 stock-t3 stock-t4 pret-fac pret-d2 fac-ass ass-aut aut-intl2 aut-eneu intl2-aus aus-d1 d1-exp eneu-exp exp-expo expo-re1 d2-re1 priv2-pa priv2-pb pa-x1 pa-i2 pb-x2 pb-i1 x1-re2 i2-re2 x2-re2 i1-re2 re2-priv2".split(" ").map(e=>e.split("-"));
-const BACK="re2-priv2";
+/* Box Widths and Heights */
+const SZ = {
+  root:[240,100], priv:[180,80], achat:[150,60], intl:[140,40], dom:[130,40],
+  autre:[200,70], meme:[200,60], stock:[130,70], t1:[110,60], t2:[150,50],
+  t3:[150,50], t4:[160,50], pret:[180,90], fac:[110,50], ass:[130,50],
+  aut:[130,50], intl2:[130,50], eneu:[100,40], aus:[150,60], d1:[180,80],
+  exp:[130,40], expo:[140,40], d2:[180,80], re1:[160,70], priv2:[220,90],
+  pa:[140,40], pb:[160,40], x1:[190,60], i2:[160,60], x2:[190,60], i1:[160,60],
+  re2:[160,70]
+};
 
+const T2 = ["root","priv","pret","priv2","stock","aut","exp","expo","re1","re2","t1","t2","t3","t4"];
+const fs = k => k=="root" ? 22 : 14;
+
+const E = "root-priv root-pret root-priv2 priv-achat achat-intl achat-dom intl-autre dom-meme autre-stock meme-stock stock-t1 stock-t2 stock-t3 stock-t4 pret-fac pret-d2 fac-ass ass-aut aut-intl2 aut-eneu intl2-aus aus-d1 d1-exp eneu-exp exp-expo expo-re1 d2-re1 priv2-pa priv2-pb pa-x1 pa-i2 pb-x2 pb-i1 x1-re2 i2-re2 x2-re2 i1-re2 re2-priv2".split(" ").map(e=>e.split("-"));
+const BACK = "re2-priv2";
+
+/* ================= EXACT ORTHOGONAL PATHS ================= */
 const PATHS = {
-  "root-priv": "M300 240 L350 150 L400 120",
-  "priv-achat": "M400 120 L550 115",
-  "achat-intl": "M550 115 L600 50 L650 50",
-  "achat-dom": "M550 115 L610 180 L660 180",
-  "intl-autre": "M650 50 L720 180 L720 290",
-  "dom-meme": "M660 180 L850 180",
-  "autre-stock": "M720 290 L950 290",
-  "meme-stock": "M850 180 L890 290 L950 290",
-  "stock-t1": "M950 290 L1020 150 L1100 150",
-  "stock-t2": "M950 290 L1100 170 L1250 170",
-  "stock-t3": "M950 290 L1220 310",
-  "stock-t4": "M950 290 L1070 370 L1250 370",
-  "root-pret": "M350 360 L450 360 L500 420 L550 420",
-  "pret-fac": "M550 420 L710 425",
-  "fac-ass": "M710 425 L830 425",
-  "ass-aut": "M830 425 L980 425",
-  "aut-intl2": "M980 425 L940 520 L1020 520",
-  "aut-eneu": "M980 425 L940 480 L890 560",
-  "intl2-aus": "M1020 520 L1250 510",
-  "aus-d1": "M1250 510 L1250 640",
-  "d1-exp": "M1250 640 L1150 640 L1050 670",
-  "eneu-exp": "M890 560 L1000 670 L1050 670",
-  "exp-expo": "M1050 670 L980 670 L880 740",
-  "pret-d2": "M550 420 L620 580 L720 580",
-  "d2-re1": "M720 580 L750 730",
-  "expo-re1": "M880 740 L750 730", 
-  "root-priv2": "M250 365 L270 420 L380 530",
-  "priv2-pa": "M380 530 L320 600 L270 680",
-  "priv2-pb": "M380 530 L380 620 L410 680",
-  "pa-x1": "M270 680 L200 730 L160 780",
-  "pa-i2": "M270 680 L250 750 L220 900",
-  "pb-x2": "M410 680 L440 730 L440 780",
-  "pb-i1": "M410 680 L350 780 L230 1020",
-  "x1-re2": "M160 780 L160 980 L620 980 L700 880",
-  "i2-re2": "M220 900 L220 980 L620 980 L700 880",
-  "x2-re2": "M440 780 L440 850 L600 980 L700 880",
-  "i1-re2": "M230 1020 L680 1020 L700 880",
-  "re2-priv2": "M700 880 L700 1200" 
+  "root-priv": "M200 100 L320 80 L360 80",
+  "priv-achat": "M540 80 L575 80",
+  "achat-intl": "M725 80 L760 30 L800 30",
+  "achat-dom": "M725 80 L760 130 L800 130",
+  "intl-autre": "M870 30 L950 150 L950 200",
+  "dom-meme": "M865 130 L1100 130",
+  "autre-stock": "M1045 200 L1250 200",
+  "meme-stock": "M1200 130 L1225 200 L1250 200",
+  "stock-t1": "M1315 200 L1380 80 L1450 80",
+  "stock-t2": "M1315 200 L1450 130 L1600 130",
+  "stock-t3": "M1315 200 L1550 230",
+  "stock-t4": "M1315 200 L1480 300 L1600 300",
+
+  "root-pret": "M200 200 L200 350 L460 350",
+  "pret-fac": "M640 350 L695 350",
+  "fac-ass": "805 350 L835 350",
+  "ass-aut": "M965 350 L1035 350",
+  "aut-intl2": "M1165 350 L1130 450 L1200 450",
+  "aut-eneu": "M1165 350 L1130 500 L1000 500",
+  "intl2-aus": "M1265 450 L1500 450",
+  "aus-d1": "M1500 450 L1500 600",
+  "d1-exp": "M1500 600 L1400 630 L1315 630",
+  "eneu-exp": "M1000 500 L1150 630 L1250 630",
+  "exp-expo": "M1250 630 L1180 630 L1050 720",
+  "pret-d2": "M640 350 L675 550 L750 550",
+  "d2-re1": "M840 550 L800 720",
+  "expo-re1": "M1050 720 L880 720 L800 720",
+
+  "root-priv2": "M200 200 L200 500 L240 500",
+  "priv2-pa": "M460 500 L350 620 L250 750",
+  "priv2-pb": "M460 500 L460 620 L500 750",
+  "pa-x1": "M250 750 L200 820 L150 880",
+  "pa-i2": "M250 750 L250 850 L300 1000",
+  "pb-x2": "M500 750 L480 820 L450 880",
+  "pb-i1": "M500 750 L550 850 L600 1000",
+  "x1-re2": "M150 880 L150 950 L800 950 L900 950",
+  "i2-re2": "M300 1000 L350 950 L800 950 L900 950",
+  "x2-re2": "M450 880 L450 920 L800 950 L900 950",
+  "i1-re2": "M600 1000 L750 950 L900 950",
+  "re2-priv2": "M900 950 L900 1100"
 };
 
-const SAT={pret:{x:450,y:480,f:"provenances/index.html",t:"provenances|provenances"}};
-const SECTIONS=["Définition|Definition","Règles et conditions|Rules and conditions","Documents requis|Required documents","Acteurs|Actors","Exemple de cas|Case example","Diagramme|Diagram","Sources|Sources"];
-const TODO="[À rédiger]|[To be written]";
-const C={};
-const DOCS={aus:[{f:"documents/cerfa-02-0083-autorisation-sortie-temporaire.pdf",t:"Cerfa n° 02-0083 : Demande d’autorisation de sortie temporaire d’un bien culturel|Cerfa no. 02-0083: Application for temporary export authorisation of a cultural good",lang:"fr"},{f:"documents/cerfa-11033-autorisation-exportation-ue.pdf",t:"Cerfa n° 11033*03 : Demande d’autorisation d’exportation d’un bien culturel (Communauté européenne)|Cerfa no. 11033*03: Application for export authorisation of a cultural good (European Community)",lang:"fr"}],fac:[{f:"documents/facility-report-questionnaire-fr.pdf",t:"Questionnaire du Service des Musées de France relatif aux conditions offertes par les lieux d’exposition|Questionnaire of the Service des Musées de France on the conditions offered by exhibition venues",lang:"fr"}],d1:[{f:"documents/fac-simile-ata.pdf",t:"Fac-similé du carnet A.T.A. (Chambre de commerce et d’industrie de Paris)|Facsimile of the A.T.A. carnet (Paris Chamber of Commerce and Industry)",lang:"fr-en"}],d2:[{f:"documents/fac-simile-ata.pdf",t:"Fac-similé du carnet A.T.A. (Chambre de commerce et d’industrie de Paris)|Facsimile of the A.T.A. carnet (Paris Chamber of Commerce and Industry)",lang:"fr-en"}]};
-const GN=["Question de départ|Starting question","Achat par un privé|Private purchase","Prêt de musée à musée|Museum-to-museum loan","Privé qui prête à un musée|Private owner loaning to a museum"];
-const U={ti:"Comment les œuvres d’art traversent-elles les frontières ?|How do artworks cross borders?",ix:"Index|Index",rs:"Réinitialiser|Reset",hint:"Cliquer sur une case : dévoiler la suite — Molette : zoom — Glisser : déplacer|Click a box: reveal what follows — Wheel: zoom — Drag: pan",open:"Ouvrir la page →|Open page →",back:"← Diagramme|← Diagram",nx:"Suite|Next",pv:"Précédent|Previous",cn:"Relations dans le diagramme|Connections in the diagram",dph:"Diagramme détaillé à venir — à insérer dans C[id].diagram|Detailed diagram to come — insert in C[id].diagram",idx:"Index des étapes|Index of steps",dop:"Ouvrir dans un nouvel onglet|Open in a new tab",ddl:"Télécharger le PDF|Download the PDF",dnote:"Document original en français.|Original document in French.",dfb:"Votre navigateur n’affiche pas le PDF ; utilisez les boutons ci-dessus.|Your browser cannot display the PDF; use the buttons above."};
+const SAT = { pret: { x: 550, y: 440, f: "provenances/index.html", t: "provenances|provenances" } };
 
-/* ================= ROBUST ENGINE ================= */
-let L=0,vb=[0,0,1500,1000],cur=null,sel=null,exp=new Set(["root"]),NE=[],ND={},SATS={};
-
-// Safe text parser
-const t = (s) => {
-  if (!s) return "";
-  const parts = s.split("|");
-  const str = parts[L] !== undefined ? parts[L] : parts[0];
-  return str.replace(/\n/g, "<br/>");
+const SECTIONS = ["Définition|Definition","Règles et conditions|Rules and conditions","Documents requis|Required documents","Acteurs|Actors","Exemple de cas|Case example","Diagramme|Diagram","Sources|Sources"];
+const TODO = "[À rédiger]|[To be written]";
+const C = {};
+const DOCS = {
+  aus: [{f:"documents/cerfa-02-0083-autorisation-sortie-temporaire.pdf", t:"Cerfa n° 02-0083 : Demande d’autorisation de sortie temporaire d’un bien culturel|Cerfa no. 02-0083: Application for temporary export authorisation of a cultural good", lang:"fr"}],
+  fac: [{f:"documents/facility-report-questionnaire-fr.pdf", t:"Questionnaire du Service des Musées de France relatif aux conditions offertes par les lieux d’exposition|Questionnaire of the Service des Musées de France on the conditions offered by exhibition venues", lang:"fr"}]
 };
-const strip = (s) => s.replace(/<br\/>/g, " ");
+const GN = ["Question de départ|Starting question","Achat par un privé|Private purchase","Prêt de musée à musée|Museum-to-museum loan","Privé qui prête à un musée|Private owner loaning to a museum"];
+const U = {
+  ti:"Comment les œuvres d’art traversent-elles les frontières ?|How do artworks cross borders?",
+  ix:"Index|Index", rs:"Réinitialiser|Reset",
+  hint:"Cliquer sur une case : dévoiler la suite — Molette : zoom — Glisser : déplacer|Click a box: reveal what follows — Wheel: zoom — Drag: pan",
+  open:"Ouvrir la page →|Open page →", back:"← Diagramme|← Diagram", nx:"Suite|Next", pv:"Précédent|Previous",
+  cn:"Relations dans le diagramme|Connections in the diagram", dph:"Diagramme détaillé à venir|Detailed diagram to come",
+  idx:"Index des étapes|Index of steps", dop:"Ouvrir dans un nouvel onglet|Open in a new tab", ddl:"Télécharger le PDF|Download the PDF",
+  dnote:"Document original en français.|Original document in French.", dfb:"Votre navigateur n’affiche pas le PDF.|Your browser cannot display the PDF."
+};
 
-const $=id=>document.getElementById(id), m=$("map"), NS="http://www.w3.org/2000/svg";
-const sz=k=>SZ[k]||[170,70], kids=k=>E.filter(e=>e[0]==k&&e.join("-")!=BACK).map(e=>e[1]);
-const inc=k=>E.filter(e=>e[1]==k&&e.join("-")!=BACK).map(e=>e[0]);
-const vis=k=>k=="root"||inc(k).some(p=>exp.has(p)&&vis(p));
+/* ================= ENGINE ================= */
+let L = 0, vb = [0, 0, 1800, 1200], cur = null, sel = null, exp = new Set(["root"]), NE = [], ND = {}, SATS = {};
 
-function route(a,b){
-  const key1 = `${a}-${b}`;
-  const key2 = `${b}-${a}`;
-  if(PATHS[key1]) return PATHS[key1];
-  if(PATHS[key2]) return PATHS[key2];
-  if(N[a] && N[b]) return `M${N[a][0]} ${N[a][1]} L${N[b][0]} ${N[b][1]}`;
-  return "M0 0 L0 0"; // Fallback to prevent crash
+const t = s => s ? s.split("|")[L] : "";
+const strip = s => s ? s.replace(/\n/g, " ") : "";
+const $ = id => document.getElementById(id), m = $("map"), NS = "http://www.w3.org/2000/svg";
+const sz = k => SZ[k] || [170, 70];
+const kids = k => E.filter(e => e[0] == k && e.join("-") != BACK).map(e => e[1]);
+const inc = k => E.filter(e => e[1] == k && e.join("-") != BACK).map(e => e[0]);
+const vis = k => k == "root" || inc(k).some(p => exp.has(p) && vis(p));
+
+function route(a, b) {
+  const k1 = `${a}-${b}`, k2 = `${b}-${a}`;
+  if (PATHS[k1]) return PATHS[k1];
+  if (PATHS[k2]) return PATHS[k2];
+  if (N[a] && N[b]) return `M${N[a][0]} ${N[a][1]} L${N[b][0]} ${N[b][1]}`;
+  return "M0 0 L0 0";
 }
 
-function build(){
-  const l=$("L"); l.innerHTML=""; NE=[]; ND={}; SATS={};
-  E.forEach(([a,b])=>{
-    if(!N[a] || !N[b]) return; // Skip if somehow undefined
-    const p=document.createElementNS(NS,"path");
-    p.setAttribute("class","pipe");
-    p.setAttribute("d",route(a,b));
-    l.appendChild(p); NE.push([a,b,p]);
+function build() {
+  const l = $("L"); l.innerHTML = ""; NE = []; ND = {}; SATS = {};
+  E.forEach(([a, b]) => {
+    if (!N[a] || !N[b]) return;
+    const p = document.createElementNS(NS, "path");
+    p.setAttribute("class", "pipe");
+    p.setAttribute("d", route(a, b));
+    l.appendChild(p); NE.push([a, b, p]);
   });
-  
-  for(const k in N){
-    const[x,y,,lb]=N[k], [w,h]=sz(k), n=document.createElementNS(NS,"g");
-    n.setAttribute("class","node"); n.dataset.k=k; n.setAttribute("transform",`translate(${x-w/2} ${y-h/2})`);
-    n.innerHTML=`<g class="in"><rect width="${w}" height="${h}"/><foreignObject width="${w}" height="${h}"><div xmlns="http://www.w3.org/1999/xhtml" style="font-size:${fs(k)}px">${t(lb)}</div></foreignObject></g>`;
-    l.appendChild(n); ND[k]=n;
+
+  for (const k in N) {
+    const [x, y, , lb] = N[k], [w, h] = sz(k), n = document.createElementNS(NS, "g");
+    n.setAttribute("class", "node"); n.dataset.k = k;
+    n.setAttribute("transform", `translate(${x - w/2} ${y - h/2})`);
+    n.innerHTML = `<g class="in"><rect width="${w}" height="${h}"/><foreignObject width="${w}" height="${h}"><div xmlns="http://www.w3.org/1999/xhtml" style="font-size:${fs(k)}px; font-weight:${k=='root'?'bold':'normal'}">${t(lb)}</div></foreignObject></g>`;
+    l.appendChild(n); ND[k] = n;
   }
-  
-  for(const k in SAT){
-    if(!N[k]) continue;
-    const a=SAT[k], [w]=sz(k), x0=N[k][0]-w/2, ln=document.createElementNS(NS,"path"), g=document.createElementNS(NS,"g");
-    ln.setAttribute("class","pipe"); ln.setAttribute("d",`M${x0} ${a.y}L${a.x} ${a.y}`);
-    g.setAttribute("class","sat"); g.dataset.f=a.f;
-    g.innerHTML=`<circle r="28" cx="${a.x}" cy="${a.y}" fill="transparent"/><circle class="dot" r="14" cx="${a.x}" cy="${a.y}"/><text x="${a.x}" y="${a.y-30}">${strip(t(a.t))}</text>`;
-    l.insertBefore(ln,l.firstChild); l.appendChild(g); SATS[k]=[ln,g];
+
+  for (const k in SAT) {
+    if (!N[k]) continue;
+    const a = SAT[k], [w] = sz(k), x0 = N[k][0] - w/2, ln = document.createElementNS(NS, "path"), g = document.createElementNS(NS, "g");
+    ln.setAttribute("class", "pipe"); ln.setAttribute("d", `M${x0} ${a.y}L${a.x} ${a.y}`);
+    g.setAttribute("class", "sat"); g.dataset.f = a.f;
+    g.innerHTML = `<circle r="26" cx="${a.x}" cy="${a.y}" fill="transparent"/><circle class="dot" r="12" cx="${a.x}" cy="${a.y}"/><text x="${a.x}" y="${a.y-25}">${strip(t(a.t))}</text>`;
+    l.insertBefore(ln, l.firstChild); l.appendChild(g); SATS[k] = [ln, g];
   }
   refresh(0);
 }
 
-function refresh(fitIt=1){
-  const v={}; for(const k in N) v[k]=vis(k);
-  for(const k in N){ND[k].classList.toggle("hid",!v[k]); ND[k].classList.toggle("open",exp.has(k)&&k!="root"&&kids(k).length>0);}
-  NE.forEach(([a,b,p])=>p.classList.toggle("hid",!(v[a]&&(a+"-"+b==BACK?true:exp.has(a)))));
-  for(const k in SATS) SATS[k].forEach(el=>el.classList.toggle("hid",!(v[k]&&exp.has(k))));
-  if(fitIt===2) return;
-  if(fitIt) fit(v); else fit(v,1);
+function refresh(fitIt = 1) {
+  const v = {}; for (const k in N) v[k] = vis(k);
+  for (const k in N) {
+    if (ND[k]) {
+      ND[k].classList.toggle("hid", !v[k]);
+      ND[k].classList.toggle("open", exp.has(k) && k != "root" && kids(k).length > 0);
+    }
+  }
+  NE.forEach(([a, b, p]) => p.classList.toggle("hid", !(v[a] && (a + "-" + b == BACK ? true : exp.has(a)))));
+  for (const k in SATS) SATS[k].forEach(el => el.classList.toggle("hid", !(v[k] && exp.has(k))));
+  if (fitIt === 2) return;
+  fit(v, fitIt);
 }
 
 let raf;
-function fit(v,now){
-  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
-  for(const k in N)if(v[k]){
-    const[w,h]=sz(k);
-    x0=Math.min(x0,N[k][0]-w/2); x1=Math.max(x1,N[k][0]+w/2);
-    y0=Math.min(y0,N[k][1]-h/2); y1=Math.max(y1,N[k][1]+h/2);
+function fit(v, now) {
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+  for (const k in N) if (v[k]) {
+    const [w, h] = sz(k);
+    x0 = Math.min(x0, N[k][0] - w/2); x1 = Math.max(x1, N[k][0] + w/2);
+    y0 = Math.min(y0, N[k][1] - h/2); y1 = Math.max(y1, N[k][1] + h/2);
   }
-  if(v["re2"]){y1=Math.max(y1,1200);}
+  const r = m.getBoundingClientRect(), pad = 100;
+  let w = x1 - x0 + 2*pad, h = y1 - y0 + 2*pad;
+  if (w <= 0 || isNaN(w)) w = 1800;
+  if (h <= 0 || isNaN(h)) h = 1200;
   
-  const r=m.getBoundingClientRect(), pad=90;
-  let w=x1-x0+2*pad, h=y1-y0+2*pad;
-  
-  // Safe math fallback to prevent SVG NaN crash
-  if (w <= 0 || isNaN(w)) w = 1500;
-  if (h <= 0 || isNaN(h)) h = 1000;
   const ar = (r.width || 1000) / (r.height || 700);
-  if(w/h<ar) w=h*ar; else h=w/ar;
+  if (w/h < ar) w = h * ar; else h = w / ar;
   
-  const to=[(x0+x1)/2-w/2, (y0+y1)/2-h/2, w, h];
-  if(to.some(isNaN)) return; // Prevent breaking the viewbox
+  const to = [(x0+x1)/2 - w/2, (y0+y1)/2 - h/2, w, h];
+  if (to.some(isNaN)) return;
   
-  const fr=[...vb], s=performance.now(); cancelAnimationFrame(raf);
-  const step=n=>{
-    const q=now?1:Math.min(1,(n-s)/550), e=1-Math.pow(1-q,3);
-    vb=fr.map((a,i)=>a+(to[i]-a)*e); vw();
-    if(q<1) raf=requestAnimationFrame(step);
+  const fr = [...vb], s = performance.now(); cancelAnimationFrame(raf);
+  const step = n => {
+    const q = now ? 1 : Math.min(1, (n - s)/500), e = 1 - Math.pow(1 - q, 3);
+    vb = fr.map((a, i) => a + (to[i] - a) * e); vw();
+    if (q < 1) raf = requestAnimationFrame(step);
   };
-  raf=requestAnimationFrame(step);
+  raf = requestAnimationFrame(step);
 }
 
-const vw=()=>{
-  if(vb.some(isNaN)) vb=[0,0,1500,1000];
-  m.setAttribute("viewBox",vb.join(" "));
-};
+const vw = () => { if (!vb.some(isNaN)) m.setAttribute("viewBox", vb.join(" ")); };
 
-function ui(){
-  for(const k in U) if($(k)) $(k).textContent=strip(t(U[k]));
-  document.documentElement.lang=L?"en":"fr";
-  build(); showSel(); if(cur) route2();
+function ui() {
+  for (const k in U) if ($(k)) $(k).textContent = strip(t(U[k]));
+  document.documentElement.lang = L ? "en" : "fr";
+  build(); showSel(); if (cur) route2();
 }
 
-function showSel(){
-  const b=$("sel"); if(!sel){b.classList.remove("show"); return;}
+function showSel() {
+  const b = $("sel"); if (!sel) { b.classList.remove("show"); return; }
   b.classList.add("show");
-  b.innerHTML=`<span>${strip(t(N[sel][3]))}</span><button onclick="location.hash='#/${sel}'">${strip(t(U.open))}</button>`;
+  b.innerHTML = `<span>${strip(t(N[sel][3]))}</span><button onclick="location.hash='#/${sel}'">${strip(t(U.open))}</button>`;
 }
 
-/* pan & zoom & click */
-let d=null; const sc=()=>{const r=m.getBoundingClientRect(); return Math.max(vb[2]/(r.width||1), vb[3]/(r.height||1));};
-m.addEventListener("pointerdown",e=>{cancelAnimationFrame(raf); const n=e.target.closest(".node"); d={x:e.clientX,y:e.clientY,v:[...vb],k:n?.dataset.k,s:e.target.closest(".sat")?.dataset.f,mv:0};});
-addEventListener("pointermove",e=>{if(!d)return; const dx=e.clientX-d.x,dy=e.clientY-d.y; if(Math.abs(dx)+Math.abs(dy)>5)d.mv=1; if(!d.mv)return; const s=sc(); vb[0]=d.v[0]-dx*s; vb[1]=d.v[1]-dy*s; vw();});
-addEventListener("pointerup",()=>{if(d&&!d.mv&&d.s)window.open(d.s,"_blank"); if(d&&!d.mv&&d.k){const k=d.k; if(kids(k).length){if(exp.has(k))location.hash="#/"+k; else{exp.add(k);sel=k;showSel();refresh(2);}}else location.hash="#/"+k;} d=null;});
-m.addEventListener("wheel",e=>{e.preventDefault(); cancelAnimationFrame(raf); const r=m.getBoundingClientRect(), f=e.deltaY>0?1.12:.89, s=sc(), px=vb[0]+(e.clientX-(r.left||0))*s, py=vb[1]+(e.clientY-(r.top||0))*s, nw=vb[2]*f; if(nw>4000||nw<300)return; vb=[px-(px-vb[0])*f,py-(py-vb[1])*f,nw,vb[3]*f]; vw();},{passive:false});
+/* Mouse interactions */
+let d = null;
+const sc = () => { const r = m.getBoundingClientRect(); return Math.max(vb[2]/(r.width||1), vb[3]/(r.height||1)); };
+m.addEventListener("pointerdown", e => { cancelAnimationFrame(raf); const n = e.target.closest(".node"); d = {x:e.clientX, y:e.clientY, v:[...vb], k:n?.dataset.k, s:e.target.closest(".sat")?.dataset.f, mv:0}; });
+addEventListener("pointermove", e => { if(!d)return; const dx=e.clientX-d.x, dy=e.clientY-d.y; if(Math.abs(dx)+Math.abs(dy)>5)d.mv=1; if(!d.mv)return; const s=sc(); vb[0]=d.v[0]-dx*s; vb[1]=d.v[1]-dy*s; vw(); });
+addEventListener("pointerup", () => { if(d&&!d.mv&&d.s)window.open(d.s,"_blank"); if(d&&!d.mv&&d.k){const k=d.k; if(kids(k).length){if(exp.has(k))location.hash="#/"+k; else{exp.add(k);sel=k;showSel();refresh(2);}}else location.hash="#/"+k;} d=null; });
+m.addEventListener("wheel", e => { e.preventDefault(); cancelAnimationFrame(raf); const r=m.getBoundingClientRect(), f=e.deltaY>0?1.12:.89, s=sc(), px=vb[0]+(e.clientX-(r.left||0))*s, py=vb[1]+(e.clientY-(r.top||0))*s, nw=vb[2]*f; if(nw>4500||nw<300)return; vb=[px-(px-vb[0])*f,py-(py-vb[1])*f,nw,vb[3]*f]; vw();},{passive:false});
 
-/* pages */
-const par=k=>inc(k)[0];
+/* Pages */
+const par = k => inc(k)[0];
 function crumbs(k){const a=[];let c=k;while(c){a.unshift(c);c=par(c)}return a}
 function mini(k){
   const ins=inc(k),outs=kids(k),H=Math.max(220,Math.max(ins.length,outs.length)*64+40),cy=H/2;
@@ -290,14 +314,14 @@ function mini(k){
   ins.forEach((id,i)=>s+=bx(id,0,20+i*64));outs.forEach((id,i)=>s+=bx(id,530,20+i*64));
   return s+`<rect x="265" y="${cy-34}" width="170" height="68" fill="#fff"/><foreignObject x="265" y="${cy-34}" width="170" height="68"><div xmlns="http://www.w3.org/1999/xhtml" style="height:68px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;font-weight:700;color:#000;padding:4px 10px">${strip(t(N[k][3]))}</div></foreignObject></svg>`;
 }
-const docs=k=>(DOCS[k]||[]).map(d=>`<div class="doc"><p><b>${strip(t(d.t))}</b></p>${L==1&&d.lang=="fr"?`<p>${strip(t(U.dnote))}</p>`:""}<a class="btn" href="${d.f}" target="_blank">${strip(t(U.dop))}</a><a class="btn" href="${d.f}" download>${strip(t(U.ddl))}</a><object data="${d.f}#view=FitH" type="application/pdf"><p>${strip(t(U.dfb))}</p></object></div>`).join("");
+const docs = k => (DOCS[k]||[]).map(d=>`<div class="doc"><p><b>${strip(t(d.t))}</b></p>${L==1&&d.lang=="fr"?`<p>${strip(t(U.dnote))}</p>`:""}<a class="btn" href="${d.f}" target="_blank">${strip(t(U.dop))}</a><a class="btn" href="${d.f}" download>${strip(t(U.ddl))}</a><object data="${d.f}#view=FitH" type="application/pdf"><p>${strip(t(U.dfb))}</p></object></div>`).join("");
 
 function page(k){
   const n=N[k], c=C[k]||{}, cr=crumbs(k), nx=kids(k), pv=par(k);
   const lk=(a,lbl)=>`<a onclick="location.hash='#/${a}'">${strip(lbl)}</a>`;
   const sec=SECTIONS.map((h,i)=>`<h2>${t(h)}</h2>`+(i==5?(c.diagram||`<div class="ph">${t(U.dph)}</div>`):`<p>${strip(t((c.s&&c.s[i])||TODO))}</p>`)+(i==2?docs(k):"")).join("");
   $("pg").innerHTML=`<div class="bar"><a onclick="location.hash=''">${t(U.back)}</a><span class="cr">${cr.map(x=>x==k?strip(t(N[x][3])):lk(x,t(N[x][3]))).join(" &nbsp;/&nbsp; ")}</span></div>
-  <span class="tag">${t(GN[n[2]])}</span><h1>${strip(t(n[3]))}</h1><p>${strip(t(c.sum||TODO))}</p>${sec}
+  <span class="tag">${t(GN[n[2]])}</span><h1>${t(n[3])}</h1><p>${strip(t(c.sum||TODO))}</p>${sec}
   <h2>${t(U.cn)}</h2>${mini(k)}
   <h2>${t(U.pv)} / ${t(U.nx)}</h2>${pv?`<p>${lk(pv,"← "+t(N[pv][3]))}</p>`:""}${nx.map(x=>`<p>${lk(x,"→ "+t(N[x][3]))}</p>`).join("")}`;
 }
@@ -312,17 +336,23 @@ function route2(){
   $("pg").classList.toggle("show",!!cur); if(cur) $("pg").scrollTop=0;
 }
 
-addEventListener("hashchange",route2);
-$("ix").onclick=()=>location.hash="#/index";
-$("rs").onclick={()=>{exp=new Set(["root"]);sel=null;showSel();refresh();}};
-$("sl").onclick=e=>{L=1-L; e.currentTarget.classList.toggle("on"); ui();};
-addEventListener("keydown",e=>{if(e.key=="Escape")location.hash="";});
-addEventListener("resize",()=>refresh());
+/* Event Handlers */
+addEventListener("hashchange", route2);
+$("ix").onclick = () => location.hash="#/index";
+$("rs").onclick = () => { exp=new Set(["root"]); sel=null; showSel(); refresh(); };
+$("sl").onclick = e => { L=1-L; e.currentTarget.classList.toggle("on"); ui(); };
+addEventListener("keydown", e => { if(e.key=="Escape") location.hash=""; });
+addEventListener("resize", () => refresh());
 
-// Initialize
+/* Start */
 try {
-  exp.add("root"); ui(); route2();
+  exp.add("root");
+  ui();
+  route2();
 } catch (e) {
-  console.error("Initialization Error:", e);
+  document.body.innerHTML = `<div style="padding:40px; color:#ff4444; font-family:monospace; background:#000; height:100vh;">
+    <h2>Runtime Error</h2><pre>${e.message}</pre>
+  </div>`;
+  console.error(e);
 }
 </script></body></html>
