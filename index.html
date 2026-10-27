@@ -60,7 +60,6 @@ header b{font-size:14px}
 <div id="hint"></div><div id="sel"></div><div id="pg"></div>
 <script>
 /* ================= DATA & HARDCODED LAYOUT ================= */
-// Exact coordinates mapped to the image
 const N={
 root:[250,300,0,"Comment les oeuvres\nd'art traversent-elles\nles frontières ?|How do artworks\ncross borders?"],
 priv:[400,120,1,"Achat d’une\noeuvre d'art par\nun privé|Private purchase\nof an artwork"],
@@ -97,7 +96,6 @@ x2:[440,780,3,"Prêt dans une région\nexonérée d'impôts|Loan in a\ntax-exemp
 i1:[230,1020,3,"Prêt dans une\nrégion imposée|Loan in a\ntaxed region"],
 re2:[700,880,3,"Re-exportation\nau propriétaire|Re-export to\nthe owner"]};
 
-// Exact sizing to wrap text exactly like the screenshot
 const SZ={
   root:[420,130], priv:[180,90], achat:[160,70], intl:[160,40], dom:[140,40],
   autre:[210,90], meme:[210,80], stock:[140,80], t1:[110,90], t2:[280,60],
@@ -108,4 +106,42 @@ const SZ={
   re2:[160,80]
 };
 
-const
+const T2=["root","priv","pret","priv2","stock","aut","exp","expo","re1","re2","t1","t2","t3","t4"];
+const fs=k=>k=="root"?28:16; 
+const E="root-priv root-pret root-priv2 priv-achat achat-intl achat-dom intl-autre dom-meme autre-stock meme-stock stock-t1 stock-t2 stock-t3 stock-t4 pret-fac pret-d2 fac-ass ass-aut aut-intl2 aut-eneu intl2-aus aus-d1 d1-exp eneu-exp exp-expo expo-re1 d2-re1 priv2-pa priv2-pb pa-x1 pa-i2 pb-x2 pb-i1 x1-re2 i2-re2 x2-re2 i1-re2 re2-priv2".split(" ").map(e=>e.split("-"));
+const BACK="re2-priv2";
+
+const PATHS = {
+  "root-priv": "M300 240 L350 150 L400 120",
+  "priv-achat": "M400 120 L550 115",
+  "achat-intl": "M550 115 L600 50 L650 50",
+  "achat-dom": "M550 115 L610 180 L660 180",
+  "intl-autre": "M650 50 L720 180 L720 290",
+  "dom-meme": "M660 180 L850 180",
+  "autre-stock": "M720 290 L950 290",
+  "meme-stock": "M850 180 L890 290 L950 290",
+  "stock-t1": "M950 290 L1020 150 L1100 150",
+  "stock-t2": "M950 290 L1100 170 L1250 170",
+  "stock-t3": "M950 290 L1220 310",
+  "stock-t4": "M950 290 L1070 370 L1250 370",
+  "root-pret": "M350 360 L450 360 L500 420 L550 420",
+  "pret-fac": "M550 420 L710 425",
+  "fac-ass": "M710 425 L830 425",
+  "ass-aut": "M830 425 L980 425",
+  "aut-intl2": "M980 425 L940 520 L1020 520",
+  "aut-eneu": "M980 425 L940 480 L890 560",
+  "intl2-aus": "M1020 520 L1250 510",
+  "aus-d1": "M1250 510 L1250 640",
+  "d1-exp": "M1250 640 L1150 640 L1050 670",
+  "eneu-exp": "M890 560 L1000 670 L1050 670",
+  "exp-expo": "M1050 670 L980 670 L880 740",
+  "pret-d2": "M550 420 L620 580 L720 580",
+  "d2-re1": "M720 580 L750 730",
+  "expo-re1": "M880 740 L750 730", 
+  "root-priv2": "M250 365 L270 420 L380 530",
+  "priv2-pa": "M380 530 L320 600 L270 680",
+  "priv2-pb": "M380 530 L380 620 L410 680",
+  "pa-x1": "M270 680 L200 730 L160 780",
+  "pa-i2": "M270 680 L250 750 L220 900",
+  "pb-x2": "M410 680 L440 730 L440 780",
+  "pb-i1": "M410 68
