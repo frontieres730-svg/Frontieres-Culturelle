@@ -98,7 +98,7 @@ i1:[2380,550,3,"Prêt dans une région imposée|Loan in a taxed region"],
 re2:[2080,800,3,"Re-exportation au propriétaire|Re-export to the owner"]};
 const E="root-priv root-pret root-priv2 priv-achat achat-intl achat-dom dom-autre dom-meme intl-stock autre-stock meme-stock stock-t1 stock-t2 stock-t3 stock-t4 pret-fac pret-d2 pret-re1 fac-ass ass-aut aut-intl2 aut-eneu intl2-aus aus-d1 d1-exp eneu-exp exp-expo expo-re1 d2-re1 priv2-pa priv2-pb pa-x1 pa-i2 pb-x2 pb-i1 x1-re2 i2-re2 x2-re2 i1-re2 re2-priv2".split(" ").map(e=>e.split("-"));
 const BACK="re2-priv2";
-/* Satellite dots: appear next to a node once it has been clicked. SAT[nodeId] = {x,y = dot position, from = point on the node it connects to, f = page to open (new tab), t = hover label "FR|EN"} (coordinates in the units of the layout SVG) */
+/* Satellite dots: appear next to a node once it has been clicked. SAT[nodeId] = {x,y = dot position, from = point on the node it connects to, f = page to open (same tab), t = hover label "FR|EN"} (coordinates in the units of the layout SVG) */
 const SAT={pret:{x:344,y:294,from:[323.2,272.0],f:"provenances/index.html",t:"provenances|provenances"},expo:{x:464,y:478,from:[464,451.8],f:"transport/index.html",t:"transport|transport"}};
 /* ================= PAGE STRUCTURE — edit here =================
  Every page uses SECTIONS. Write real text in C[id] = {sum:"FR|EN", s:["FR|EN", …one per section…], diagram:"<svg…>"} */
@@ -351,7 +351,7 @@ function showSel(){const b=$("sel");if(!sel){b.classList.remove("show");return}b
 let d=null;const sc=()=>{const r=m.getBoundingClientRect();return Math.max(vb[2]/r.width,vb[3]/r.height)};
 m.addEventListener("pointerdown",e=>{cancelAnimationFrame(raf);const n=e.target.closest(".node");d={x:e.clientX,y:e.clientY,v:[...vb],k:n?.dataset.k,s:e.target.closest(".sat")?.dataset.f,mv:0}});
 addEventListener("pointermove",e=>{if(!d)return;const dx=e.clientX-d.x,dy=e.clientY-d.y;if(Math.abs(dx)+Math.abs(dy)>5)d.mv=1;if(!d.mv)return;const s=sc();vb[0]=d.v[0]-dx*s;vb[1]=d.v[1]-dy*s;vw()});
-addEventListener("pointerup",()=>{if(d&&!d.mv&&d.s)window.open(d.s,"_blank");if(d&&!d.mv&&d.k){const k=d.k;if(kids(k).length){if(exp.has(k))location.hash="#/"+k;else{exp.add(k);sel=k;showSel();refresh(2)}}else location.hash="#/"+k}d=null});
+addEventListener("pointerup",()=>{if(d&&!d.mv&&d.s)location.href=d.s;if(d&&!d.mv&&d.k){const k=d.k;if(kids(k).length){if(exp.has(k))location.hash="#/"+k;else{exp.add(k);sel=k;showSel();refresh(2)}}else location.hash="#/"+k}d=null});
 m.addEventListener("wheel",e=>{e.preventDefault();cancelAnimationFrame(raf);const r=m.getBoundingClientRect(),f=e.deltaY>0?1.12:.89,s=sc(),px=vb[0]+(e.clientX-r.left)*s,py=vb[1]+(e.clientY-r.top)*s,nw=vb[2]*f;if(nw>3000||nw<100)return;vb=[px-(px-vb[0])*f,py-(py-vb[1])*f,nw,vb[3]*f];vw()},{passive:false});
 /* pages */
 const par=k=>inc(k)[0];

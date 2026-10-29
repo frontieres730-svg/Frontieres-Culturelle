@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>S.S. United States - Mona Lisa Transport 3D Visualizer</title>
+    <title>S.S. United States — Mona Lisa transport</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Three.js & OrbitControls -->
@@ -11,7 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <style>
         :root {
-            --bg: #000000;
+            --bg: #231f20;
             --ink: #ffffff;
             --mut: #888888;
             box-sizing: border-box;
@@ -38,29 +38,27 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 52px;
+            height: 48px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
+            padding: 0 24px;
             z-index: 50;
             background: #000000;
             border-bottom: 1px solid #ffffff;
+            font-size: 13px;
         }
 
         header h1 {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 700;
             margin: 0;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            font-family: monospace, sans-serif;
         }
 
         /* Controls / Language Switcher */
         .ctl {
             display: flex;
-            gap: 20px;
+            gap: 26px;
             align-items: center;
         }
 
@@ -70,9 +68,9 @@
             display: flex;
             gap: 8px;
             align-items: center;
-            font-size: 12px;
-            font-weight: 700;
-            font-family: monospace, sans-serif;
+            font-size: 13px;
+            font-weight: 400;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         }
 
         .ctl a:hover {
@@ -81,9 +79,9 @@
 
         .sw i {
             width: 34px;
-            height: 18px;
+            height: 16px;
             border: 1px solid #ffffff;
-            border-radius: 9px;
+            border-radius: 8px;
             position: relative;
             display: inline-block;
         }
@@ -91,23 +89,23 @@
         .sw i:after {
             content: "";
             position: absolute;
-            top: 3px;
-            left: 3px;
+            top: 2px;
+            left: 2px;
             width: 10px;
             height: 10px;
             border-radius: 50%;
             background: #ffffff;
-            transition: left 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: left 0.2s;
         }
 
         .sw.on i:after {
-            left: 19px;
+            left: 20px;
         }
 
         /* Main Workspace Container */
         main {
             position: relative;
-            padding-top: 52px;
+            padding-top: 48px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -119,7 +117,7 @@
             width: 100%;
             height: 62vh;
             min-height: 440px;
-            background: #000000;
+            background: #231f20;
             border-bottom: 1px solid #ffffff;
             overflow: hidden;
         }
@@ -155,7 +153,7 @@
         }
 
         .hotspot-pin:hover .hotspot-dot, .hotspot-pin.selected .hotspot-dot {
-            background: #000000;
+            background: #231f20;
             border-color: #ffffff;
             transform: scale(1.6);
         }
@@ -187,11 +185,11 @@
             flex-wrap: wrap;
             gap: 6px;
             padding: 16px 20px 0;
-            background: #000000;
+            background: #231f20;
         }
 
         nav.swiss-nav button {
-            font-family: monospace, sans-serif;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             background: #ffffff;
             color: #000000;
             border: 1px solid #ffffff;
@@ -203,7 +201,7 @@
         }
 
         nav.swiss-nav button[aria-pressed="true"] {
-            background: #000000;
+            background: #231f20;
             color: #ffffff;
         }
 
@@ -228,16 +226,14 @@
         .swiss-panel {
             border: 1px solid #ffffff;
             padding: 16px;
-            background: #000000;
+            background: #231f20;
         }
 
         .swiss-panel h2 {
             font-size: 12px;
             font-weight: 700;
             margin: 0 0 10px;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            font-family: monospace, sans-serif;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             border-bottom: 1px solid #ffffff;
             padding-bottom: 6px;
         }
@@ -251,9 +247,8 @@
             padding: 10px 16px;
             font-size: 12px;
             font-weight: 700;
-            font-family: monospace, sans-serif;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             cursor: pointer;
-            text-transform: uppercase;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
@@ -261,7 +256,7 @@
         }
 
         .btn-explode-action:hover {
-            background: #000000;
+            background: #231f20;
             color: #ffffff;
         }
 
@@ -272,11 +267,10 @@
             top: 20px;
             width: 310px;
             max-width: calc(100vw - 40px);
-            background: #000000;
+            background: #231f20;
             border: 1px solid #ffffff;
             padding: 16px;
             z-index: 40;
-            box-shadow: 6px 6px 0px rgba(255, 255, 255, 0.2);
             display: none;
         }
 
@@ -297,7 +291,7 @@
             padding: 5px 0;
             border-bottom: 1px solid #222222;
             font-size: 12px;
-            font-family: monospace, sans-serif;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         }
 
         .spec-row span:first-child {
@@ -327,18 +321,17 @@
         }
 
         .modal-box {
-            background: #000000;
+            background: #231f20;
             border: 1px solid #ffffff;
             max-width: 600px;
             width: 100%;
             padding: 24px;
-            box-shadow: 8px 8px 0px #ffffff;
         }
 
         .modal-box h2 {
             font-size: 14px;
             font-weight: 700;
-            font-family: monospace, sans-serif;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             margin: 0 0 12px;
             border-bottom: 1px solid #ffffff;
             padding-bottom: 8px;
@@ -357,25 +350,33 @@
             border: 1px solid #ffffff;
             padding: 8px 18px;
             font-weight: 700;
-            font-family: monospace, sans-serif;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             cursor: pointer;
             float: right;
             margin-top: 10px;
         }
 
         .modal-box button:hover {
-            background: #000000;
+            background: #231f20;
             color: #ffffff;
         }
+
+        /* match the main site: Helvetica everywhere, sentence case, no decoration */
+        .font-mono { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important; }
+        .uppercase { text-transform: none !important; }
+        .hotspot-pulse { display: none !important; }
+        nav.swiss-nav button, .btn-explode-action, .modal-box button { font-weight: 400; }
+        .annotation-card, .modal-box, .swiss-panel { box-shadow: none !important; }
     </style>
 </head>
 <body>
 
     <!-- Swiss Header with Language Switcher -->
     <header>
-        <h1 id="hdr-title">S.S. UNITED STATES // SUITE M72-M75 [1962–1963]</h1>
+        <h1 id="hdr-title">S.S. United States — Suite M72–M75 (1962–1963)</h1>
         <div class="ctl">
-            <a id="btn-open-dossier">[DOSSIER HISTORIQUE]</a>
+            <a id="btn-back" href="../index.html">← Diagramme</a>
+            <a id="btn-open-dossier">Dossier historique</a>
             <div class="sw" id="lang-switch">
                 <span>FR</span>
                 <i></i>
@@ -393,8 +394,8 @@
             <!-- Docked Side Card -->
             <div id="annotation-card" class="annotation-card">
                 <div class="flex items-center justify-between border-b border-white pb-2 mb-2">
-                    <span id="card-tag" class="text-[10px] font-bold px-1.5 py-0.5 bg-white text-black font-mono">POINT_01</span>
-                    <button id="btn-close-card" class="text-white hover:text-gray-400 text-xs font-mono font-bold">[X]</button>
+                    <span id="card-tag" class="text-[10px] font-bold px-1.5 py-0.5 bg-white text-black font-mono">Point 1</span>
+                    <button id="btn-close-card" class="text-white hover:text-gray-400 text-xs font-mono font-bold">×</button>
                 </div>
                 <h3 id="card-title" class="font-bold text-sm mb-1 font-mono uppercase">-</h3>
                 <p id="card-desc" class="text-xs text-gray-300 leading-relaxed mb-3">-</p>
@@ -419,7 +420,7 @@
             <div class="swiss-panel">
                 <div class="flex items-center justify-between mb-3">
                     <h2 id="lbl-explode-title" class="!border-b-0 !mb-0 !pb-0">VUE ÉCLATÉE DU CAISSON</h2>
-                    <span id="lbl-explode-val" class="font-mono font-bold text-xs">[ASSEMBLÉ]</span>
+                    <span id="lbl-explode-val" class="font-mono font-bold text-xs">Assemblé</span>
                 </div>
                 <div class="py-1">
                     <button id="btn-toggle-explode" class="btn-explode-action" aria-pressed="false">
@@ -438,11 +439,11 @@
                 <div class="space-y-1">
                     <div class="spec-row">
                         <span id="spec-lbl-ship">NAVIRE / EMPLACEMENT</span>
-                        <span>S.S. UNITED STATES // SUITE M72-M75</span>
+                        <span>S.S. United States — Suite M72–M75</span>
                     </div>
                     <div class="spec-row">
                         <span id="spec-lbl-date">TRAVERSÉE / DATES</span>
-                        <span>DEC 1962–JAN 1963</span>
+                        <span>Dec 1962 – Jan 1963</span>
                     </div>
                     <div class="spec-row">
                         <span id="spec-lbl-orient">ORIENTATION PEINTURE</span>
@@ -472,9 +473,10 @@
 
         const I18N = {
             hdrTitle: [
-                "S.S. UNITED STATES // SUITE M72-M75 [1962–1963]",
-                "S.S. UNITED STATES // SUITE M72-M75 [1962–1963]"
+                "S.S. United States — Suite M72–M75 (1962–1963)",
+                "S.S. United States — Suite M72–M75 (1962–1963)"
             ],
+            lblBack: ["← Diagramme", "← Diagram"],
             lblDossier: ["[DOSSIER HISTORIQUE]", "[HISTORICAL LOG]"],
             lblExplodeTitle: ["VUE ÉCLATÉE DU CAISSON", "EXPLODED VIEW INSPECTOR"],
             lblBtnExplode: ["ÉCLATER / ASSEMBLER LE CAISSON", "EXPLODE / ASSEMBLE VAULT"],
@@ -559,6 +561,23 @@
             }
         };
 
+        // Sentence case for the all-caps strings (matches the main site)
+        const KEEP = [[/s\.s\. united states/ig, 'S.S. United States'], [/m72-m75/ig, 'M72–M75'], [/t\.48/ig, 'T.48'], [/\bus\b/g, 'US'], [/la joconde/ig, 'La Joconde'], [/mona lisa/ig, 'Mona Lisa'], [/louvre/ig, 'Louvre'], [/\b3d\b/ig, '3D']];
+        function sentence(s) {
+            const letters = s.replace(/[^A-Za-zÀ-ÿŒœ]/g, '');
+            if (letters.length < 2 || letters !== letters.toUpperCase()) return s;
+            let o = s.toLowerCase().replace(/\s*\/\/\s*/g, ' — ').replace(/\[([^\]]*)\]/g, '($1)').replace(/^\((.*)\)$/, '$1');
+            o = o.replace(/^[^a-zà-ÿœ]*([a-zà-ÿœ])/, (m, c) => m.slice(0, m.length - 1) + c.toUpperCase());
+            KEEP.forEach(([r, v]) => { o = o.replace(r, v); });
+            return o;
+        }
+        function normAll(x) {
+            if (Array.isArray(x)) { x.forEach((v, i) => { x[i] = typeof v === 'string' ? fix(v) : (normAll(v), v); }); }
+            else if (x && typeof x === 'object') { for (const k in x) { const v = x[k]; if (typeof v === 'string') x[k] = fix(v); else normAll(v); } }
+        }
+        function fix(v) { return v.includes('<strong>') ? v.replace(/<strong>(.*?)<\/strong>/g, (m, t) => '<strong>' + sentence(t) + '</strong>') : sentence(v); }
+        normAll(I18N); normAll(ANNOTATIONS);
+
         // 3D Variables
         let scene, camera, renderer, controls;
         let woolMesh, vaultMesh, crateMesh, artworkMesh, boltsGroup;
@@ -574,7 +593,7 @@
             const height = container.clientHeight;
 
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x000000);
+            scene.background = new THREE.Color(0x231f20);
 
             camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
             camera.position.set(13, 8, 15);
@@ -603,7 +622,7 @@
 
             // Materials
             const lineMat = new THREE.LineBasicMaterial({ color: 0xffffff });
-            const subtleDarkMat = new THREE.LineBasicMaterial({ color: 0x1c1c1e });
+            const subtleDarkMat = new THREE.LineBasicMaterial({ color: 0x3a3536 });
 
             // 1. Suite Boundary & Architecture
             const suiteGroup = new THREE.Group();
@@ -946,7 +965,7 @@
             if (artworkMesh) artworkMesh.position.y = 0.8 + factor * 0.0;
 
             const percent = Math.round(factor * 100);
-            document.getElementById('lbl-explode-val').textContent = percent === 0 ? `[ASSEMBLÉ]` : `[ÉCLATÉ ${percent}%]`;
+            document.getElementById('lbl-explode-val').textContent = percent === 0 ? (currentLang ? 'Assembled' : 'Assemblé') : (currentLang ? `Exploded ${percent}%` : `Éclaté ${percent} %`);
         }
 
         function animateExplodeTo(target) {
@@ -996,6 +1015,7 @@
 
             document.getElementById('hdr-title').textContent = I18N.hdrTitle[L];
             document.getElementById('btn-open-dossier').textContent = I18N.lblDossier[L];
+            document.getElementById('btn-back').textContent = I18N.lblBack[L];
             document.getElementById('lbl-explode-title').textContent = I18N.lblExplodeTitle[L];
             document.getElementById('lbl-btn-explode').textContent = I18N.lblBtnExplode[L];
             
