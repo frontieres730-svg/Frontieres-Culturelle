@@ -54,11 +54,29 @@ header b{font-size:14px}
 #pg ul{list-style:none;padding:0;margin:0;max-width:640px}
 #pg li{padding:9px 0;border-bottom:1px solid #000;font-size:15px;cursor:pointer}
 #pg li:hover{padding-left:10px}
+
+#smv{position:fixed;top:48px;left:0;right:0;bottom:0;background:#000;z-index:25;overflow:auto;display:none;padding:28px 24px 60px}
+#smv.show{display:block}
+#smv .w{max-width:760px;margin:0 auto}
+#smv h1{font-size:36px;line-height:1.05;letter-spacing:-.02em;margin:0 0 14px}
+#smv h2{font-size:22px;margin:18px 0 8px;letter-spacing:-.01em}
+#smv p{line-height:1.5;font-size:15px;margin:0 0 12px;max-width:64ch}
+#smv .m{display:flex;gap:10px;margin:0 0 6px}
+#smv .m div{flex:1;border:1px solid #fff;padding:8px 10px;font-size:12px}
+#smv .m b{display:block;font-size:20px;margin-top:2px}
+#smv .bad{background:#fff;color:#000}
+#smv button,#smv .bt{display:block;width:100%;text-align:left;font:inherit;font-size:14px;color:#fff;background:#000;border:1px solid #fff;padding:12px 14px;margin:0 0 8px;cursor:pointer}
+#smv button:hover{background:#fff;color:#000}
+#smv small{display:block;font-size:12px;opacity:.7;margin-top:4px}
+#smv a{cursor:pointer;text-decoration:underline;font-size:13px}
+#smv .x{float:right}
+#smv svg{width:100%;height:64px;display:block;margin:0 0 14px}
+#smv li{font-size:14px;line-height:1.45;margin:0 0 6px}
 </style></head><body>
 <header><b id="ti"></b>
-<div class="ctl"><a id="ix"></a><a id="rs"></a><div class="sw" id="sl"><span>FR</span><i></i><span>EN</span></div></div></header>
+<div class="ctl"><a id="sm"></a><a id="ix"></a><a id="rs"></a><div class="sw" id="sl"><span>FR</span><i></i><span>EN</span></div></div></header>
 <svg id="map"><g id="L"></g></svg>
-<div id="hint"></div><div id="sel"></div><div id="pg"></div>
+<div id="hint"></div><div id="sel"></div><div id="pg"></div><div id="smv"></div>
 <script>
 /* ================= DATA — edit here =================
  Nodes: id:[x,y,group,"FR|EN"]  (x,y = centre; group 0 root · 1 private purchase · 2 museum loan · 3 private owner loaning to museum)
@@ -301,7 +319,7 @@ re2:mk("Retour de l’œuvre au propriétaire, qui referme la boucle de la branc
  DOCS[nodeId] = [{f:"documents/file.pdf", t:"FR title|EN title", lang:"fr"}]  — put the PDF in the documents/ folder next to index.html. lang = language of the PDF. */
 const DOCS={aus:[{f:"documents/cerfa-02-0083-autorisation-sortie-temporaire.pdf",t:"Cerfa n° 02-0083 : Demande d’autorisation de sortie temporaire d’un bien culturel|Cerfa no. 02-0083: Application for temporary export authorisation of a cultural good",lang:"fr"},{f:"documents/cerfa-11033-autorisation-exportation-ue.pdf",t:"Cerfa n° 11033*03 : Demande d’autorisation d’exportation d’un bien culturel (Communauté européenne)|Cerfa no. 11033*03: Application for export authorisation of a cultural good (European Community)",lang:"fr"}],fac:[{f:"documents/facility-report-questionnaire-fr.pdf",t:"Questionnaire du Service des Musées de France relatif aux conditions offertes par les lieux d’exposition|Questionnaire of the Service des Musées de France on the conditions offered by exhibition venues",lang:"fr"}],d1:[{f:"documents/fac-simile-ata.pdf",t:"Fac-similé du carnet A.T.A. (Chambre de commerce et d’industrie de Paris)|Facsimile of the A.T.A. carnet (Paris Chamber of Commerce and Industry)",lang:"fr-en"}],d2:[{f:"documents/fac-simile-ata.pdf",t:"Fac-similé du carnet A.T.A. (Chambre de commerce et d’industrie de Paris)|Facsimile of the A.T.A. carnet (Paris Chamber of Commerce and Industry)",lang:"fr-en"}]};
 const GN=["Question de départ|Starting question","Achat par un privé|Private purchase","Prêt de musée à musée|Museum-to-museum loan","Privé qui prête à un musée|Private owner loaning to a museum"];
-const U={ti:"Comment les œuvres d’art traversent-elles les frontières ?|How do artworks cross borders?",ix:"Index|Index",rs:"Réinitialiser|Reset",
+const U={sm:"Simulation|Simulation",ti:"Comment les œuvres d’art traversent-elles les frontières ?|How do artworks cross borders?",ix:"Index|Index",rs:"Réinitialiser|Reset",
 hint:"Cliquer sur une case : dévoiler la suite — Molette : zoom — Glisser : déplacer|Click a box: reveal what follows — Wheel: zoom — Drag: pan",
 open:"Ouvrir la page →|Open page →",back:"← Diagramme|← Diagram",nx:"Suite|Next",pv:"Précédent|Previous",cn:"Relations dans le diagramme|Connections in the diagram",
 dph:"Diagramme détaillé à venir — à insérer dans C[id].diagram|Detailed diagram to come — insert in C[id].diagram",idx:"Index des étapes|Index of steps",dop:"Ouvrir dans un nouvel onglet|Open in a new tab",ddl:"Télécharger le PDF|Download the PDF",dnote:"Document original en français.|Original document in French.",dfb:"Votre navigateur n’affiche pas le PDF ; utilisez les boutons ci-dessus.|Your browser cannot display the PDF; use the buttons above."};
@@ -345,7 +363,7 @@ let raf;function fit(v,now){let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const k in GEO
  const to=[(x0+x1)/2-w/2,(y0+y1)/2-h/2,w,h],fr=[...vb],s=performance.now();cancelAnimationFrame(raf);
  const step=n=>{const q=now?1:Math.min(1,(n-s)/550),e=1-Math.pow(1-q,3);vb=fr.map((a,i)=>a+(to[i]-a)*e);vw();if(q<1)raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step)}
 const vw=()=>m.setAttribute("viewBox",vb.join(" "));
-function ui(){for(const k in U)if($(k))$(k).textContent=t(U[k]);document.documentElement.lang=L?"en":"fr";build();showSel();if(cur)route2()}
+function ui(){for(const k in U)if($(k))$(k).textContent=t(U[k]);document.documentElement.lang=L?"en":"fr";build();showSel();if(cur)route2();smR()}
 function showSel(){const b=$("sel");if(!sel){b.classList.remove("show");return}b.classList.add("show");b.innerHTML=`<span>${t(N[sel][3])}</span><button onclick="location.hash='#/${sel}'">${t(U.open)}</button>`}
 /* pan & zoom & click */
 let d=null;const sc=()=>{const r=m.getBoundingClientRect();return Math.max(vb[2]/r.width,vb[3]/r.height)};
@@ -381,5 +399,129 @@ $("rs").onclick=()=>{exp=new Set(["root"]);sel=null;showSel();refresh()};
 $("sl").onclick=e=>{L=1-L;e.currentTarget.classList.toggle("on");ui()};
 addEventListener("keydown",e=>{if(e.key=="Escape")location.hash=""});
 addEventListener("resize",()=>refresh());
+
+/* ================= SIMULATION — edit content in SMD ================= 
+ step: [page-node, title, text, choices]; choice: [label, cost€, weeks, dossier, flag, outcome]
+ flags trigger consequences in the final reckoning (SMF) */
+const SMD={
+c:{b:10500,dl:13,lp:500,pp:40000,n:"Collectionneur·se|Collector",
+ d:"Vous achetez une œuvre à une galerie hors de l’UE et la faites venir en France. Puis vous la revendez. Budget : frais, taxes et transport.|You are buying an artwork from a gallery outside the EU and bringing it to France. You then resell it. Budget: fees, taxes and transport.",
+ s:[
+ ["achat","Vérifier l’œuvre|Check the work","Avant de payer, que faites-vous de la provenance et du titre de propriété ?|Before paying, what do you do about provenance and title?",[
+  ["Commander une recherche de provenance complète|Commission full provenance research",900,2,10,"","Le dossier est solide ; les registres sont clairs.|The file is solid; the registers are clear."],
+  ["Faire confiance à la galerie|Trust the gallery",0,0,-10,"np","Gain de temps, mais aucun document ne protège votre titre.|You save time, but no document protects your title."]]],
+ ["intl","Régime fiscal de l’achat|Tax treatment of the purchase","Où et comment l’achat est-il taxé ?|Where and how is the purchase taxed?",[
+  ["Payer la taxe dès l’achat|Pay tax at purchase",3500,0,5,"","Simple et clair : la taxe est réglée.|Simple and clear: the tax is settled."],
+  ["Entrepôt sous suspension, taxe plus tard|Duty-suspended storage, tax later",1200,1,0,"tax","Moins cher aujourd’hui ; la taxe reste due plus tard.|Cheaper today; the tax is still owed later."],
+  ["Laisser l’œuvre à la galerie, décider plus tard|Leave it with the gallery, decide later",0,3,-5,"","Trois semaines perdues sans rien régler.|Three weeks lost with nothing settled."]]],
+ ["aus","Autorisation de sortie|Export authorisation","Le pays d’origine peut exiger une autorisation de sortie.|The country of origin may require an export authorisation.",[
+  ["Déposer la demande maintenant|Apply now",600,4,10,"","L’autorisation arrive après quatre semaines.|The authorisation arrives after four weeks."],
+  ["Laisser le transporteur « s’en occuper »|Let the shipper “sort it out”",0,0,-15,"ne","Aucune trace écrite de cette autorisation.|There is no written trace of this authorisation."]]],
+ ["ass","Transport et assurance|Transport and insurance","Comment l’œuvre voyage-t-elle ?|How does the work travel?",[
+  ["Transporteur d’art + assurance clou à clou|Fine-art shipper + nail-to-nail insurance",3000,1,5,"ins","Couverture complète, de l’atelier au mur.|Full cover, from gallery to wall.",0,4],
+  ["Coursier standard, assurance minimale|Standard courier, minimal insurance",700,0,0,"dm","Économique, mais fragile.|Cheap, but fragile.",0,30]]],
+ ["intl","Douane d’importation|Import customs","Quelle valeur déclarez-vous à l’arrivée ?|What value do you declare on arrival?",[
+  ["Valeur et catégorie exactes|True value and category",2800,0,5,"","Déclaration conforme, TVA à l’import payée.|Correct declaration, import VAT paid."],
+  ["Valeur minorée pour payer moins|Understate the value",1400,0,-10,"ud","Vous payez moins… pour le moment.|You pay less… for now."]]],
+ ["stock","Préparer la revente|Prepare for resale","L’œuvre est arrivée. Avant de la revendre, que faites-vous de son dossier ?|The work has arrived. Before reselling, what do you do with its file?",[
+  ["Classer les documents d’export et d’import, mettre à jour le rapport d’état|File export and import papers, update the condition report",600,1,5,"","Un acheteur peut retracer tout le parcours.|A buyer can trace the whole journey.",5],
+  ["Revendre telle quelle, sans dossier complet|Resell as is, without a full file",0,0,-5,"","Rapide, mais l’acheteur hésite.|Quick, but the buyer hesitates.",-5]]],
+ ["dom","Où revendre ?|Where to resell?","Le marché choisi change le prix et les formalités.|The market you choose changes the price and the formalities.",[
+  ["En France, sans nouvelle sortie|In France, no new export",500,2,0,"","Pas de formalités, mais peu d’acheteurs.|No formalities, but few buyers.",-5],
+  ["Aux enchères dans le pays d’origine (réexportation)|At auction in the country of origin (re-export)",3500,5,-5,"","Plus d’acheteurs, mais sortie et réimportation à organiser.|More buyers, but export and re-import to organise.",15,8],
+  ["À un acheteur d’une autre région fiscale|To a buyer in another tax region",2500,4,0,"","Nouvelle sortie à autoriser, taxe à clarifier.|A new export to authorise and tax to clarify.",8]]],
+ ["stock","Moment de la vente|Timing of the sale","Vendre maintenant ou attendre la saison favorable ?|Sell now or wait for the strong season?",[
+  ["Vendre maintenant|Sell now",0,0,0,"","Vous vendez au prix actuel du marché.|You sell at current market prices.",0],
+  ["Attendre la saison (stockage, assurance)|Wait for the season (storage, insurance)",900,8,0,"","Huit semaines de plus, mais un marché plus porteur.|Eight weeks more, but a stronger market.",8]]]],
+ f:{
+ np:["Un tiers revendique l’œuvre ; avocats et gel de la vente.|A third party claims the work; lawyers and a frozen sale.",4000,5,-20,-25],
+ ne:["La douane retient la caisse : pas d’autorisation de sortie.|Customs holds the crate: no export authorisation.",2500,6,-15,-10],
+ dm:["La caisse arrive avec un cadre fissuré, réparation non couverte.|The crate arrives with a cracked frame; repair not covered.",1500,0,-10,-5],
+ ud:["Un contrôle douanier révèle la sous-évaluation : pénalité.|A customs audit reveals the undervaluation: penalty.",5000,3,-25,-10],
+ tax:["La taxe différée devient exigible à la sortie de l’entrepôt.|The deferred tax falls due when the work leaves storage.",2800,0,0]}},
+m:{b:17000,dl:15,lp:1500,n:"Musée|Museum",
+ d:"Votre musée emprunte une œuvre à un musée étranger pour une exposition ouvrant dans 24 semaines. Il l’acquiert ensuite, puis la prête à d’autres musées. Budget : assurance, transport et formalités.|Your museum is borrowing an artwork from a foreign museum for an exhibition opening in 24 weeks. It then acquires the work and lends it on to other museums. Budget: insurance, transport and formalities.",
+ s:[
+ ["fac","Facility report|Facility report","Le prêteur demande des garanties sur vos salles.|The lender asks for guarantees about your galleries.",[
+  ["Rapport complet : climat, sécurité, éclairage|Full report: climate, security, lighting",1500,1,10,"","Le prêteur est rassuré.|The lender is reassured."],
+  ["Version courte et générique|Short generic version",200,0,-5,"fr","Rapide, mais le prêteur pose des questions.|Quick, but the lender has questions."]]],
+ ["aut","Autorisation du prêt|Loan authorisation","Comment formalisez-vous le prêt ?|How do you formalise the loan?",[
+  ["Contrat de prêt validé par le conseil du prêteur|Loan agreement approved by the lender’s board",800,4,10,"","Tout est écrit et signé.|Everything is written and signed."],
+  ["Accord informel par courriel|Informal agreement by email",0,0,-15,"lo","Vite fait, mais rien de précis sur les conditions.|Quick, but nothing precise on conditions."]]],
+ ["ass","Assurance « clou à clou »|“Nail to nail” insurance","Comment couvrir l’œuvre ?|How do you cover the work?",[
+  ["Assurance commerciale clou à clou|Commercial nail-to-nail insurance",6000,0,5,"ins","Couverture immédiate.|Immediate cover."],
+  ["Demander une garantie d’État|Apply for a state indemnity",500,5,0,"ins","Moins cher, mais cinq semaines d’instruction.|Cheaper, but five weeks of processing."]]],
+ ["aus","Autorisations de sortie|Export authorisations","Le pays du prêteur doit autoriser la sortie temporaire.|The lender’s country must authorise temporary export.",[
+  ["Déposer les demandes maintenant|File the applications now",700,3,10,"","Les autorisations sont prêtes à temps.|The authorisations are ready in time."],
+  ["Attendre la date d’expédition|Wait until shipping time",0,0,-10,"late","Pari risqué sur les délais.|A risky bet on timing."]]],
+ ["d1","Douane : carnet ATA|Customs: ATA carnet","Comment passer la douane d’entrée ?|How do you clear import customs?",[
+  ["Carnet ATA (admission temporaire)|ATA carnet (temporary admission)",2000,1,5,"","Passage fluide, sans TVA à avancer.|Smooth clearance, no VAT to advance."],
+  ["Déclaration ordinaire, TVA à récupérer|Ordinary declaration, VAT to reclaim later",5500,0,0,"vat","Vous avancez la TVA.|You advance the VAT."]]],
+ ["expo","Convoyeurs et installation|Couriers and installation","Qui manipule l’œuvre à l’arrivée ?|Who handles the work on arrival?",[
+  ["Convoyeur du prêteur présent|Lender’s courier on site",3500,0,5,"","Le convoyeur supervise le déballage.|The courier supervises unpacking.",0,3],
+  ["Manutentionnaires locaux seuls|Local handlers only",800,0,0,"hd","Économie, mais sans expert du prêteur.|Savings, but no lender expert.",0,25]]],
+ ["achat","Acquérir l’œuvre|Acquire the work","L’exposition est un succès : le musée veut acheter l’œuvre. Que faire du carnet ATA ?|The exhibition is a success: the museum wants to buy the work. What happens to the ATA carnet?",[
+  ["Apurer le carnet et mettre en libre pratique (TVA, droits)|Close the carnet and release for free circulation (VAT, duties)",5000,2,5,"","L’œuvre est désormais importée définitivement.|The work is now permanently imported."],
+  ["Réexporter, puis racheter et réimporter|Re-export, then buy and import again",7500,5,0,"","Double formalités : lent et coûteux.|Double formalities: slow and costly."]]],
+ ["pret","Prêter à un autre musée|Lend to another museum","L’œuvre est à vous. Un autre musée la demande. Où se trouve-t-il ?|The work is now yours. Another museum asks for it. Where is it?",[
+  ["Dans l’UE|Within the EU",1500,2,0,"","Peu de formalités de sortie.|Few export formalities.",0,5],
+  ["Hors de l’UE (autorisation de sortie + carnet ATA)|Outside the EU (export authorisation + ATA carnet)",5000,5,-5,"","Autorisation de sortie et carnet à organiser.|Export authorisation and carnet to organise.",0,12]]],
+ ["aut","Conditions du prêt|Loan terms","Quelles conditions imposez-vous à l’emprunteur ?|What conditions do you set for the borrower?",[
+  ["Facility report, contrat écrit et redevance de prêt|Facility report, written contract and loan fee",-3200,1,10,"","Frais de 800 €, redevance de 4 000 € encaissée ; tout est écrit.|800 € costs, 4,000 € loan fee collected; everything is written down."],
+  ["Prêt gratuit sur parole|Free loan on a handshake",0,0,-15,"lh","Aucune garantie écrite.|Nothing in writing."]]],
+ ["re1","Retour du prêt|Return from the loan","L’emprunteur doit rendre l’œuvre ; le carnet a une date limite.|The borrower must return the work; the carnet has a deadline.",[
+  ["Réserver le retour avant l’échéance|Book the return before the deadline",2500,0,5,"","Retour dans les temps.|Return on time."],
+  ["Laisser l’emprunteur la garder plus longtemps|Let the borrower keep it longer",0,0,-5,"ex","Vous repoussez la question.|You postpone the question."]]]],
+ f:{
+ fr:["Le prêteur doute de vos salles ; le prêt manque d’être retiré.|The lender doubts your galleries; the loan is nearly withdrawn.",0,3,-15],
+ lo:["Désaccord sur les conditions du prêt à l’ouverture.|A dispute over loan conditions at the opening.",3000,2,-20],
+ late:["Les autorisations de sortie retardent l’expédition.|Export authorisations delay the shipment.",1500,5,-10],
+ vat:["Le remboursement de TVA prend des mois : trésorerie immobilisée.|The VAT refund takes months: cash is tied up.",2000,2,0],
+ hd:["Une manutention maladroite abîme la surface ; réclamation.|Clumsy handling scuffs the surface; a claim follows.",4000,0,-20],
+ lh:["Dégâts et retard : aucun contrat pour réclamer.|Damage and delay: no contract to claim against.",3000,3,-20],
+ ex:["Le carnet expire : amende et retour en urgence.|The carnet expires: a fine and an urgent return.",3500,2,-15]}}};
+const SU={st:"Choisissez votre point de vue|Choose your point of view",in:"Une simulation simplifiée à partir du diagramme : vos choix coûtent de l’argent et du temps, et ont des conséquences plus tard. Le hasard s’en mêle. Illustratif, pas un conseil juridique.|A simplified simulation based on the diagram: your choices cost money and time, and have consequences later. Chance plays a part. Illustrative, not legal advice.",
+ b:"Budget|Budget",w:"Semaines|Weeks",d:"Solidité de la documentation|Documentation strength",nx:"Continuer →|Continue →",rd:"Lire la page →|Read the page →",cl:"Fermer ✕|Close ✕",
+ rk:"Bilan|Reckoning",nof:"Aucune mauvaise surprise.|No nasty surprises.",re:"Rejouer|Play again",
+ ok:"L’œuvre arrive à temps et en bon état.|The work arrives on time and in good condition.",
+ lt:"L’œuvre arrive, mais après la date visée.|The work arrives, but after your target date.",
+ ko:"Le dossier échoue : l’œuvre n’arrive pas.|The file collapses: the work does not arrive.",ob:"Objectif|Target",rp:"Revente|Resale",pb:"Prix d’achat :|Purchase price:",pr:"Prix de revente :|Resale price:",nt:"Résultat net (revente − achat − frais) :|Net result (resale − purchase − costs):",dm:"Solidité de la documentation|Documentation strength",
+ dgp:"Dommage permanent : l’œuvre est définitivement abîmée.|Permanent damage: the work is permanently damaged.",
+ dgc:"Dommage permanent : l’assurance verse 6 000 €, mais la valeur est perdue.|Permanent damage: insurance pays €6,000, but the value is lost.",
+ dgm:"Dommage permanent : le prêteur réclame 12 000 €.|Permanent damage: the lender claims €12,000.",
+ dgi:"Dommage permanent : l’assurance couvre la réclamation.|Permanent damage: insurance covers the claim.",
+ dgn:"L’œuvre a subi un dommage permanent.|The work suffered permanent damage.",dpm:"Dommage permanent|Permanent damage",lt2:"Frais de retard :|Delay costs:"};
+const EV=[["Grève douanière : dossiers bloqués.|Customs strike: files are stuck.",0,3,0,0,100],
+["Le taux de change joue contre vous.|The exchange rate moves against you.",900,0,0,0,100],
+["Un document est perdu et doit être refait.|A document is lost and must be redone.",400,1,-8,0,100],
+["Contrôle douanier aléatoire : dossier faible, retenue et frais.|Random customs check: weak documentation, held and fined.",1500,3,-5,0,49],
+["Contrôle douanier aléatoire : dossier solide, passage rapide.|Random customs check: strong documentation, fast clearance.",0,-1,3,70,100],
+["Un agent bien disposé accélère la procédure.|A helpful official speeds things up.",0,-1,0,0,100],
+["Le transporteur offre une remise de groupage.|The shipper offers a consolidation discount.",-600,0,0,0,100],
+["Un contrôle du lieu de stockage demande des preuves.|A storage inspection asks for proof.",300,1,-3,0,69]];
+function smRnd(c){S.ev=S.dg=null;
+ if(c[7]&&Math.random()*100<c[7]){const ins=S.f.includes("ins"),m=S.p=="m";S.dmg=1;S.d-=20;if(m&&!ins)S.b-=12000;if(!m&&ins)S.b+=6000;S.dg=m?(ins?SU.dgi:SU.dgm):(ins?SU.dgc:SU.dgp)}
+ if(Math.random()<.35){const k=EV.filter(e=>S.d>=e[4]&&S.d<=e[5]),e=k[Math.floor(Math.random()*k.length)];S.b-=e[1];S.w=Math.max(0,S.w+e[2]);S.d+=e[3];S.ev=e[0]}}
+let S=null;
+const eu=n=>n.toLocaleString(L?"en-GB":"fr-FR")+" €";
+function smStart(p){const D=SMD[p];S={p,i:0,b:D.b,w:0,d:60,f:[],ph:"q",o:null,R:[],PM:[]};smR()}
+function smPick(j){const c=SMD[S.p].s[S.i][3][j];S.b-=c[1];S.w+=c[2];S.d=Math.min(100,S.d+c[3]);if(c[4])S.f.push(c[4]);if(c[6])S.PM.push([SMD[S.p].s[S.i][1],c[6]]);smRnd(c);S.o=c[5];S.ph="o";smR()}
+function smNext(){const D=SMD[S.p];S.i++;if(S.i>=D.s.length){S.f.forEach(k=>{const e=D.f[k];S.b-=e[1];S.w+=e[2];S.d+=e[3];S.R.push(e[0]);if(e[4])S.PM.push([e[0],e[4]])});if(S.w>D.dl){const x=(S.w-D.dl)*D.lp;S.b-=x;S.R.push(SU.lt2.split("|").map(a=>a+" "+eu(x)).join("|"))}if(S.dmg){S.R.push(SU.dgn);if(D.pp)S.PM.push([SU.dpm,-40])}if(D.pp){const dm=S.d>=80?8:S.d<50?-12:0;if(dm)S.PM.push([SU.dm,dm]);S.P=Math.round(D.pp*(1+S.PM.reduce((a,x)=>a+x[1],0)/100))}S.ph="e"}else S.ph="q";smR()}
+function smR(){const el=$("smv");if(!el)return;let h="";const D=S&&SMD[S.p];
+ const hd=`<a class="x" onclick="$('smv').classList.remove('show')">${t(SU.cl)}</a>`;
+ if(!S){h=`<div class="w">${hd}<h1>${t(U.sm)}</h1><p>${t(SU.in)}</p><h2>${t(SU.st)}</h2>`+["c","m"].map(k=>`<button onclick="smStart('${k}')"><b>${t(SMD[k].n)}</b><small>${t(SMD[k].d)}</small></button>`).join("")+"</div>"}
+ else{const n=D.s.length,pt=i=>40+i*(620/(n-1)),cx=S.ph=="e"?n-1:S.i;
+  const svg=`<svg viewBox="0 0 700 64"><line x1="40" y1="32" x2="660" y2="32" stroke="#fff" stroke-width="2"/>${D.s.map((s,i)=>`<circle cx="${pt(i)}" cy="32" r="6" fill="${i<=cx?"#fff":"#000"}" stroke="#fff"/>`).join("")}<rect x="${pt(cx)-9}" y="5" width="18" height="18" fill="#fff"/></svg>`;
+  const me=`<div class="m"><div class="${S.b<0?"bad":""}">${t(SU.b)}<b>${eu(S.b)}</b></div><div class="${S.w>D.dl?"bad":""}">${t(SU.w)} (${t(SU.ob)} ${D.dl})<b>${S.w}</b></div><div class="${S.d<=0?"bad":""}">${t(SU.d)}<b>${S.d}/100</b></div></div>`;
+  h=`<div class="w">${hd}${svg}${me}`;
+  if(S.ph=="e"){const bad=S.b<0||S.d<=0,late=S.w>D.dl;
+   h+=`<h1>${t(bad?SU.ko:late?SU.lt:SU.ok)}</h1><h2>${t(SU.rk)}</h2>${S.R.length?"<ul>"+S.R.map(r=>`<li>${t(r)}</li>`).join("")+"</ul>":`<p>${t(SU.nof)}</p>`}${S.P!=null&&!bad?`<h2>${t(SU.rp)}</h2><p>${t(SU.pb)} ${eu(D.pp)}</p><ul>${S.PM.map(x=>`<li>${t(x[0])} : ${x[1]>0?"+":""}${x[1]} %</li>`).join("")}</ul><p><b>${t(SU.pr)} ${eu(S.P)}</b></p><p>${t(SU.nt)} ${eu(S.P-D.pp-(D.b-S.b))}</p>`:""}<button onclick="S=null;smR()">${t(SU.re)}</button>`}
+  else{const st=D.s[S.i];h+=`<h2>${S.i+1}/${n} — ${t(st[1])}</h2><p>${t(st[2])}</p>`;
+   if(S.ph=="q")h+=st[3].map((c,j)=>`<button onclick="smPick(${j})">${t(c[0])}</button>`).join("");
+   else h+=`<p class="bt">${t(S.o)}</p>${S.dg?`<p class="bt bad">${t(S.dg)}</p>`:""}${S.ev?`<p class="bt">${t(S.ev)}</p>`:""}<button onclick="smNext()">${t(SU.nx)}</button>`;
+   h+=`<a onclick="location.hash='#/${st[0]}'">${t(SU.rd)}</a>`}
+  h+="</div>"}
+ el.innerHTML=h}
+$("sm").onclick=()=>{$("smv").classList.add("show");smR()};
 exp.add("root");ui();route2();
 </script></body></html>
