@@ -4,7 +4,7 @@
 <title>Comment les œuvres d’art traversent-elles les frontières ?</title>
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;background:#000;color:#fff;font-family:Helvetica,"Helvetica Neue",Arial,sans-serif;overflow:hidden}
+html,body{margin:0;height:100%;background:#000;color:#fff;font-family:Helvetica,"Helvetica Neue",Arial,sans-serif}
 header{position:fixed;top:0;left:0;right:0;height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;z-index:20;background:#000;border-bottom:1px solid #fff;font-size:13px}
 header b{font-size:14px}
 .ctl{display:flex;gap:26px;align-items:center}
@@ -14,44 +14,37 @@ header b{font-size:14px}
 .sw i:after{content:"";position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;background:#fff;transition:left .2s}
 .sw.on i:after{left:20px}
 #map{position:fixed;top:48px;left:0;width:100%;height:calc(100% - 48px);cursor:grab;touch-action:none}
-
-/* Architectural thick structural lines */
-.pipe{fill:none;stroke:#fff;stroke-width:24;stroke-linecap:square;stroke-linejoin:miter;transition:opacity .3s}
-.node{cursor:pointer;transition:opacity .3s}
-.node .in{transition:transform .15s;transform-box:fill-box;transform-origin:center}
-.node:hover .in{transform:scale(1.02)}
-
-/* Seamless white boxes blending into lines */
-.node rect{fill:#fff; stroke:none;}
-.node div{
-    width:100%; height:100%;
-    display:flex; align-items:center; justify-content:flex-start;
-    text-align:left; font-size:13px; line-height:1.2; color:#000;
-    padding:10px 14px; pointer-events:none;
-    white-space: pre-line;
-}
-
-.sat{cursor:pointer;transition:opacity .3s}
-.sat .dot{fill:#fff;transition:transform .15s;transform-box:fill-box;transform-origin:center}
+.sat{cursor:pointer;transition:opacity .45s}
 .sat:hover .dot{transform:scale(1.5)}
-.sat text{fill:#fff;font-size:18px;text-anchor:middle;opacity:0;transition:opacity .15s;pointer-events:none}
 .sat:hover text{opacity:1}
+#map{background:#231f20}
+.shape{fill:#fff;stroke:none;transition:opacity .45s}
+.cut{fill:none;stroke:#231f20;stroke-width:.6;transition:opacity .45s}
+.node{cursor:pointer;transition:opacity .45s}
+.node polygon,.node rect{fill:#fff}
+.meas{font-size:10px;letter-spacing:-.01em;font-family:Helvetica,"Helvetica Neue",Arial,sans-serif;opacity:0;pointer-events:none}
+.node text{fill:#231f20;font-size:10px;letter-spacing:-.01em;font-family:Helvetica,"Helvetica Neue",Arial,sans-serif}
+.node .in{transition:transform .15s;transform-box:view-box}
+.node:hover .in{transform:scale(1.05)}
+.satline{stroke:#fff;stroke-width:3;transition:opacity .45s}
+.sat .dot{fill:#fff;transition:transform .15s;transform-box:fill-box;transform-origin:center}
+.sat:hover .dot{transform:scale(1.6)}
+.sat text{fill:#fff;font-size:11px;font-family:Helvetica,Arial,sans-serif;text-anchor:start;opacity:0;transition:opacity .15s;pointer-events:none}
 .hid{opacity:0;pointer-events:none}
-
-#hint{position:fixed;bottom:14px;left:24px;font-size:12px;background:#000;padding:4px 8px;z-index:10}
-#sel{position:fixed;bottom:14px;right:24px;font-size:13px;background:#fff;color:#000;padding:8px 14px;display:none;gap:16px;align-items:center;max-width:60vw;z-index:40}
+#hint{position:fixed;bottom:14px;left:24px;font-size:12px;background:#000;padding:4px 8px}
+#sel{position:fixed;bottom:14px;right:24px;font-size:13px;background:#fff;color:#000;padding:8px 14px;display:none;gap:16px;align-items:center;max-width:60vw}
 #sel.show{display:flex}
 #sel button{font:inherit;background:#000;color:#fff;border:0;padding:6px 12px;cursor:pointer}
-
-#pg{position:fixed;inset:0;background:#fff;color:#000;z-index:50;overflow:auto;padding:76px 8vw 80px;display:none}
-#pg.show{display:block;animation:in .3s}
+#pg{position:fixed;inset:0;background:#fff;color:#000;z-index:30;overflow:auto;padding:76px 8vw 80px;display:none}
+#pg.show{display:block;animation:in .35s}
 @keyframes in{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0)}}
 #pg .bar{position:fixed;top:0;left:0;right:0;height:48px;background:#000;color:#fff;display:flex;align-items:center;gap:18px;padding:0 24px;font-size:13px}
-#pg a{cursor:pointer}#pg a:hover{text-decoration:underline}
+#pg a{cursor:pointer}
+#pg p a{color:#000;text-decoration:underline}#pg a:hover{text-decoration:underline}
 #pg .bar .cr{opacity:.8}
-#pg h1{font-size:40px;line-height:1.05;margin:20px 0 14px;max-width:15em;letter-spacing:-.02em; white-space:pre-line;}
+#pg h1{font-size:44px;line-height:1.05;margin:20px 0 14px;max-width:15em;letter-spacing:-.02em}
 #pg .tag{display:inline-block;border:1px solid #000;padding:2px 8px;font-size:12px}
-#pg p{max-width:64ch;line-height:1.5;font-size:15px;margin:0 0 4px; white-space:pre-line;}
+#pg p{max-width:64ch;line-height:1.5;font-size:15px;margin:0 0 4px}
 #pg h2{font-size:15px;margin:34px 0 8px;border-top:1px solid #000;padding-top:10px;max-width:900px}
 #pg .ph{border:1px dashed #000;max-width:900px;height:180px;display:flex;align-items:center;justify-content:center;font-size:13px;text-align:center;padding:20px}
 #pg svg{width:100%;max-width:900px;background:#000}
@@ -62,297 +55,331 @@ header b{font-size:14px}
 #pg li{padding:9px 0;border-bottom:1px solid #000;font-size:15px;cursor:pointer}
 #pg li:hover{padding-left:10px}
 </style></head><body>
-
 <header><b id="ti"></b>
 <div class="ctl"><a id="ix"></a><a id="rs"></a><div class="sw" id="sl"><span>FR</span><i></i><span>EN</span></div></div></header>
-
-<svg id="map" viewBox="0 0 1800 1200"><g id="L"></g></svg>
-
+<svg id="map"><g id="L"></g></svg>
 <div id="hint"></div><div id="sel"></div><div id="pg"></div>
-
 <script>
-/* ================= PRECISE BLUEPRINT COORDINATES ================= */
-const N = {
-  root:  [200, 150, 0, "Comment les oeuvres\nd'art traversent-elles\nles frontières ?|How do artworks\ncross borders?"],
-  priv:  [450,  80, 1, "Achat d’une oeuvre\nd'art par un privé|Private purchase of\nan artwork"],
-  achat: [650,  80, 1, "Achat d’une\noEuvre d'art|Purchase of\nan artwork"],
-  intl:  [800,  30, 1, "à l’international|international"],
-  dom:   [800, 130, 1, "à domicile|domestic"],
-  autre: [950, 200, 1, "Achat d’une oeuvre\nd'art dans une autre\nrégion fiscale|Purchase in another\ntax region"],
-  meme:  [1100,130, 1, "Achat d’une oeuvre\nd'art dans la même\nrégion fiscale|Purchase within the\nsame tax region"],
-  stock: [1250,200, 1, "Stockage\nd’art|Art storage"],
-  t1:    [1450, 80, 1, "taxable à\nl’achat|taxable at\npurchase"],
-  t2:    [1600,130, 1, "non taxable\nà l'achat|not taxable\nat purchase"],
-  t3:    [1550,230, 1, "taxable apres\nl’achat|taxable after\npurchase"],
-  t4:    [1600,300, 1, "non taxable\napres l'achat|not taxable\nafter purchase"],
+/* ================= DATA — edit here =================
+ Nodes: id:[x,y,group,"FR|EN"]  (x,y = centre; group 0 root · 1 private purchase · 2 museum loan · 3 private owner loaning to museum)
+ SZ overrides the default size [170,70]. Edges "from-to" read top to bottom. */
+const N={
+root:[1300,80,0,"Comment les œuvres d’art traversent-elles les frontières ?|How do artworks cross borders?"],
+priv:[480,270,1,"Achat d’une œuvre d’art par un privé|Private purchase of an artwork"],
+achat:[480,420,1,"Achat d’une œuvre d’art|Purchase of an artwork"],
+intl:[350,550,1,"à l’international|international"],
+dom:[610,550,1,"à domicile|domestic"],
+autre:[350,690,1,"Achat d’une œuvre d’art dans une autre région fiscale|Purchase in another tax region"],
+meme:[610,690,1,"Achat d’une œuvre d’art dans la même région fiscale|Purchase within the same tax region"],
+stock:[480,850,1,"Stockage d’art|Art storage"],
+t1:[90,1020,1,"taxable à l’achat|taxable at purchase"],
+t2:[350,1020,1,"non taxable à l’achat|not taxable at purchase"],
+t3:[610,1020,1,"taxable après l’achat|taxable after purchase"],
+t4:[870,1020,1,"non taxable après l’achat|not taxable after purchase"],
+pret:[1300,270,2,"Prêt d’une œuvre d’art d’un musée à un musée|Loan of an artwork from museum to museum"],
+fac:[1300,420,2,"Facility report|Facility report"],
+d2:[1620,420,2,"Passage de la douane de sortie, carnet ATA|Exit customs, ATA carnet"],
+ass:[1300,550,2,"Assurance «\u00a0clou\u00a0à\u00a0clou\u00a0»|“Nail to nail” insurance"],
+aut:[1300,690,2,"Autorisation du prêt|Loan authorisation"],
+intl2:[1180,840,2,"À l’internationale|International"],
+eneu:[1420,840,2,"En EU|Within the EU"],
+aus:[1180,970,2,"Autorisations de sortie|Export authorisations"],
+d1:[1180,1100,2,"Passage de la douane de sortie, carnet ATA|Exit customs, ATA carnet"],
+exp:[1300,1250,2,"Exportation|Export"],
+expo:[1300,1400,2,"Exposition|Exhibition"],
+re1:[1300,1560,2,"Re-exportation pays d’origine|Re-export to country of origin"],
+priv2:[2080,270,3,"Achat d’œuvres d’art par un privé, pour les prêter à un musée|Private purchase of artworks, to loan to a museum"],
+pa:[1880,420,3,"Prêt à l’achat|Loan at purchase"],
+pb:[2280,420,3,"Prêt après l’achat|Loan after purchase"],
+x1:[1780,550,3,"Prêt dans une région exonérée d’impôts|Loan in a tax-exempt region"],
+i2:[1980,550,3,"Prêt dans une région imposée|Loan in a taxed region"],
+x2:[2180,550,3,"Prêt dans une région exonérée d’impôts|Loan in a tax-exempt region"],
+i1:[2380,550,3,"Prêt dans une région imposée|Loan in a taxed region"],
+re2:[2080,800,3,"Re-exportation au propriétaire|Re-export to the owner"]};
+const E="root-priv root-pret root-priv2 priv-achat achat-intl achat-dom dom-autre dom-meme intl-stock autre-stock meme-stock stock-t1 stock-t2 stock-t3 stock-t4 pret-fac pret-d2 pret-re1 fac-ass ass-aut aut-intl2 aut-eneu intl2-aus aus-d1 d1-exp eneu-exp exp-expo expo-re1 d2-re1 priv2-pa priv2-pb pa-x1 pa-i2 pb-x2 pb-i1 x1-re2 i2-re2 x2-re2 i1-re2 re2-priv2".split(" ").map(e=>e.split("-"));
+const BACK="re2-priv2";
+/* Satellite dots: appear next to a node once it has been clicked. SAT[nodeId] = {x,y = dot position, from = point on the node it connects to, f = page to open (new tab), t = hover label "FR|EN"} (coordinates in the units of the layout SVG) */
+const SAT={pret:{x:344,y:294,from:[323.2,272.0],f:"provenances/index.html",t:"provenances|provenances"},expo:{x:464,y:478,from:[464,451.8],f:"transport/index.html",t:"transport|transport"}};
+/* ================= PAGE STRUCTURE — edit here =================
+ Every page uses SECTIONS. Write real text in C[id] = {sum:"FR|EN", s:["FR|EN", …one per section…], diagram:"<svg…>"} */
+const SECTIONS=["Définition|Definition","Règles et conditions|Rules and conditions","Documents requis|Required documents","Acteurs|Actors","Exemple de cas|Case example","Diagramme|Diagram","Sources|Sources"];
+const TODO="[À rédiger]|[To be written]";
+/* ===== TEXT CONTENT — draft from internet research (verify legal and tax details before submitting) =====
+ mk(summary, definition, rules, documents, actors, example, sources) — every text is "FR|EN" */
+const A=(l,u)=>`<a href='${u}' target='_blank' rel='noopener'>${l}</a>`;
+const SRC={
+cult:A("Douane — Exporter des biens culturels","https://www.douane.gouv.fr/demarche/exporter-des-biens-culturels"),
+cult2:A("Ministère de la Culture — Circulation des biens culturels","https://www.culture.gouv.fr/fr/thematiques/livre-et-lecture/pour-les-professionnels-des-bibliotheques/patrimoine-des-bibliotheques/circulation-des-biens-culturels"),
+ata:A("CCI Paris Île-de-France — Carnet ATA","https://www.entreprises.cci-paris-idf.fr/web/international/exportation-temporaire-carnet-ata"),
+ataman:A("CCI Paris Île-de-France — Mode d’emploi du carnet ATA (PDF)","https://entreprises.cci-paris-idf.fr/documents/20152/137470/mode+d%27emploi+ATA+2021.pdf"),
+at:A("Règlement délégué (UE) 2015/2446, art. 234 — exonération totale pour expositions","https://www.thetradehub.eu/fr/reglementation/uk/eu/da-2446-2015/article/234"),
+douart:A("Douane — Les œuvres et objets d’art","https://www.douane.gouv.fr/fiche/les-oeuvres-et-objets-dart-transport-par-son-auteur"),
+tva:A("BOFiP — TVA : œuvres d’art, objets de collection ou d’antiquité","https://bofip.impots.gouv.fr/bofip/1285-PGP.html"),
+tvaexp:A("BOFiP — TVA : exportations (BOI-TVA-SECT-90-70)","https://www.thetradehub.eu/en/reglementation/france/doctrine/bofip/bofip-boi-tva-sect-90-70"),
+ch1:A("IAL — Customs warehouses in Switzerland: an introduction","https://ial.uk.com/customs-warehouses-in-switzerland-an-introduction/"),
+ch2:A("Artnet — Switzerland tightens freeport regulations (2015)","https://news.artnet.com/market/switzerland-freeport-regulations-367361"),
+ch3:A("Swissinfo — Russian war renews pressure on Swiss free ports","https://www.swissinfo.ch/eng/russian-war-in-ukraine-renews-pressure-on-swiss-free-ports/47671636"),
+cpta:A("Office fédéral de la culture — Devoirs de diligence (LTBC)","https://www.bak.admin.ch/dam/bak/en/dokumente/kulturguetertransfer/publikationen/checkliste_besonderesorgfaltspflichten.pdf.download.pdf/duties_of_diligence.pdf"),
+ret:A("Office fédéral de la culture — Garantie de restitution","https://www.bak.admin.ch/dam/fr/sd-web/Q3uwKZByGYuR/return-guarantee-details-provenance.pdf"),
+eu:A("Douane — Biens culturels (règlement UE 2019/880)","https://www.douane.gouv.fr/professionnels/commerce-international/produits-soumis-reglementation-particuliere-embargos/biens"),
+loan1:A("LaM — Procédure de prêt d’œuvres (PDF)","https://www.musee-lam.fr/sites/default/files/2026-02/Ext_Proc%C3%A9dure%20pr%C3%AAts%20VDEF%20-%20FR.pdf"),
+loan2:A("Contrat de prêt type — Haute-Vienne (PDF)","https://www.haute-vienne.fr/fileadmin/deliberations/medias/seance_51739/5_CONTRAT_DE_PRET-LE_POINT_DU_JOUR.pdf"),
+loan3:A("Convention de prêt type — Avignon Musées (PDF)","https://www.avignon.fr/fileadmin/actualites/Documents/2025/07_Juillet/CM/33.PDF")};
+const SR=(...k)=>{const x=k.map(i=>SRC[i]).join("<br>");return x+"|"+x};
+const mk=(sum,d,r,doc,act,ex,src)=>({sum,s:[d,r,doc,act,ex,"",SR(...src)]});
+const SC="Scénario hypothétique : |Hypothetical scenario: ";
+const CUST=(sum)=>mk(sum,
+"Présentation des œuvres au bureau de douane de sortie avec le carnet ATA : la douane vérifie les biens par rapport à la liste générale et vise le volet d’exportation.|Presentation of the works at the exit customs office with the ATA carnet: customs checks the goods against the general list and endorses the export voucher.",
+"Le carnet ATA est valable un an, sa liste générale ne peut plus être modifiée après émission, et il doit être visé à chaque passage (sortie, entrée, réexportation, réimportation). Un défaut de visa de réexportation peut engager la garantie de la chambre émettrice.|The ATA carnet is valid for one year, its general list cannot be changed after issue, and it must be stamped at every crossing (exit, entry, re-export, re-import). A missing re-export stamp can trigger the issuing chamber’s guarantee.",
+"Le carnet ATA avec sa liste générale (voir le fac-similé joint ci-dessus), et les autorisations de sortie nécessaires.|The ATA carnet with its general list (see the attached facsimile above), and the required exit authorisations.",
+"Titulaire du carnet, transporteur ou transitaire, agent des douanes, chambre de commerce émettrice (CCI Paris Île-de-France en France).|Carnet holder, carrier or forwarder, customs officer, issuing chamber of commerce (CCI Paris Île-de-France in France).",
+SC.split("|")[0]+"le convoyeur présente le carnet et les caisses ; la douane contrôle les numéros d’ordre puis appose son cachet sur le volet.|"+SC.split("|")[1]+"the courier presents the carnet and the crates; customs checks the item numbers then stamps the voucher.",
+["ata","ataman","cult"]);
+const LOCP=(sum,d,r)=>mk(sum,d,r,
+"Contrat de prêt entre le propriétaire et le musée, attestation d’assurance, facture d’achat, preuve de provenance et, selon le lieu, déclaration d’admission temporaire ou autorisation de sortie.|Loan agreement between owner and museum, insurance certificate, purchase invoice, proof of provenance and, depending on the place, temporary admission declaration or exit authorisation.",
+"Propriétaire privé, musée emprunteur, assureur, transporteur, douane.|Private owner, borrowing museum, insurer, carrier, customs.",
+"Scénario hypothétique : un collectionneur prête une œuvre à un musée étranger pour une exposition de six mois.|Hypothetical scenario: a collector lends a work to a foreign museum for a six-month exhibition.",
+["at","tva","loan1"]);
+const TAX=(sum,d,r,doc,act,ex,src)=>mk(sum,d,r,doc,act,ex,src);
+const C={
+root:mk("Cette recherche suit le parcours juridique, douanier et fiscal d’une œuvre qui change de pays : achetée par un privé, prêtée de musée à musée, ou achetée par un privé pour être prêtée.|This research follows the legal, customs and tax path of an artwork that changes country: bought by a private person, lent from museum to museum, or bought by a private owner to be lent.",
+"Une œuvre n’est pas une marchandise ordinaire : franchir une frontière combine la protection du patrimoine (autorisations de sortie), la douane (admission temporaire, carnet ATA, entrepôts) et la fiscalité (TVA, droits).|An artwork is not an ordinary good: crossing a border combines heritage protection (export authorisations), customs (temporary admission, ATA carnet, warehouses) and tax (VAT, duties).",
+"Les règles varient selon l’âge, la valeur et la catégorie du bien, les pays de départ et d’arrivée, et le caractère définitif ou temporaire du mouvement. Cadre principal : règlement (CE) 116/2009 (export), règlement (UE) 2019/880 (import), code du patrimoine, code des douanes de l’Union. Synthèse de recherche : à vérifier avant diffusion.|Rules vary with the age, value and category of the good, the countries of departure and arrival, and whether the movement is definitive or temporary. Main framework: Regulation (EC) 116/2009 (export), Regulation (EU) 2019/880 (import), the French heritage code, the Union Customs Code. Research summary: verify before publication.",
+"Selon le cas : autorisation de sortie temporaire ou certificat, licence d’exportation européenne, carnet ATA, déclaration en douane, facility report, contrat de prêt, attestation d’assurance.|As applicable: temporary exit authorisation or certificate, EU export licence, ATA carnet, customs declaration, facility report, loan agreement, insurance certificate.",
+"Propriétaires, musées, galeries et maisons de vente, transporteurs et transitaires, assureurs, ministère de la Culture, douane, chambres de commerce, exploitants d’entrepôts francs.|Owners, museums, galleries and auction houses, carriers and forwarders, insurers, Ministry of Culture, customs, chambers of commerce, freeport operators.",
+"Scénario hypothétique : un collectionneur parisien prête un tableau à un musée de Genève ; l’œuvre sort de l’UE, entre en Suisse puis revient.|Hypothetical scenario: a Parisian collector lends a painting to a museum in Geneva; the work leaves the EU, enters Switzerland and comes back.",
+["cult","ata","eu","cpta"]),
+priv:mk("Premier embranchement : un particulier acquiert une œuvre pour la posséder et la conserver.|First branch: a private individual acquires an artwork to own and keep.",
+"Achat par une personne privée, hors prêt à un musée ; les formalités dépendent du lieu de l’achat et du lieu où l’œuvre sera conservée.|Purchase by a private person outside any museum loan; formalities depend on where it is bought and where the work will be kept.",
+"Trois questions structurent le parcours : l’achat est-il local ou international, quelle région fiscale s’applique, et l’œuvre est-elle stockée (entrepôt franc) ou conservée à domicile ?|Three questions structure the path: is the purchase local or international, which tax region applies, and is the work stored (freeport) or kept at home?",
+"Facture ou acte de vente, preuves de provenance et, selon le cas, licence d’exportation, déclaration en douane ou déclaration de l’importateur.|Invoice or bill of sale, provenance evidence and, as applicable, export licence, customs declaration or importer statement.",
+"Acheteur, vendeur (artiste, galerie, maison de vente), transporteur, douane, administration fiscale.|Buyer, seller (artist, gallery, auction house), carrier, customs, tax authority.",
+"Scénario hypothétique : un particulier français achète une peinture à une galerie de Bruxelles.|Hypothetical scenario: a French private buyer buys a painting from a Brussels gallery.",["tva","eu"]),
+achat:mk("Le transfert de propriété d’une œuvre, point de départ des obligations fiscales et douanières.|The transfer of ownership of an artwork, starting point of tax and customs obligations.",
+"Transfert de propriété à titre onéreux ; selon les cas, il déclenche TVA, droits de douane et contrôles de provenance.|Transfer of ownership for payment; depending on the case it triggers VAT, customs duties and provenance checks.",
+"Le diagramme sépare l’achat « à domicile » (même région fiscale) de l’achat « à l’international » (autre région fiscale).|The diagram separates “domestic” purchase (same tax region) from “international” purchase (another tax region).",
+"Facture, contrat de vente, certificat d’authenticité, preuve de provenance.|Invoice, sales contract, certificate of authenticity, proof of provenance.",
+"Acheteur, vendeur, conseil ou courtier, transporteur.|Buyer, seller, adviser or broker, carrier.",
+"Scénario hypothétique : l’acheteur hésite entre une œuvre vendue en France et la même chez un marchand à l’étranger ; la fiscalité diffère.|Hypothetical scenario: the buyer hesitates between a work sold in France and a similar one from a dealer abroad; the tax treatment differs.",["tva","douart"]),
+dom:mk("L’achat se fait dans le pays (ou l’espace fiscal) de l’acheteur.|The purchase takes place in the buyer’s own country (or tax area).",
+"Achat réalisé dans l’espace fiscal où l’acheteur est établi, sans passage de frontière fiscale.|Purchase made in the tax area where the buyer is established, with no fiscal border crossing.",
+"La TVA du pays s’applique au prix ; en France, le taux réduit de 5,5 % s’applique à la plupart des livraisons d’œuvres d’art depuis le 1er janvier 2025, sauf régime de la marge.|The country’s VAT applies to the price; in France a reduced rate of 5.5% has applied to most artwork deliveries since 1 January 2025, except under the margin scheme.",
+"Facture avec mention de la TVA ou du régime de la marge.|Invoice stating the VAT or the margin scheme.",
+"Acheteur, vendeur assujetti, administration fiscale.|Buyer, VAT-registered seller, tax authority.",
+"Scénario hypothétique : achat auprès d’un marchand parisien payé en euros, TVA française.|Hypothetical scenario: purchase from a Paris dealer paid in euros, French VAT.",["tva"]),
+intl:mk("L’achat implique deux pays ou deux régions fiscales.|The purchase involves two countries or two tax regions.",
+"Achat transfrontalier : le bien change de territoire douanier ou fiscal entre le vendeur et l’acheteur.|Cross-border purchase: the good changes customs or tax territory between seller and buyer.",
+"Entre États de l’UE : acquisition intracommunautaire (TVA du pays d’arrivée). Depuis un pays tiers : importation avec droits et TVA, et, depuis le 28 juin 2025, licence d’importation ou déclaration de l’importateur pour certains biens culturels.|Between EU states: intra-EU acquisition (VAT of the arrival country). From a third country: import with duties and VAT and, since 28 June 2025, an import licence or importer statement for certain cultural goods.",
+"Facture, preuve de l’expédition, déclaration en douane, licence ou déclaration de l’importateur (règlement 2019/880) si le bien est visé.|Invoice, proof of shipment, customs declaration, import licence or importer statement (Regulation 2019/880) if the good is covered.",
+"Acheteur, vendeur étranger, transitaire, douane, administration fiscale.|Buyer, foreign seller, forwarder, customs, tax authority.",
+"Scénario hypothétique : un acheteur à Lyon achète une œuvre auprès d’une galerie à New York.|Hypothetical scenario: a buyer in Lyon buys a work from a New York gallery.",["eu","tva","cpta"]),
+autre:mk("L’œuvre est achetée dans une région fiscale différente de celle où elle sera conservée.|The work is bought in a tax region different from the one where it will be kept.",
+"Achat dans une région fiscale autre que celle de l’acheteur ou du lieu de conservation.|Purchase in a tax region other than that of the buyer or the place of storage.",
+"La TVA peut être due dans le pays de destination ; une vente à l’exportation hors UE est exonérée de TVA sur preuve de sortie ; l’importation en France d’une œuvre d’art est au taux réduit de 5,5 %.|VAT may be due in the destination country; a sale for export outside the EU is VAT-exempt on proof of exit; importing an artwork into France is at the reduced rate of 5.5%.",
+"Facture, déclaration d’exportation visée par la douane, déclaration d’importation.|Invoice, export declaration endorsed by customs, import declaration.",
+"Vendeur, acheteur, transitaire, douanes des deux pays.|Seller, buyer, forwarder, customs of both countries.",
+"Scénario hypothétique : une œuvre achetée à Londres est livrée à Paris : importation et TVA française.|Hypothetical scenario: a work bought in London is delivered to Paris: import and French VAT.",["tva","tvaexp"]),
+meme:mk("L’œuvre est achetée dans la région fiscale de l’acheteur.|The work is bought within the buyer’s own tax region.",
+"Achat sans passage de frontière fiscale : une seule fiscalité s’applique.|Purchase without crossing a fiscal border: a single tax system applies.",
+"TVA locale ou régime de la marge selon le vendeur. Si l’œuvre est un bien culturel protégé, les règles de circulation du patrimoine restent à vérifier.|Local VAT or margin scheme depending on the seller. If the work is a protected cultural good, heritage-circulation rules still need checking.",
+"Facture, contrat de vente, preuve de provenance.|Invoice, sales contract, provenance evidence.",
+"Acheteur, vendeur, administration fiscale.|Buyer, seller, tax authority.",
+"Scénario hypothétique : achat en vente aux enchères en France par un résident français.|Hypothetical scenario: purchase at an auction in France by a French resident.",["tva"]),
+stock:mk("Où l’œuvre est conservée après l’achat : à domicile ou en entrepôt sous douane (port franc).|Where the work is kept after purchase: at home or in a customs warehouse (freeport).",
+"Un port franc ou entrepôt douanier conserve des biens sans déclencher droits de douane ni TVA tant qu’ils restent sous ce régime ; Genève, fondé en 1888, est le plus célèbre.|A freeport or customs warehouse keeps goods without triggering customs duties or VAT while they stay under that regime; Geneva, founded in 1888, is the best known.",
+"Suisse : révision de la loi sur les douanes en 2016 (inventaire des biens et des propriétaires, contrôle douanier), loi sur le transfert des biens culturels (devoirs de diligence). UE : le règlement 2019/880 traite le placement en entrepôt ou zone franche comme une importation. Durée maximale et identification du bénéficiaire effectif restent débattues : à vérifier.|Switzerland: 2016 revision of the Customs Act (inventory of goods and owners, customs oversight), Cultural Property Transfer Act (due diligence). EU: Regulation 2019/880 treats placement in a warehouse or free zone as an import. Maximum duration and beneficial-owner identification remain debated: to verify.",
+"Inventaire tenu par l’exploitant (description, propriétaire, date de dépôt), contrat de stockage, justificatifs de provenance, déclarations en douane au dépôt et à la sortie.|Inventory kept by the operator (description, owner, deposit date), storage contract, provenance evidence, customs declarations on deposit and exit.",
+"Exploitant (Ports Francs et Entrepôts de Genève SA), administration fédérale des douanes, Office fédéral de la culture, propriétaires et représentants, assureurs, transporteurs.|Operator (Ports Francs et Entrepôts de Genève SA), Swiss customs administration, Federal Office of Culture, owners and representatives, insurers, carriers.",
+"Scénario hypothétique : un collectionneur fait livrer une œuvre achetée en foire directement dans un entrepôt franc ; les taxes ne sont dues qu’à la sortie vers un territoire taxé.|Hypothetical scenario: a collector has a work bought at a fair delivered straight to a freeport; taxes are only due on exit into a taxed territory.",
+["ch1","ch2","ch3","cpta","eu"]),
+t1:mk("La taxe est exigible dès l’achat ou l’importation (interprétation du diagramme).|Tax is due at purchase or import (interpretation of the diagram).",
+"Cas où la TVA, voire les droits, sont acquittés au moment de l’achat ou de l’importation.|Case where VAT, possibly duties, are paid at the time of purchase or import.",
+"En France, importation, acquisition intracommunautaire et livraison d’œuvres d’art relèvent du taux réduit de 5,5 % depuis le 1er janvier 2025 (hors régime de la marge).|In France, import, intra-EU acquisition and delivery of artworks fall under the reduced rate of 5.5% since 1 January 2025 (except margin scheme).",
+"Facture avec TVA, déclaration d’importation ou déclaration de TVA.|Invoice with VAT, import declaration or VAT return.",
+"Acheteur, vendeur assujetti, douane à l’importation, administration fiscale.|Buyer, VAT-registered seller, customs on import, tax authority.",
+"Scénario hypothétique : achat en galerie à Paris, TVA comprise dans le prix payé.|Hypothetical scenario: purchase from a Paris gallery, VAT included in the price paid.",["tva"]),
+t2:mk("L’achat se fait sans taxe immédiate : suspension ou exonération (interprétation du diagramme).|The purchase is made without immediate tax: suspension or exemption (interpretation of the diagram).",
+"Achat sans taxe due sur le moment, parce que les taxes sont suspendues ou que le bien est exonéré.|Purchase with no tax due at the time because taxes are suspended or the good is exempt.",
+"Cas typiques : achat d’une œuvre déjà placée en entrepôt douanier (suspension) ; vente à l’exportation hors UE, exonérée de TVA sur preuve de sortie ; bien sous admission temporaire en exonération totale, non considéré comme importé pour la TVA.|Typical cases: purchase of a work already in a customs warehouse (suspension); sale for export outside the EU, VAT-exempt on proof of exit; goods under temporary admission with total relief, not treated as imported for VAT.",
+"Preuve du placement sous régime suspensif, exemplaire n° 3 de la déclaration d’exportation visé par la douane.|Evidence of placement under a suspensive procedure, copy no. 3 of the export declaration endorsed by customs.",
+"Vendeur, acheteur, exploitant d’entrepôt, douane, administration fiscale.|Seller, buyer, warehouse operator, customs, tax authority.",
+"Scénario hypothétique : une œuvre est vendue entre deux collectionneurs sans quitter l’entrepôt franc de Genève.|Hypothetical scenario: a work is sold between two collectors without leaving the Geneva freeport.",["tvaexp","ch1","tva"]),
+t3:mk("La taxe n’est pas due à l’achat mais devient exigible plus tard (interprétation du diagramme).|Tax is not due at purchase but becomes payable later (interpretation of the diagram).",
+"La taxe est reportée jusqu’à un événement ultérieur, par exemple la sortie de l’entrepôt vers un territoire taxé.|Tax is deferred until a later event, for example exit from the warehouse into a taxed territory.",
+"À Genève, la TVA suisse et les droits ne sont dus qu’à la sortie du port franc vers le territoire suisse ; vers l’UE, TVA et droits d’importation du pays de destination s’appliquent à la mise en libre pratique.|In Geneva, Swiss VAT and duties are only due when goods leave the freeport into Swiss territory; into the EU, destination-country import VAT and duties apply on release for free circulation.",
+"Déclaration en douane à la sortie de l’entrepôt, facture, éventuellement licence ou déclaration de l’importateur.|Customs declaration on leaving the warehouse, invoice, possibly import licence or importer statement.",
+"Propriétaire, exploitant de l’entrepôt, douane, administration fiscale du pays de destination.|Owner, warehouse operator, customs, tax authority of the destination country.",
+"Scénario hypothétique : une œuvre stockée plusieurs années à Genève est livrée à Paris : TVA d’importation française due à l’arrivée.|Hypothetical scenario: a work stored for several years in Geneva is delivered to Paris: French import VAT is due on arrival.",["ch1","ch3","tva"]),
+t4:mk("Après l’achat, l’œuvre reste hors taxe : en suspension ou à l’export (interprétation du diagramme).|After purchase the work stays untaxed: in suspension or on export (interpretation of the diagram).",
+"L’œuvre reste sans taxe : elle demeure en suspension ou quitte le territoire vers un pays tiers.|The work stays untaxed: it remains in suspension or leaves the territory for a third country.",
+"Une œuvre qui reste en entrepôt peut changer de propriétaire sans taxe ; une sortie vers un pays tiers est exonérée de TVA à l’exportation sur preuve de sortie, mais les taxes du pays d’arrivée peuvent s’appliquer. Ce mécanisme est au cœur des critiques adressées aux ports francs.|A work staying in a warehouse can change owner without tax; exit to a third country is VAT-exempt on export with proof of exit, but the arrival country’s taxes may apply. This mechanism lies at the heart of the criticism of freeports.",
+"Inventaire d’entrepôt à jour, déclaration d’exportation visée.|Up-to-date warehouse inventory, endorsed export declaration.",
+"Propriétaire, exploitant d’entrepôt, douane suisse, autorités de lutte contre le blanchiment.|Owner, warehouse operator, Swiss customs, anti-money-laundering authorities.",
+"Scénario hypothétique : une œuvre est revendue deux fois à l’intérieur du port franc avant d’être expédiée à Hong Kong.|Hypothetical scenario: a work is resold twice inside the freeport before being shipped to Hong Kong.",["ch2","ch3","tvaexp"]),
+pret:mk("Deuxième embranchement : une institution prête une œuvre de ses collections à une autre.|Second branch: one institution lends a work from its collection to another.",
+"Prêt temporaire entre deux musées, souvent pour une exposition, régi par une convention de prêt et soumis à des conditions de conservation, d’assurance et de sécurité.|Temporary loan between two museums, usually for an exhibition, governed by a loan agreement and subject to conservation, insurance and security conditions.",
+"Pour les musées de France, le prêt d’œuvres des collections nationales est soumis à l’autorisation préalable du Service des Musées de France ; le délai avant le départ est de l’ordre de 6 à 9 mois selon les institutions.|For Musées de France, loans from national collections need prior authorisation from the Service des Musées de France; the lead time before departure is around 6–9 months depending on the institution.",
+"Demande de prêt, facility report, fiche de prêt, constats d’état, contrat de prêt, attestation d’assurance.|Loan request, facility report, loan sheet, condition reports, loan agreement, insurance certificate.",
+"Musée prêteur, musée emprunteur, régie des œuvres, convoyeur, assureur, transporteur spécialisé.|Lending museum, borrowing museum, registrar, courier, insurer, specialist shipper.",
+"Scénario hypothétique : un musée de région prête une œuvre à un musée étranger pour six mois.|Hypothetical scenario: a regional museum lends a work to a foreign museum for six months.",["loan1","loan2","loan3","cult"]),
+fac:mk("Questionnaire décrivant les conditions de conservation et de sécurité du lieu d’exposition ; le document joint en est un exemple.|Questionnaire describing the conservation and security conditions of the venue; the attached document is an example.",
+"Il permet au prêteur de juger si l’emprunteur peut accueillir l’œuvre : climat, éclairage, manutention, sûreté, sécurité incendie, transport.|It lets the lender judge whether the borrower can host the work: climate, lighting, handling, security, fire safety, transport.",
+"Exigé avant la validation du prêt. Le questionnaire du Service des Musées de France compte dix chapitres (exposition, organisation, lieu, gestion des œuvres, environnement, sûreté-sécurité : généralités, moyens mécaniques, électroniques, humains, transport). La signature engage l’emprunteur sur l’exactitude des informations ; la MiSSA peut demander un contrôle sur place aux frais de l’organisateur.|Required before the loan is confirmed. The Service des Musées de France questionnaire has ten chapters (exhibition, organisation, venue, handling, environment, security and safety: general, mechanical, electronic, human means, transport). The signature commits the borrower to the accuracy of the information; the MiSSA may ask for an on-site inspection at the organiser’s expense.",
+"Le questionnaire rempli et signé, avec la copie du dernier procès-verbal de la commission de sécurité pour les établissements recevant du public en France et des relevés climatiques.|The completed, signed questionnaire, with a copy of the latest safety-commission report for French public venues and climate records.",
+"Emprunteur (direction, régie), prêteur, Service des Musées de France, MiSSA (Mission de la sécurité, de la sûreté et de l’accessibilité).|Borrower (management, registrar), lender, Service des Musées de France, MiSSA (security, safety and accessibility mission).",
+"Scénario hypothétique : avant de prêter, le musée compare la température et l’hygrométrie déclarées (le formulaire propose 20 °C ± 1 °C et 50 % ± 5 %) à ses propres exigences.|Hypothetical scenario: before lending, the museum compares the declared temperature and humidity (the form offers 20 °C ± 1 °C and 50% ± 5%) with its own requirements.",["loan1","loan3"]),
+ass:mk("Couverture « tous risques » de l’œuvre pendant tout le prêt, transport compris.|“All risks” cover for the work throughout the loan, transport included.",
+"Assurance depuis le décrochage au lieu d’enlèvement jusqu’à la remise en place, transport et séjours intermédiaires inclus.|Insurance from de-installation at the pick-up site until the work is returned, including transport and intermediate stays.",
+"À la charge de l’emprunteur ; attestation exigée avant le départ ; valeur d’assurance fixée par le prêteur ; contrats types sans franchise ni clause d’abandon. Certains pays proposent une garantie d’État en alternative.|Paid by the borrower; certificate required before departure; insured value set by the lender; model contracts with no deductible or abandonment clause. Some countries offer a state guarantee as an alternative.",
+"Police ou certificat d’assurance, fiche de prêt indiquant la valeur d’assurance, constats d’état.|Policy or insurance certificate, loan sheet stating the insured value, condition reports.",
+"Emprunteur, assureur ou courtier d’art, prêteur, parfois l’État garant.|Borrower, insurer or art broker, lender, sometimes the guaranteeing state.",
+"Scénario hypothétique : le prêteur refuse le départ de l’œuvre tant que l’attestation d’assurance n’est pas reçue.|Hypothetical scenario: the lender refuses to release the work until the insurance certificate is received.",["loan2","loan3","loan1"]),
+aut:mk("Décision formelle du prêteur d’accepter le prêt ; elle ouvre la phase contractuelle et douanière.|The lender’s formal decision to approve the loan; it opens the contractual and customs phase.",
+"Décision du prêteur et, pour les collections publiques, de l’autorité de tutelle, après examen du facility report et de l’assurance.|Decision by the lender and, for public collections, the supervising authority, after review of the facility report and insurance.",
+"Pour un prêt à l’étranger, la voie diffère selon que la destination est dans l’UE ou hors de l’UE (voir les deux nœuds suivants).|For a loan abroad the route differs depending on whether the destination is inside or outside the EU (see the next two nodes).",
+"Convention ou contrat de prêt signé, fiche de prêt, décision de l’organe de tutelle.|Signed loan agreement, loan sheet, supervising body’s decision.",
+"Direction du musée prêteur, organe de tutelle, Service des Musées de France, emprunteur.|Lending museum management, supervisory body, Service des Musées de France, borrower.",
+"Scénario hypothétique : la direction accepte le prêt sous réserve de la réception de l’assurance et du facility report complété.|Hypothetical scenario: management accepts the loan subject to receipt of insurance and the completed facility report.",["loan1","loan3"]),
+intl2:mk("Prêt vers un pays hors de l’Union européenne.|Loan to a country outside the European Union.",
+"Le prêt fait sortir l’œuvre du territoire douanier de l’UE.|The loan takes the work out of the EU customs territory.",
+"Autorisation de sortie temporaire ou licence d’exportation selon la catégorie du bien, déclaration d’exportation ou carnet ATA, formalités d’admission temporaire à l’arrivée. Certains pays, comme la Suisse, proposent une garantie de restitution qui protège l’œuvre contre les revendications de tiers.|Temporary exit authorisation or export licence depending on category, export declaration or ATA carnet, temporary admission formalities on arrival. Some countries, such as Switzerland, offer a return guarantee protecting the work from third-party claims.",
+"Cerfa 02-0083 ou licence (Cerfa 11033*03), carnet ATA, liste des biens, assurance, garantie de restitution si prévue.|Cerfa 02-0083 or licence (Cerfa 11033*03), ATA carnet, list of goods, insurance, return guarantee if available.",
+"Prêteur, emprunteur étranger, ministère de la Culture, douane, chambre de commerce émettrice, transitaire.|Lender, foreign borrower, Ministry of Culture, customs, issuing chamber of commerce, forwarder.",
+"Scénario hypothétique : un musée français prête une œuvre à un musée de Genève.|Hypothetical scenario: a French museum lends a work to a museum in Geneva.",["cult","ata","ret"]),
+eneu:mk("Prêt vers un autre État de l’Union européenne.|Loan to another EU member state.",
+"Le mouvement reste dans l’espace douanier de l’UE.|The movement stays within the EU customs area.",
+"Pas de douane de sortie ni de carnet ATA. Les règles nationales sur les biens culturels peuvent toutefois exiger des documents (par exemple une autorisation de sortie temporaire), que la douane contrôle à l’intérieur de l’UE : à vérifier selon le bien.|No exit customs or ATA carnet. National rules on cultural goods may still require documents (for example a temporary exit authorisation), which customs checks within the EU: to verify per object.",
+"Contrat de prêt, assurance, constats d’état et, le cas échéant, autorisation de sortie temporaire.|Loan agreement, insurance, condition reports and, where applicable, temporary exit authorisation.",
+"Prêteur, emprunteur, transporteur, assureur, douane (contrôles intra-UE).|Lender, borrower, carrier, insurer, customs (intra-EU checks).",
+"Scénario hypothétique : un musée français prête une œuvre à un musée de Bruxelles.|Hypothetical scenario: a French museum lends a work to a museum in Brussels.",["cult","cult2"]),
+d1:CUST("Passage de la douane de sortie avec le carnet ATA, sur la voie internationale.|Passage through exit customs with the ATA carnet, on the international route."),
+d2:CUST("Passage de la douane de sortie avec le carnet ATA, sur la voie qui mène à la réexportation.|Passage through exit customs with the ATA carnet, on the route leading to re-export."),
+aus:mk("Autorisations administratives pour faire sortir un bien culturel du territoire.|Administrative authorisations to take a cultural good out of the territory.",
+"Autorisation de sortie temporaire (AST) ou certificat d’exportation en France, et licence d’exportation européenne hors UE.|Temporary exit authorisation (AST) or export certificate in France, and EU export licence outside the EU.",
+"Selon que la sortie est définitive ou non, le propriétaire (ou son mandataire) demande au ministère de la Culture une AST ou un certificat ; une licence européenne (Cerfa 11033*03) peut s’y ajouter pour les biens visés par le règlement 116/2009. Sont dispensés de certificat et d’AST les biens présents en France depuis moins de deux ans ou placés sous admission temporaire.|Depending on whether the exit is definitive, the owner (or agent) asks the Ministry of Culture for an AST or a certificate; a European licence (Cerfa 11033*03) may be added for goods covered by Regulation 116/2009. Goods present in France for under two years or under temporary admission are exempt from certificate and AST.",
+"Cerfa 02-0083 (AST) et Cerfa 11033*03 (licence), joints à cette page ; photographie du bien, description, valeur d’assurance, identité du transporteur.|Cerfa 02-0083 (AST) and Cerfa 11033*03 (licence), attached to this page; photograph of the good, description, insured value, carrier identity.",
+"Propriétaire ou mandataire, ministère de la Culture, douane.|Owner or agent, Ministry of Culture, customs.",
+"Scénario hypothétique : un musée dépose le Cerfa 02-0083 en double exemplaire, avec photographie, pour prêter une peinture à l’étranger.|Hypothetical scenario: a museum files Cerfa 02-0083 in two copies, with a photograph, to lend a painting abroad.",["cult","cult2"]),
+exp:mk("Sortie effective du territoire douanier avec contrôle et visa de la douane.|Actual exit from the customs territory with customs check and endorsement.",
+"Déclaration d’exportation (ou carnet ATA), contrôle et visa de la douane au point de sortie de l’UE.|Export declaration (or ATA carnet), customs check and endorsement at the EU exit point.",
+"Pour une sortie temporaire vers un pays tiers, une déclaration en douane ou un carnet ATA est nécessaire ; la vente à l’exportation est exonérée de TVA sur preuve de sortie (exemplaire n° 3 visé par la douane).|For temporary export to a third country a customs declaration or ATA carnet is needed; a sale for export is VAT-exempt on proof of exit (copy no. 3 endorsed by customs).",
+"Déclaration d’exportation (DAU) ou carnet ATA, AST ou licence, facture ou fiche de prêt.|Export declaration (DAU) or ATA carnet, AST or licence, invoice or loan sheet.",
+"Exportateur, transitaire, douane de sortie, ministère de la Culture.|Exporter, forwarder, exit customs, Ministry of Culture.",
+"Scénario hypothétique : le transitaire dépose la déclaration d’exportation ; la douane la vise au point de sortie de l’UE.|Hypothetical scenario: the forwarder files the export declaration; customs endorses it at the EU exit point.",["douart","tvaexp","cult"]),
+expo:mk("Période pendant laquelle l’œuvre est présentée dans le pays d’accueil, sous admission temporaire.|Period during which the work is displayed in the host country, under temporary admission.",
+"L’œuvre est exposée dans le lieu décrit par le facility report, pour une durée fixée par le prêt et par la validité du carnet.|The work is displayed at the venue described in the facility report, for a period set by the loan and the validity of the carnet.",
+"Dans l’UE, les objets d’art importés pour exposition peuvent bénéficier de l’exonération totale des droits (code des douanes de l’Union, art. 250, et règlement délégué 2015/2446, art. 234) ; les biens sous ce régime ne sont pas considérés comme importés pour la TVA. Les conditions du facility report s’appliquent pendant tout le séjour.|In the EU, art objects imported for exhibition can benefit from total duty relief (Union Customs Code art. 250 and Delegated Regulation 2015/2446 art. 234); goods under this procedure are not treated as imported for VAT. Facility report conditions apply throughout the stay.",
+"Carnet ATA ou déclaration d’admission temporaire, constat d’état à l’arrivée, attestation d’assurance, contrat de prêt.|ATA carnet or temporary admission declaration, arrival condition report, insurance certificate, loan agreement.",
+"Musée hôte, convoyeur du prêteur, douane du pays d’accueil, assureur.|Host museum, lender’s courier, host-country customs, insurer.",
+"Scénario hypothétique : l’œuvre reste six mois ; le convoyeur vérifie son état au déballage et à l’emballage.|Hypothetical scenario: the work stays six months; the courier checks its condition on unpacking and repacking.",["loan2","at","ataman"]),
+re1:mk("Retour de l’œuvre vers son pays d’origine à l’issue de l’exposition.|Return of the work to its country of origin at the end of the exhibition.",
+"La réexportation clôt la procédure d’admission temporaire.|Re-export closes the temporary admission procedure.",
+"Elle doit être déclarée et visée par la douane avant l’échéance du carnet ; sans preuve de réexportation, droits et taxes peuvent être réclamés au titulaire ou à la chambre garante. Le carnet utilisé doit être rendu à la chambre émettrice.|It must be declared and endorsed by customs before the carnet expires; without proof of re-export, duties and taxes may be claimed from the holder or the guaranteeing chamber. The used carnet must be returned to the issuing chamber.",
+"Volets de réexportation et de réimportation du carnet ATA, constat d’état de retour, attestation de retour (partie détachable du Cerfa 02-0083).|Re-export and re-import vouchers of the ATA carnet, return condition report, return attestation (detachable part of Cerfa 02-0083).",
+"Titulaire du carnet, transporteur, douane, musée prêteur.|Carnet holder, carrier, customs, lending museum.",
+"Scénario hypothétique : à la fin du prêt la douane vise le volet de réexportation et le carnet est rendu à la CCI.|Hypothetical scenario: at the end of the loan customs stamps the re-export voucher and the carnet is returned to the CCI.",["ata","ataman","cult"]),
+priv2:mk("Troisième embranchement : un particulier achète des œuvres pour les prêter à un musée.|Third branch: a private person buys artworks to lend to a museum.",
+"Combinaison de l’achat privé et du prêt : le propriétaire garde la propriété mais met l’œuvre à disposition d’une institution.|Combination of private purchase and loan: the owner keeps title but makes the work available to an institution.",
+"Le diagramme distingue le prêt dès l’achat du prêt après l’achat, puis la région du prêt (exonérée d’impôts ou imposée).|The diagram distinguishes a loan at purchase from one after purchase, then the region of the loan (tax-exempt or taxed).",
+"Facture d’achat, contrat de prêt avec le musée, assurance, preuve de provenance, autorisations de sortie si besoin.|Purchase invoice, loan agreement with the museum, insurance, proof of provenance, exit authorisations if needed.",
+"Propriétaire privé, musée emprunteur, galerie ou conseil, assureur, douane.|Private owner, borrowing museum, gallery or adviser, insurer, customs.",
+"Scénario hypothétique : un collectionneur achète une installation et la prête directement au musée qui prépare l’exposition.|Hypothetical scenario: a collector buys an installation and lends it directly to the museum preparing the exhibition.",["loan1","tva","at"]),
+pa:LOCP("Le prêt est consenti dès l’acquisition.|The loan is made right at acquisition.","L’œuvre est prêtée au musée dès son acquisition, parfois sans jamais être livrée au propriétaire.|The work is lent to the museum right after acquisition, sometimes without ever being delivered to the owner.","Le lieu du prêt détermine la fiscalité : dans une région exonérée l’œuvre peut rester en suspension de taxes ; dans une région imposée, la TVA ou l’importation peut être due dès l’entrée.|The location of the loan determines taxation: in an exempt region the work can remain in suspension of taxes; in a taxed region VAT or import may be due on entry."),
+pb:LOCP("Le prêt est consenti après une première période de détention.|The loan is made after a first period of ownership.","L’œuvre est d’abord acquise et détenue par le propriétaire, puis prêtée dans un second temps.|The work is first acquired and held by the owner, then lent later.","L’œuvre a peut-être déjà acquitté ses taxes : un prêt ultérieur hors du territoire suppose autorisation de sortie temporaire et formalités douanières.|The work may already have paid its taxes: a later loan outside the territory requires temporary exit authorisation and customs formalities."),
+x1:LOCP("Prêt à l’achat dans une région exonérée d’impôts.|Loan at purchase in a tax-exempt region.","Prêt vers une zone où l’œuvre n’est soumise ni à TVA ni à droits, par exemple sous admission temporaire ou en entrepôt.|Loan to an area where the work is subject to neither VAT nor duty, for example under temporary admission or in a warehouse.","La suspension dure tant que les conditions du régime sont respectées (réexportation dans le délai) ; une utilisation ou une vente hors cadre peut rendre les taxes exigibles.|The suspension lasts while the procedure’s conditions are met (re-export within the deadline); use or sale outside the framework can make taxes payable."),
+x2:LOCP("Prêt après l’achat dans une région exonérée d’impôts.|Loan after purchase in a tax-exempt region.","Prêt vers une zone où l’œuvre n’est soumise ni à TVA ni à droits, par exemple sous admission temporaire ou en entrepôt.|Loan to an area where the work is subject to neither VAT nor duty, for example under temporary admission or in a warehouse.","La suspension dure tant que les conditions du régime sont respectées (réexportation dans le délai) ; une utilisation ou une vente hors cadre peut rendre les taxes exigibles.|The suspension lasts while the procedure’s conditions are met (re-export within the deadline); use or sale outside the framework can make taxes payable."),
+i1:LOCP("Prêt après l’achat dans une région imposée.|Loan after purchase in a taxed region.","Prêt dans un pays ou territoire où l’importation ou la circulation de l’œuvre est soumise à la TVA et aux droits.|Loan in a country or territory where import or circulation of the work is subject to VAT and duties.","Sans régime suspensif, la TVA à l’importation est due (en France : taux réduit de 5,5 % pour les œuvres d’art) ; l’admission temporaire en exonération totale permet d’éviter la taxation pendant l’exposition.|Without a suspensive procedure, import VAT is due (in France: reduced 5.5% for artworks); temporary admission with total relief can avoid taxation during the exhibition."),
+i2:LOCP("Prêt à l’achat dans une région imposée.|Loan at purchase in a taxed region.","Prêt dans un pays ou territoire où l’importation ou la circulation de l’œuvre est soumise à la TVA et aux droits.|Loan in a country or territory where import or circulation of the work is subject to VAT and duties.","Sans régime suspensif, la TVA à l’importation est due (en France : taux réduit de 5,5 % pour les œuvres d’art) ; l’admission temporaire en exonération totale permet d’éviter la taxation pendant l’exposition.|Without a suspensive procedure, import VAT is due (in France: reduced 5.5% for artworks); temporary admission with total relief can avoid taxation during the exhibition."),
+re2:mk("Retour de l’œuvre au propriétaire, qui referme la boucle de la branche.|Return of the work to its owner, closing the loop of the branch.",
+"Retour à la fin du prêt, avec réexportation depuis le pays du musée.|Return at the end of the loan, with re-export from the museum’s country.",
+"Si l’œuvre était sous admission temporaire, la réexportation doit être justifiée et visée par la douane pour clore le régime ; au retour dans la région du propriétaire, les formalités d’importation ou de réimportation s’appliquent selon le cas.|If the work was under temporary admission, re-export must be justified and endorsed by customs to close the procedure; on return to the owner’s region, import or re-import formalities apply as the case may be.",
+"Volet de réexportation, constat d’état de retour, attestation de retour, assurance clou à clou jusqu’à la remise au propriétaire.|Re-export voucher, return condition report, return attestation, nail-to-nail insurance until handover to the owner.",
+"Propriétaire, musée, transporteur, douane de sortie puis d’arrivée.|Owner, museum, carrier, exit then arrival customs.",
+"Scénario hypothétique : à l’issue de l’exposition le collectionneur reprend l’œuvre et la place en entrepôt franc ou à domicile.|Hypothetical scenario: at the end of the exhibition the collector takes back the work and places it in a freeport or at home.",["ata","at","tva"])};
 
-  pret:  [550, 350, 2, "Prêt d’une oeuvre\nd'art d'un musée\nà un musée|Loan of an artwork\nfrom museum\nto museum"],
-  fac:   [750, 350, 2, "Facility\nreport|Facility\nreport"],
-  ass:   [900, 350, 2, "Assurance\n\"Clou à clou\"|“Nail to nail”\ninsurance"],
-  aut:   [1100,350, 2, "Autorisation\ndu prêt|Loan\nauthorisation"],
-  intl2: [1200,450, 2, "A\nl’internationale|International"],
-  eneu:  [1000,500, 2, "En EU|Within the EU"],
-  aus:   [1500,450, 2, "Autorisations\nde sortie|Export\nauthorisations"],
-  d1:    [1500,600, 2, "Passage de la\ndouane de sortie\nCarnet ATA|Exit customs,\nATA carnet"],
-  exp:   [1250,630, 2, "Exportation|Export"],
-  expo:  [1050,720, 2, "Exposition|Exhibition"],
-  d2:    [750, 550, 2, "Passage de la\ndouane de sortie\nCarnet ATA|Exit customs,\nATA carnet"],
-  re1:   [800, 720, 2, "Re-exportation\npays d'origine|Re-export to\ncountry of origin"],
-
-  priv2: [350, 500, 3, "Achat d’oeuvres d'art\npar un privé, pour la\nprêter à un musée|Private purchase of\nartworks, to loan to a museum"],
-  pa:    [250, 750, 3, "Prêt à l’achat|Loan at purchase"],
-  pb:    [500, 750, 3, "Prêt apres l'achat|Loan after purchase"],
-  x1:    [150, 880, 3, "Prêt dans une région\nexonérée d'impôts|Loan in a\ntax-exempt region"],
-  i2:    [300,1000, 3, "Prêt dans une\nrégion imposée|Loan in a\ntaxed region"],
-  x2:    [450, 880, 3, "Prêt dans une région\nexonérée d'impôts|Loan in a\ntax-exempt region"],
-  i1:    [600,1000, 3, "Prêt dans une\nrégion imposée|Loan in a\nsaxed region"],
-  re2:   [900, 950, 3, "Re-exportation\nau propriétaire|Re-export to\nthe owner"]
-};
-
-/* Box Widths and Heights */
-const SZ = {
-  root:[240,100], priv:[180,80], achat:[150,60], intl:[140,40], dom:[130,40],
-  autre:[200,70], meme:[200,60], stock:[130,70], t1:[110,60], t2:[150,50],
-  t3:[150,50], t4:[160,50], pret:[180,90], fac:[110,50], ass:[130,50],
-  aut:[130,50], intl2:[130,50], eneu:[100,40], aus:[150,60], d1:[180,80],
-  exp:[130,40], expo:[140,40], d2:[180,80], re1:[160,70], priv2:[220,90],
-  pa:[140,40], pb:[160,40], x1:[190,60], i2:[160,60], x2:[190,60], i1:[160,60],
-  re2:[160,70]
-};
-
-const T2 = ["root","priv","pret","priv2","stock","aut","exp","expo","re1","re2","t1","t2","t3","t4"];
-const fs = k => k=="root" ? 22 : 14;
-
-const E = "root-priv root-pret root-priv2 priv-achat achat-intl achat-dom intl-autre dom-meme autre-stock meme-stock stock-t1 stock-t2 stock-t3 stock-t4 pret-fac pret-d2 fac-ass ass-aut aut-intl2 aut-eneu intl2-aus aus-d1 d1-exp eneu-exp exp-expo expo-re1 d2-re1 priv2-pa priv2-pb pa-x1 pa-i2 pb-x2 pb-i1 x1-re2 i2-re2 x2-re2 i1-re2 re2-priv2".split(" ").map(e=>e.split("-"));
-const BACK = "re2-priv2";
-
-/* ================= EXACT ORTHOGONAL PATHS ================= */
-const PATHS = {
-  "root-priv": "M200 100 L320 80 L360 80",
-  "priv-achat": "M540 80 L575 80",
-  "achat-intl": "M725 80 L760 30 L800 30",
-  "achat-dom": "M725 80 L760 130 L800 130",
-  "intl-autre": "M870 30 L950 150 L950 200",
-  "dom-meme": "M865 130 L1100 130",
-  "autre-stock": "M1045 200 L1250 200",
-  "meme-stock": "M1200 130 L1225 200 L1250 200",
-  "stock-t1": "M1315 200 L1380 80 L1450 80",
-  "stock-t2": "M1315 200 L1450 130 L1600 130",
-  "stock-t3": "M1315 200 L1550 230",
-  "stock-t4": "M1315 200 L1480 300 L1600 300",
-
-  "root-pret": "M200 200 L200 350 L460 350",
-  "pret-fac": "M640 350 L695 350",
-  "fac-ass": "805 350 L835 350",
-  "ass-aut": "M965 350 L1035 350",
-  "aut-intl2": "M1165 350 L1130 450 L1200 450",
-  "aut-eneu": "M1165 350 L1130 500 L1000 500",
-  "intl2-aus": "M1265 450 L1500 450",
-  "aus-d1": "M1500 450 L1500 600",
-  "d1-exp": "M1500 600 L1400 630 L1315 630",
-  "eneu-exp": "M1000 500 L1150 630 L1250 630",
-  "exp-expo": "M1250 630 L1180 630 L1050 720",
-  "pret-d2": "M640 350 L675 550 L750 550",
-  "d2-re1": "M840 550 L800 720",
-  "expo-re1": "M1050 720 L880 720 L800 720",
-
-  "root-priv2": "M200 200 L200 500 L240 500",
-  "priv2-pa": "M460 500 L350 620 L250 750",
-  "priv2-pb": "M460 500 L460 620 L500 750",
-  "pa-x1": "M250 750 L200 820 L150 880",
-  "pa-i2": "M250 750 L250 850 L300 1000",
-  "pb-x2": "M500 750 L480 820 L450 880",
-  "pb-i1": "M500 750 L550 850 L600 1000",
-  "x1-re2": "M150 880 L150 950 L800 950 L900 950",
-  "i2-re2": "M300 1000 L350 950 L800 950 L900 950",
-  "x2-re2": "M450 880 L450 920 L800 950 L900 950",
-  "i1-re2": "M600 1000 L750 950 L900 950",
-  "re2-priv2": "M900 950 L900 1100"
-};
-
-const SAT = { pret: { x: 550, y: 440, f: "provenances/index.html", t: "provenances|provenances" } };
-
-const SECTIONS = ["Définition|Definition","Règles et conditions|Rules and conditions","Documents requis|Required documents","Acteurs|Actors","Exemple de cas|Case example","Diagramme|Diagram","Sources|Sources"];
-const TODO = "[À rédiger]|[To be written]";
-const C = {};
-const DOCS = {
-  aus: [{f:"documents/cerfa-02-0083-autorisation-sortie-temporaire.pdf", t:"Cerfa n° 02-0083 : Demande d’autorisation de sortie temporaire d’un bien culturel|Cerfa no. 02-0083: Application for temporary export authorisation of a cultural good", lang:"fr"}],
-  fac: [{f:"documents/facility-report-questionnaire-fr.pdf", t:"Questionnaire du Service des Musées de France relatif aux conditions offertes par les lieux d’exposition|Questionnaire of the Service des Musées de France on the conditions offered by exhibition venues", lang:"fr"}]
-};
-const GN = ["Question de départ|Starting question","Achat par un privé|Private purchase","Prêt de musée à musée|Museum-to-museum loan","Privé qui prête à un musée|Private owner loaning to a museum"];
-const U = {
-  ti:"Comment les œuvres d’art traversent-elles les frontières ?|How do artworks cross borders?",
-  ix:"Index|Index", rs:"Réinitialiser|Reset",
-  hint:"Cliquer sur une case : dévoiler la suite — Molette : zoom — Glisser : déplacer|Click a box: reveal what follows — Wheel: zoom — Drag: pan",
-  open:"Ouvrir la page →|Open page →", back:"← Diagramme|← Diagram", nx:"Suite|Next", pv:"Précédent|Previous",
-  cn:"Relations dans le diagramme|Connections in the diagram", dph:"Diagramme détaillé à venir|Detailed diagram to come",
-  idx:"Index des étapes|Index of steps", dop:"Ouvrir dans un nouvel onglet|Open in a new tab", ddl:"Télécharger le PDF|Download the PDF",
-  dnote:"Document original en français.|Original document in French.", dfb:"Votre navigateur n’affiche pas le PDF.|Your browser cannot display the PDF."
-};
-
+/* ================= DOCUMENTS — add PDFs here =================
+ DOCS[nodeId] = [{f:"documents/file.pdf", t:"FR title|EN title", lang:"fr"}]  — put the PDF in the documents/ folder next to index.html. lang = language of the PDF. */
+const DOCS={aus:[{f:"documents/cerfa-02-0083-autorisation-sortie-temporaire.pdf",t:"Cerfa n° 02-0083 : Demande d’autorisation de sortie temporaire d’un bien culturel|Cerfa no. 02-0083: Application for temporary export authorisation of a cultural good",lang:"fr"},{f:"documents/cerfa-11033-autorisation-exportation-ue.pdf",t:"Cerfa n° 11033*03 : Demande d’autorisation d’exportation d’un bien culturel (Communauté européenne)|Cerfa no. 11033*03: Application for export authorisation of a cultural good (European Community)",lang:"fr"}],fac:[{f:"documents/facility-report-questionnaire-fr.pdf",t:"Questionnaire du Service des Musées de France relatif aux conditions offertes par les lieux d’exposition|Questionnaire of the Service des Musées de France on the conditions offered by exhibition venues",lang:"fr"}],d1:[{f:"documents/fac-simile-ata.pdf",t:"Fac-similé du carnet A.T.A. (Chambre de commerce et d’industrie de Paris)|Facsimile of the A.T.A. carnet (Paris Chamber of Commerce and Industry)",lang:"fr-en"}],d2:[{f:"documents/fac-simile-ata.pdf",t:"Fac-similé du carnet A.T.A. (Chambre de commerce et d’industrie de Paris)|Facsimile of the A.T.A. carnet (Paris Chamber of Commerce and Industry)",lang:"fr-en"}]};
+const GN=["Question de départ|Starting question","Achat par un privé|Private purchase","Prêt de musée à musée|Museum-to-museum loan","Privé qui prête à un musée|Private owner loaning to a museum"];
+const U={ti:"Comment les œuvres d’art traversent-elles les frontières ?|How do artworks cross borders?",ix:"Index|Index",rs:"Réinitialiser|Reset",
+hint:"Cliquer sur une case : dévoiler la suite — Molette : zoom — Glisser : déplacer|Click a box: reveal what follows — Wheel: zoom — Drag: pan",
+open:"Ouvrir la page →|Open page →",back:"← Diagramme|← Diagram",nx:"Suite|Next",pv:"Précédent|Previous",cn:"Relations dans le diagramme|Connections in the diagram",
+dph:"Diagramme détaillé à venir — à insérer dans C[id].diagram|Detailed diagram to come — insert in C[id].diagram",idx:"Index des étapes|Index of steps",dop:"Ouvrir dans un nouvel onglet|Open in a new tab",ddl:"Télécharger le PDF|Download the PDF",dnote:"Document original en français.|Original document in French.",dfb:"Votre navigateur n’affiche pas le PDF ; utilisez les boutons ci-dessus.|Your browser cannot display the PDF; use the buttons above."};
+/* ===== LAYOUT — exact shapes of Diagram_of_Art_Traversing_Borders-26.svg (generated; to change the layout, send a new SVG) ===== */
+const GEO={"nodes":{"re2":{"p":[[415.08,495.28],[415.08,1200],[342.66,1200],[342.66,577.75],[342.66,565.85],[342.66,564.99],[342.66,547.81],[342.66,537.15],[342.66,524.39],[342.66,513.9],[342.66,501.14],[342.66,495.28],[356.7,495.28],[369.46,495.28],[415.08,495.28]],"bb":[342.7,495.3,415.1,595.3],"t":[344.71,507.98,[[0.0,0.0,"Re-exportation"],[0.0,13.2,"au propri\u00e9taire"]]]},"x2":{"p":[[282.88,443.7],[282.88,471.77],[281.3,471.77],[268.55,471.77],[188.83,471.77],[188.83,443.7],[222.3,443.7],[240.34,443.7],[282.88,443.7]],"bb":[188.8,443.7,282.9,471.8],"t":[190.87,454.26,[[0.0,0.0,"Pr\u00eat dans une r\u00e9gion"],[0.0,13.2,"exon\u00e9r\u00e9e d\u2019imp\u00f4ts"]]]},"ass":{"p":[[487.25,258.53],[487.25,266.82],[423.17,266.82],[423.17,257.63],[423.17,244.88],[423.17,235.69],[487.25,235.69],[487.25,245.78],[487.25,258.53]],"bb":[423.2,235.7,487.2,266.8],"t":[427.08,248.03,[[0.0,0.0,"Assurance"],[0.0,13.2,"\u00ab Clou \u00e0 clou \u00bb"]]]},"fac":{"p":[[394.78,257.63],[394.78,266.82],[357.57,266.82],[357.57,255.22],[357.57,237.18],[357.57,235.69],[394.78,235.69],[394.78,244.88],[394.78,257.63]],"bb":[357.6,235.7,394.8,266.8],"t":[360.84,247.46,[[0,0,"Facility"],[0,13.2,"report"]]]},"d2":{"p":[[420.28,325.16],[420.28,368.48],[409.79,368.48],[397.03,368.48],[337.47,368.48],[337.47,353.75],[337.47,335.71],[337.47,325.16],[420.28,325.16]],"bb":[337.5,325.2,420.3,368.5],"t":[340.53,337.37,[[0.0,0.0,"Passage de la"],[0.0,13.2,"douane de sortie"],[0.0,26.4,"Carnet ATA"]]]},"re1":{"p":[[431.27,445.34],[431.27,450.72],[358.72,450.72],[358.72,422.65],[359.66,422.65],[377.7,422.65],[397.03,422.65],[409.79,422.65],[431.27,422.65],[431.27,432.58],[431.27,445.34]],"bb":[358.7,422.6,431.3,450.7],"t":[360.77,433.21,[[0,0,"Re-exportation"],[0,13.2,"pays d\u2019origine"]]]},"expo":{"p":[[1440,426.06],[1440,451.86],[449.42,451.86],[449.42,445.34],[449.42,432.58],[449.42,426.06],[465.2,426.06],[483.24,426.06],[1440,426.06]],"bb":[449.4,426.1,841.9,451.9],"t":[452.62,442.37,[[0.0,0.0,"Exposition"]]]},"exp":{"p":[[621.8,405.84],[621.8,412.36],[563.37,412.36],[563.37,405.52],[563.37,392.77],[563.37,386.56],[580.27,386.56],[598.31,386.56],[621.8,386.56],[621.8,393.08],[621.8,405.84]],"bb":[563.4,386.6,621.8,412.4],"t":[566.57,402.87,[[0.0,0.0,"Exportation"]]]},"d1":{"p":[[746.89,366.01],[746.89,409.32],[664.07,409.32],[664.07,405.84],[664.07,393.08],[664.07,366.01],[699.1,366.01],[711.86,366.01],[746.89,366.01]],"bb":[664.1,366.0,746.9,409.3],"t":[667.27,378.35,[[0.0,0.0,"Passage de la"],[0.0,13.2,"douane de sortie"],[0.0,26.4,"Carnet ATA"]]]},"aus":{"p":[[740.16,286.97],[740.16,318.11],[711.86,318.11],[699.1,318.11],[670.8,318.11],[670.8,308.92],[670.8,296.17],[670.8,286.97],[740.16,286.97]],"bb":[670.8,287.0,740.2,318.1],"t":[674.0,299.31,[[0.0,0.0,"Autorisations"],[0.0,13.2,"de sortie"]]]},"intl2":{"p":[[604.95,308.92],[604.95,318.11],[535.58,318.11],[535.58,286.97],[550.26,286.97],[563.01,286.97],[604.95,286.97],[604.95,296.17],[604.95,308.92]],"bb":[535.6,287.0,605.0,318.1],"t":[538.78,299.31,[[0.0,0.0,"A"],[0.0,13.2,"l\u2019international"]]]},"eneu":{"p":[[507.15,341.83],[507.15,348.35],[471.75,348.35],[471.75,322.55],[482.49,322.55],[495.24,322.55],[507.15,322.55],[507.15,329.07],[507.15,341.83]],"bb":[471.8,322.6,507.1,348.4],"t":[476.32,338.86,[[0.0,0.0,"En EU"]]]},"aut":{"p":[[577.54,235.69],[577.54,266.82],[563.01,266.82],[550.26,266.82],[537.02,266.82],[518.98,266.82],[515.64,266.82],[515.64,258.53],[515.64,245.78],[515.64,235.69],[577.54,235.69]],"bb":[515.6,235.7,577.5,266.8],"t":[518.84,248.03,[[0.0,0.0,"Autorisation"],[0.0,13.2,"du pr\u00eat"]]]},"t4":{"p":[[1440,208.45],[1440,239.59],[651.33,239.59],[651.33,230.46],[651.33,217.7],[651.33,208.45],[1440,208.45]],"bb":[651.3,208.4,841.9,239.6],"t":[654.59,220.22,[[0,0,"non taxable"],[0,13.2,"apr\u00e8s l\u2019achat"]]]},"t3":{"p":[[1440,169.24],[1440,200.38],[650.11,200.38],[650.11,191.19],[650.11,178.44],[650.11,169.24],[1440,169.24]],"bb":[650.1,169.2,841.9,200.4],"t":[653.38,181.01,[[0.0,0.0,"taxable"],[0.0,13.2,"apr\u00e8s l\u2019achat"]]]},"t2":{"p":[[1440,77.68],[1440,108.82],[681.38,108.82],[663.34,108.82],[633.76,108.82],[633.76,77.68],[1440,77.68]],"bb":[633.8,77.7,841.9,108.8],"t":[637.03,89.45,[[0.0,0.0,"non taxable"],[0.0,13.2,"\u00e0 l\u2019achat"]]]},"t1":{"p":[[616.91,-600],[616.91,108.82],[610.33,108.82],[592.29,108.82],[568.27,108.82],[568.27,-600],[616.91,-600]],"bb":[568.3,0.0,616.9,108.8],"t":[571.54,89.45,[[0.0,0.0,"taxable \u00e0"],[0.0,13.2,"l\u2019achat"]]]},"stock":{"p":[[537.73,196.84],[537.73,197.0],[519.85,197.0],[466.77,197.0],[466.77,183.02],[466.77,170.27],[466.77,152.66],[466.77,151.83],[469.15,151.83],[481.9,151.83],[537.73,151.83],[537.73,153.61],[537.73,165.95],[537.73,166.37],[537.73,178.44],[537.73,178.71],[537.73,191.19],[537.73,196.84]],"bb":[466.8,151.8,537.7,197.0],"t":[474.11,169.79,[[0.0,0.0,"Stockage"],[0.0,16.8,"d\u2019art"]]]},"meme":{"p":[[542.13,77.53],[542.13,121.14],[481.9,121.14],[469.15,121.14],[439.01,121.14],[439.01,105.2],[439.01,92.45],[439.01,77.53],[542.13,77.53]],"bb":[439.0,77.5,542.1,121.1],"t":[442.28,89.3,[[0.0,0.0,"Achat d\u2019une \u0153uvre"],[0.0,13.2,"d\u2019art dans la m\u00eame"],[0.0,26.4,"r\u00e9gion fiscale"]]]},"intl":{"p":[[373.29,21.58],[373.29,42.05],[356.16,42.05],[338.12,42.05],[328.1,42.05],[309.95,42.05],[304.41,42.05],[304.41,21.58],[373.29,21.58]],"bb":[304.4,21.6,373.3,42.0],"t":[304.96,34.86,[[0.0,0.0,"\u00e0 l\u2019international"]]]},"achat":{"p":[[328.1,42.05],[304.83,65.32],[242.19,65.32],[242.19,52.49],[299.51,52.49],[309.95,42.05],[328.1,42.05]],"bb":[242.2,42.0,328.1,65.3],"t":[247.91,62.14,[[0.0,0.0,"Achat d\u2019une"],[0.0,13.2,"\u0153uvre d\u2019art"]]]},"dom":{"p":[[354.32,105.2],[354.32,107.79],[335.75,107.79],[322.99,107.79],[304.41,107.79],[304.41,89.86],[311.22,89.86],[329.37,89.86],[354.32,89.86],[354.32,92.45],[354.32,105.2]],"bb":[304.4,89.9,354.3,107.8],"t":[307.6,102.33,[[0.0,0.0,"\u00e0 domicile"]]]},"autre":{"p":[[424.84,183.02],[424.84,188.69],[321.73,188.69],[321.73,145.08],[343.24,145.08],[361.28,145.08],[424.84,145.08],[424.84,170.27],[424.84,183.02]],"bb":[321.7,145.1,424.8,188.7],"t":[324.99,156.85,[[0.0,0.0,"Achat d\u2019une \u0153uvre"],[0.0,13.2,"d\u2019art dans une autre"],[0.0,26.4,"r\u00e9gion fiscale"]]]},"i1":{"p":[[223.14,513.9],[223.14,521.56],[150.72,521.56],[150.72,493.49],[157.78,493.49],[170.54,493.49],[223.14,493.49],[223.14,501.14],[223.14,513.9]],"bb":[150.7,493.5,223.1,521.6],"t":[152.77,504.04,[[0.0,0.0,"Pr\u00eat dans une"],[0.0,13.2,"r\u00e9gion impos\u00e9e"]]]},"pret":{"p":[[323.48,234.19],[323.48,272.05],[299.78,272.05],[287.22,272.05],[287.02,272.05],[274.46,272.05],[144.93,272.05],[112.06,239.17],[112.06,214.15],[275.45,214.15],[293.49,214.15],[323.48,214.15],[323.48,221.43],[323.48,234.19]],"bb":[112.1,214.2,323.5,272.1],"t":[266.0,226.66,[[0.0,0.0,"Pr\u00eat d\u2019une"],[0.0,13.2,"\u0153uvre d\u2019art"],[0.0,26.4,"d\u2019un mus\u00e9e"],[0.0,39.6,"\u00e0 un mus\u00e9e"]]]},"priv":{"p":[[242.19,65.32],[242.19,78.16],[242.19,92.26],[163.58,92.26],[163.58,71.69],[163.58,58.94],[163.58,-600],[242.19,-600],[242.19,52.49],[242.19,65.32]],"bb":[163.6,0.0,242.2,92.3],"t":[168.69,55.6,[[0.0,0.0,"Achat d\u2019une"],[0.0,13.2,"\u0153uvre d\u2019art par"],[0.0,26.4,"un priv\u00e9"]]]},"root":{"p":[[221.61,188.24],[221.61,210.52],[112.06,210.52],[99.3,210.52],[-600,210.52],[-600,141.14],[69.91,141.14],[87.95,141.14],[221.61,141.14],[221.61,175.48],[221.61,188.24]],"bb":[0.0,141.1,221.6,210.5],"t":[54.82,159.43,[[0,0,"Comment les"],[0,13.2,"\u0153uvres d\u2019art"],[0,26.4,"traversent-elles"],[0,39.6,"les fronti\u00e8res ?"]]]},"pb":{"p":[[219.71,386.25],[219.71,409.43],[206.06,409.43],[188.03,409.43],[170.54,409.43],[157.78,409.43],[140.07,409.43],[140.07,386.25],[164.27,386.25],[182.31,386.25],[219.71,386.25]],"bb":[140.1,386.2,219.7,409.4],"t":[143.13,401.43,[[0.0,0.0,"Pr\u00eat apr\u00e8s l\u2019achat"]]]},"priv2":{"p":[[199.13,314.31],[199.13,344.63],[153.0,344.63],[140.75,344.63],[140.25,344.63],[127.99,344.63],[-600,344.63],[-600,285.83],[140.67,285.83],[150.51,285.83],[158.71,285.83],[199.13,285.83],[199.13,296.27],[199.13,314.31]],"bb":[0.0,285.8,199.1,344.6],"t":[114.91,298.33,[[0.0,0.0,"Achat d\u2019\u0153uvres"],[0.0,13.2,"d\u2019art par un priv\u00e9,"],[0.0,26.4,"pour la pr\u00eater \u00e0 un"],[0.0,39.6,"mus\u00e9e"]]]},"i2":{"p":[[124.73,537.15],[124.73,547.09],[52.31,547.09],[52.31,519.02],[104.89,519.02],[117.64,519.02],[124.73,519.02],[124.73,524.39],[124.73,537.15]],"bb":[52.3,519.0,124.7,547.1],"t":[54.36,529.58,[[0.0,0.0,"Pr\u00eat dans une"],[0.0,13.2,"r\u00e9gion impos\u00e9e"]]]},"pa":{"p":[[121.7,386.25],[121.7,409.43],[117.64,409.43],[104.89,409.43],[104.52,409.43],[102.9,409.43],[86.48,409.43],[60.5,409.43],[60.5,386.25],[98.49,386.25],[103.41,386.25],[116.53,386.25],[121.7,386.25]],"bb":[60.5,386.2,121.7,409.4],"t":[63.57,401.43,[[0.0,0.0,"Pr\u00eat \u00e0 l\u2019achat"]]]},"x1":{"p":[[97.16,443.7],[97.16,471.77],[27.0,471.77],[14.25,471.77],[3.1,471.77],[3.1,443.7],[52.21,443.7],[70.25,443.7],[97.16,443.7]],"bb":[3.1,443.7,97.2,471.8],"t":[5.15,454.26,[[0.0,0.0,"Pr\u00eat dans une r\u00e9gion"],[0.0,13.2,"exon\u00e9r\u00e9e d\u2019imp\u00f4ts"]]]}},"pipes":[{"p":[[342.66,524.39],[342.66,537.15],[332.0,537.15],[319.24,524.39],[342.66,524.39]],"e":["i1-re2","i2-re2","x2-re2"]},{"p":[[342.66,501.14],[342.66,513.9],[308.75,513.9],[295.99,501.14],[342.66,501.14]],"e":["i1-re2","i2-re2","x2-re2"]},{"p":[[342.66,547.81],[342.66,564.99],[341.8,564.99],[313.96,537.15],[301.21,524.39],[290.72,513.9],[277.96,501.14],[268.55,491.73],[268.55,471.77],[281.3,471.77],[281.3,486.45],[295.99,501.14],[308.75,513.9],[319.24,524.39],[332.0,537.15],[342.66,547.81]],"e":["i1-re2","i2-re2","x2-re2"]},{"p":[[240.34,443.7],[222.3,443.7],[188.03,409.43],[206.06,409.43],[240.34,443.7]],"e":["pb-x2"]},{"p":[[369.46,466.6],[369.46,495.28],[356.7,495.28],[356.7,471.89],[199.13,314.31],[199.13,296.27],[369.46,466.6]],"e":["re2-priv2"]},{"p":[[357.57,237.18],[357.57,255.22],[336.54,234.19],[323.48,234.19],[323.48,221.43],[341.83,221.43],[357.57,237.18]],"e":["pret-fac"]},{"p":[[287.22,332.16],[377.7,422.65],[359.66,422.65],[274.46,337.45],[274.46,272.05],[287.22,272.05],[287.22,303.31],[287.22,303.51],[287.22,332.16]],"e":["pret-re1"]},{"p":[[337.47,335.71],[337.47,353.75],[287.22,303.51],[287.22,272.05],[299.78,272.05],[299.78,298.02],[337.47,335.71]],"e":["pret-d2"]},{"p":[[563.37,392.77],[563.37,405.52],[503.78,405.52],[483.24,426.06],[465.2,426.06],[498.49,392.77],[563.37,392.77]],"e":["exp-expo"]},{"p":[[540.83,329.07],[598.31,386.56],[580.27,386.56],[535.55,341.83],[507.15,341.83],[507.15,329.07],[540.83,329.07]],"e":["eneu-exp"]},{"p":[[537.02,266.82],[495.24,308.6],[495.24,322.55],[482.49,322.55],[482.49,303.32],[518.98,266.82],[537.02,266.82]],"e":["aut-eneu"]},{"p":[[651.33,217.7],[651.33,230.46],[553.3,230.46],[519.85,197.0],[537.73,197.0],[537.73,196.99],[558.59,217.85],[651.33,217.7]],"e":["stock-t4"]},{"p":[[650.11,178.44],[650.11,191.19],[537.73,191.19],[537.73,178.71],[611.49,178.71],[611.76,178.44],[650.11,178.44]],"e":["stock-t3"]},{"p":[[681.38,108.82],[611.76,178.71],[537.73,178.71],[537.73,165.95],[552.78,165.95],[553.2,165.95],[606.2,165.95],[663.34,108.82],[681.38,108.82]],"e":["stock-t2"]},{"p":[[610.33,108.82],[553.2,165.95],[537.73,165.95],[537.73,153.61],[547.5,153.61],[592.29,108.82],[610.33,108.82]],"e":["stock-t1"]},{"p":[[466.77,170.27],[466.77,183.02],[424.84,183.02],[424.84,170.27],[466.34,170.27],[466.77,170.27]],"e":["autre-stock"]},{"p":[[439.01,92.45],[439.01,105.2],[419.31,105.2],[406.56,92.45],[439.01,92.45]],"e":["dom-meme"]},{"p":[[401.27,105.2],[354.32,105.2],[354.32,92.45],[388.52,92.45],[401.27,105.2]],"e":["dom-meme"]},{"p":[[466.77,152.66],[466.77,170.27],[466.34,170.27],[401.27,105.2],[388.52,92.45],[338.12,42.05],[356.16,42.05],[406.56,92.45],[419.31,105.2],[437.13,123.02],[466.77,152.66]],"e":["intl-stock"]},{"p":[[329.37,89.86],[311.22,89.86],[299.51,78.16],[242.19,78.16],[242.19,65.32],[304.83,65.32],[329.37,89.86]],"e":["achat-dom","priv-achat"]},{"p":[[335.75,119.54],[361.28,145.08],[343.24,145.08],[322.99,124.82],[322.99,107.79],[335.75,107.79],[335.75,119.54]],"e":["dom-autre"]},{"p":[[290.72,513.9],[223.14,513.9],[223.14,501.14],[277.96,501.14],[290.72,513.9]],"e":["i1-re2"]},{"p":[[301.21,524.39],[313.96,537.15],[124.73,537.15],[124.73,524.39],[150.72,524.39],[301.21,524.39]],"e":["i2-re2"]},{"p":[[342.66,565.85],[342.66,577.75],[14.25,577.75],[14.25,471.77],[27.0,471.77],[27.0,564.99],[341.8,564.99],[342.66,564.99],[342.66,565.85]],"e":["x1-re2"]},{"p":[[254.83,175.48],[293.49,214.15],[275.45,214.15],[249.54,188.24],[221.61,188.24],[221.61,175.48],[254.83,175.48]],"e":["root-pret"]},{"p":[[182.31,386.25],[164.27,386.25],[140.4,362.38],[140.25,362.22],[140.25,344.63],[153.0,344.63],[153.0,356.94],[182.31,386.25]],"e":["priv2-pb"]},{"p":[[163.58,58.94],[163.58,71.69],[157.4,71.69],[87.95,141.14],[69.91,141.14],[152.12,58.94],[163.58,58.94]],"e":["root-priv"]},{"p":[[158.71,285.83],[150.51,285.83],[140.67,285.83],[126.89,272.05],[99.3,244.46],[99.3,214.15],[99.3,210.52],[112.06,210.52],[112.06,214.15],[112.06,239.17],[144.93,272.05],[158.71,285.83]],"e":["root-priv2"]},{"p":[[140.25,362.22],[140.4,362.38],[116.53,386.25],[103.41,386.25],[98.49,386.25],[127.99,356.75],[127.99,344.63],[140.25,344.63],[140.25,362.22]],"e":["priv2-pa"]},{"p":[[126.89,272.05],[-600,272.05],[-600,214.15],[99.3,214.15],[99.3,244.46],[126.89,272.05]],"e":["root-priv2"]},{"p":[[104.52,409.43],[70.25,443.7],[52.21,443.7],[86.48,409.43],[102.9,409.43],[104.52,409.43]],"e":["pa-x1"]},{"p":[[394.78,244.88],[423.17,244.88],[423.17,257.63],[394.78,257.63]],"e":["fac-ass"]},{"p":[[487.25,245.78],[515.64,245.78],[515.64,258.53],[487.25,258.53]],"e":["ass-aut"]},{"p":[[397.03,368.48],[409.79,368.48],[409.79,422.65],[397.03,422.65]],"e":["d2-re1"]},{"p":[[431.27,432.58],[449.42,432.58],[449.42,445.34],[431.27,445.34]],"e":["expo-re1"]},{"p":[[621.8,393.08],[664.07,393.08],[664.07,405.84],[621.8,405.84]],"e":["d1-exp"]},{"p":[[699.1,318.11],[711.86,318.11],[711.86,366.01],[699.1,366.01]],"e":["aus-d1"]},{"p":[[604.95,296.17],[670.8,296.17],[670.8,308.92],[604.95,308.92]],"e":["intl2-aus"]},{"p":[[550.26,266.82],[563.01,266.82],[563.01,286.97],[550.26,286.97]],"e":["aut-intl2"]},{"p":[[469.15,121.14],[481.9,121.14],[481.9,151.83],[469.15,151.83]],"e":["meme-stock"]},{"p":[[157.78,409.43],[170.54,409.43],[170.54,493.49],[157.78,493.49]],"e":["pb-i1"]},{"p":[[104.89,409.43],[117.64,409.43],[117.64,519.02],[104.89,519.02]],"e":["pa-i2"]},{"p":[[399.5,92],[407.5,92],[407.5,105],[399.5,105]],"e":["dom-meme"]}],"cuts":[{"p":[[267.17,490.35],[290.72,513.9]],"e":["i1-re2","i2-re2","x2-re2"]},{"p":[[290.72,513.9],[341.8,564.99]],"e":["i1-re2","i2-re2","x1-re2","x2-re2"]},{"p":[[308.75,513.9],[342.66,547.81]],"e":["i1-re2","i2-re2","x2-re2"]},{"p":[[338.12,42.05],[466.34,170.27]],"e":["autre-stock","intl-stock"]},{"p":[[356.16,42.05],[466.77,152.66]],"e":["intl-stock","meme-stock"]},{"p":[[281.3,471.77],[281.3,486.45],[308.75,513.9]],"e":["i1-re2","i2-re2","x2-re2"]},{"p":[[112.06,210.52],[112.06,239.17],[158.71,285.82]],"e":["root-priv2"]},{"p":[[99.3,210.52],[99.3,244.46],[140.67,285.83]],"e":["root-priv2"]}],"dot":[344,294],"dotfrom":[323.2,272.0]};
 /* ================= ENGINE ================= */
-let L = 0, vb = [0, 0, 1800, 1200], cur = null, sel = null, exp = new Set(["root"]), NE = [], ND = {}, SATS = {};
-
-const t = s => s ? s.split("|")[L] : "";
-const strip = s => s ? s.replace(/\n/g, " ") : "";
-const $ = id => document.getElementById(id), m = $("map"), NS = "http://www.w3.org/2000/svg";
-const sz = k => SZ[k] || [170, 70];
-const kids = k => E.filter(e => e[0] == k && e.join("-") != BACK).map(e => e[1]);
-const inc = k => E.filter(e => e[1] == k && e.join("-") != BACK).map(e => e[0]);
-const vis = k => k == "root" || inc(k).some(p => exp.has(p) && vis(p));
-
-function route(a, b) {
-  const k1 = `${a}-${b}`, k2 = `${b}-${a}`;
-  if (PATHS[k1]) return PATHS[k1];
-  if (PATHS[k2]) return PATHS[k2];
-  if (N[a] && N[b]) return `M${N[a][0]} ${N[a][1]} L${N[b][0]} ${N[b][1]}`;
-  return "M0 0 L0 0";
-}
-
-function build() {
-  const l = $("L"); l.innerHTML = ""; NE = []; ND = {}; SATS = {};
-  E.forEach(([a, b]) => {
-    if (!N[a] || !N[b]) return;
-    const p = document.createElementNS(NS, "path");
-    p.setAttribute("class", "pipe");
-    p.setAttribute("d", route(a, b));
-    l.appendChild(p); NE.push([a, b, p]);
-  });
-
-  for (const k in N) {
-    const [x, y, , lb] = N[k], [w, h] = sz(k), n = document.createElementNS(NS, "g");
-    n.setAttribute("class", "node"); n.dataset.k = k;
-    n.setAttribute("transform", `translate(${x - w/2} ${y - h/2})`);
-    n.innerHTML = `<g class="in"><rect width="${w}" height="${h}"/><foreignObject width="${w}" height="${h}"><div xmlns="http://www.w3.org/1999/xhtml" style="font-size:${fs(k)}px; font-weight:${k=='root'?'bold':'normal'}">${t(lb)}</div></foreignObject></g>`;
-    l.appendChild(n); ND[k] = n;
-  }
-
-  for (const k in SAT) {
-    if (!N[k]) continue;
-    const a = SAT[k], [w] = sz(k), x0 = N[k][0] - w/2, ln = document.createElementNS(NS, "path"), g = document.createElementNS(NS, "g");
-    ln.setAttribute("class", "pipe"); ln.setAttribute("d", `M${x0} ${a.y}L${a.x} ${a.y}`);
-    g.setAttribute("class", "sat"); g.dataset.f = a.f;
-    g.innerHTML = `<circle r="26" cx="${a.x}" cy="${a.y}" fill="transparent"/><circle class="dot" r="12" cx="${a.x}" cy="${a.y}"/><text x="${a.x}" y="${a.y-25}">${strip(t(a.t))}</text>`;
-    l.insertBefore(ln, l.firstChild); l.appendChild(g); SATS[k] = [ln, g];
-  }
-  refresh(0);
-}
-
-function refresh(fitIt = 1) {
-  const v = {}; for (const k in N) v[k] = vis(k);
-  for (const k in N) {
-    if (ND[k]) {
-      ND[k].classList.toggle("hid", !v[k]);
-      ND[k].classList.toggle("open", exp.has(k) && k != "root" && kids(k).length > 0);
-    }
-  }
-  NE.forEach(([a, b, p]) => p.classList.toggle("hid", !(v[a] && (a + "-" + b == BACK ? true : exp.has(a)))));
-  for (const k in SATS) SATS[k].forEach(el => el.classList.toggle("hid", !(v[k] && exp.has(k))));
-  if (fitIt === 2) return;
-  fit(v, fitIt);
-}
-
-let raf;
-function fit(v, now) {
-  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
-  for (const k in N) if (v[k]) {
-    const [w, h] = sz(k);
-    x0 = Math.min(x0, N[k][0] - w/2); x1 = Math.max(x1, N[k][0] + w/2);
-    y0 = Math.min(y0, N[k][1] - h/2); y1 = Math.max(y1, N[k][1] + h/2);
-  }
-  const r = m.getBoundingClientRect(), pad = 100;
-  let w = x1 - x0 + 2*pad, h = y1 - y0 + 2*pad;
-  if (w <= 0 || isNaN(w)) w = 1800;
-  if (h <= 0 || isNaN(h)) h = 1200;
-  
-  const ar = (r.width || 1000) / (r.height || 700);
-  if (w/h < ar) w = h * ar; else h = w / ar;
-  
-  const to = [(x0+x1)/2 - w/2, (y0+y1)/2 - h/2, w, h];
-  if (to.some(isNaN)) return;
-  
-  const fr = [...vb], s = performance.now(); cancelAnimationFrame(raf);
-  const step = n => {
-    const q = now ? 1 : Math.min(1, (n - s)/500), e = 1 - Math.pow(1 - q, 3);
-    vb = fr.map((a, i) => a + (to[i] - a) * e); vw();
-    if (q < 1) raf = requestAnimationFrame(step);
-  };
-  raf = requestAnimationFrame(step);
-}
-
-const vw = () => { if (!vb.some(isNaN)) m.setAttribute("viewBox", vb.join(" ")); };
-
-function ui() {
-  for (const k in U) if ($(k)) $(k).textContent = strip(t(U[k]));
-  document.documentElement.lang = L ? "en" : "fr";
-  build(); showSel(); if (cur) route2();
-}
-
-function showSel() {
-  const b = $("sel"); if (!sel) { b.classList.remove("show"); return; }
-  b.classList.add("show");
-  b.innerHTML = `<span>${strip(t(N[sel][3]))}</span><button onclick="location.hash='#/${sel}'">${strip(t(U.open))}</button>`;
-}
-
-/* Mouse interactions */
-let d = null;
-const sc = () => { const r = m.getBoundingClientRect(); return Math.max(vb[2]/(r.width||1), vb[3]/(r.height||1)); };
-m.addEventListener("pointerdown", e => { cancelAnimationFrame(raf); const n = e.target.closest(".node"); d = {x:e.clientX, y:e.clientY, v:[...vb], k:n?.dataset.k, s:e.target.closest(".sat")?.dataset.f, mv:0}; });
-addEventListener("pointermove", e => { if(!d)return; const dx=e.clientX-d.x, dy=e.clientY-d.y; if(Math.abs(dx)+Math.abs(dy)>5)d.mv=1; if(!d.mv)return; const s=sc(); vb[0]=d.v[0]-dx*s; vb[1]=d.v[1]-dy*s; vw(); });
-addEventListener("pointerup", () => { if(d&&!d.mv&&d.s)window.open(d.s,"_blank"); if(d&&!d.mv&&d.k){const k=d.k; if(kids(k).length){if(exp.has(k))location.hash="#/"+k; else{exp.add(k);sel=k;showSel();refresh(2);}}else location.hash="#/"+k;} d=null; });
-m.addEventListener("wheel", e => { e.preventDefault(); cancelAnimationFrame(raf); const r=m.getBoundingClientRect(), f=e.deltaY>0?1.12:.89, s=sc(), px=vb[0]+(e.clientX-(r.left||0))*s, py=vb[1]+(e.clientY-(r.top||0))*s, nw=vb[2]*f; if(nw>4500||nw<300)return; vb=[px-(px-vb[0])*f,py-(py-vb[1])*f,nw,vb[3]*f]; vw();},{passive:false});
-
-/* Pages */
-const par = k => inc(k)[0];
+let L=0,vb=[0,0,842,595],cur=null,sel=null,exp=new Set(["root"]),NP=[],NC=[],ND={},SATS={};
+const t=s=>s.split("|")[L],$=id=>document.getElementById(id),m=$("map"),NS="http://www.w3.org/2000/svg";
+const kids=k=>E.filter(e=>e[0]==k&&e.join("-")!=BACK).map(e=>e[1]);
+const inc=k=>E.filter(e=>e[1]==k&&e.join("-")!=BACK).map(e=>e[0]);
+const vis=k=>k=="root"||inc(k).some(p=>exp.has(p)&&vis(p));
+const mk$=(tag,cls,attrs)=>{const e=document.createElementNS(NS,tag);if(cls)e.setAttribute("class",cls);for(const a in attrs)e.setAttribute(a,attrs[a]);return e};
+const PT=p=>p.map(q=>q.join(",")).join(" ");
+const MT=mk$("text","meas",{});m.appendChild(MT);
+const meas=x=>{MT.textContent=x;return MT.getComputedTextLength()};
+function wrapM(txt,w){const o=[];let c="";for(const x of txt.split(" ")){const z=c?c+" "+x:x;if(c&&meas(z)>w){o.push(c);c=x}else c=z}if(c)o.push(c);return o}
+function wrapEN(txt,n){const o=[];let c="";for(const x of txt.split(" ")){if(c&&(c+" "+x).length>n){o.push(c);c=x}else c=c?c+" "+x:x}if(c)o.push(c);return o}
+function build(){const l=$("L");l.innerHTML="";NP=[];NC=[];ND={};SATS={};
+ GEO.pipes.forEach(p=>{const e=mk$("polygon","shape",{points:PT(p.p)});l.appendChild(e);NP.push([p.e,e])});
+ GEO.cuts.forEach(c=>{const e=mk$("polyline","cut",{points:PT(c.p)});l.appendChild(e);NC.push([c.e,e])});
+ for(const k in GEO.nodes){const g=GEO.nodes[k],[tx,ty,ln]=g.t,n=mk$("g","node",{});n.dataset.k=k;
+  const avail=Math.max(g.bb[2]-tx-3,46);const ls=L?wrapM(t(N[k][3]),avail):ln.map(x=>x[2]);
+  const ty2=ty+(k=="root"?4.5:0),W=Math.max(...ls.map(meas)),Hh=(ls.length-1)*13.2;
+  const ext=(tx+W+3>g.bb[2]||ty2+Hh+4>g.bb[3])?`<rect x="${tx-3}" y="${ty2-9.5}" width="${W+7}" height="${Hh+14.5}"/>`:"";
+  const cx=tx+Math.min(W,70)/2,cy=ty2+Hh/2-3;
+  n.innerHTML=`<g class="in" style="transform-origin:${cx}px ${cy}px"><polygon points="${PT(g.p)}"/>${ext}<text transform="translate(${tx} ${ty2})">${ls.map((x,i)=>`<tspan x="0" y="${(i*13.2).toFixed(1)}">${x}</tspan>`).join("")}</text></g>`;
+  l.appendChild(n);ND[k]=n}
+ for(const k in SAT){const a=SAT[k],ln=mk$("line","satline",{x1:a.from[0],y1:a.from[1],x2:a.x,y2:a.y}),g=mk$("g","sat",{});g.dataset.f=a.f;
+  g.innerHTML=`<circle r="14" cx="${a.x}" cy="${a.y}" fill="transparent"/><circle class="dot" r="7" cx="${a.x}" cy="${a.y}"/><text x="${a.x+13}" y="${a.y+4}">${t(a.t)}</text>`;
+  l.insertBefore(ln,l.firstChild);l.appendChild(g);SATS[k]=[ln,g]}
+ refresh(0)}
+function refresh(fitIt=1){const v={};for(const k in N)v[k]=vis(k);
+ const ev=key=>{const[a,b]=key.split("-");return v[a]&&(key==BACK?true:exp.has(a))};
+ for(const k in N){ND[k].classList.toggle("hid",!v[k]);ND[k].classList.toggle("open",exp.has(k)&&k!="root"&&kids(k).length>0)}
+ NP.forEach(([es,e])=>e.classList.toggle("hid",!es.some(ev)));
+ NC.forEach(([es,e])=>e.classList.toggle("hid",!es.some(ev)));
+ for(const k in SATS)SATS[k].forEach(el=>el.classList.toggle("hid",!(v[k]&&exp.has(k))));
+ if(fitIt===2)return;if(fitIt)fit(v);else fit(v,1)}
+let raf;function fit(v,now){let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const k in GEO.nodes)if(v[k]){const b=GEO.nodes[k].bb;x0=Math.min(x0,b[0]);y0=Math.min(y0,b[1]);x1=Math.max(x1,b[2]);y1=Math.max(y1,b[3])}
+ const r=m.getBoundingClientRect(),pad=30;let w=x1-x0+2*pad,h=y1-y0+2*pad;const ar=r.width/r.height;if(w/h<ar)w=h*ar;else h=w/ar;
+ const to=[(x0+x1)/2-w/2,(y0+y1)/2-h/2,w,h],fr=[...vb],s=performance.now();cancelAnimationFrame(raf);
+ const step=n=>{const q=now?1:Math.min(1,(n-s)/550),e=1-Math.pow(1-q,3);vb=fr.map((a,i)=>a+(to[i]-a)*e);vw();if(q<1)raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step)}
+const vw=()=>m.setAttribute("viewBox",vb.join(" "));
+function ui(){for(const k in U)if($(k))$(k).textContent=t(U[k]);document.documentElement.lang=L?"en":"fr";build();showSel();if(cur)route2()}
+function showSel(){const b=$("sel");if(!sel){b.classList.remove("show");return}b.classList.add("show");b.innerHTML=`<span>${t(N[sel][3])}</span><button onclick="location.hash='#/${sel}'">${t(U.open)}</button>`}
+/* pan & zoom & click */
+let d=null;const sc=()=>{const r=m.getBoundingClientRect();return Math.max(vb[2]/r.width,vb[3]/r.height)};
+m.addEventListener("pointerdown",e=>{cancelAnimationFrame(raf);const n=e.target.closest(".node");d={x:e.clientX,y:e.clientY,v:[...vb],k:n?.dataset.k,s:e.target.closest(".sat")?.dataset.f,mv:0}});
+addEventListener("pointermove",e=>{if(!d)return;const dx=e.clientX-d.x,dy=e.clientY-d.y;if(Math.abs(dx)+Math.abs(dy)>5)d.mv=1;if(!d.mv)return;const s=sc();vb[0]=d.v[0]-dx*s;vb[1]=d.v[1]-dy*s;vw()});
+addEventListener("pointerup",()=>{if(d&&!d.mv&&d.s)window.open(d.s,"_blank");if(d&&!d.mv&&d.k){const k=d.k;if(kids(k).length){if(exp.has(k))location.hash="#/"+k;else{exp.add(k);sel=k;showSel();refresh(2)}}else location.hash="#/"+k}d=null});
+m.addEventListener("wheel",e=>{e.preventDefault();cancelAnimationFrame(raf);const r=m.getBoundingClientRect(),f=e.deltaY>0?1.12:.89,s=sc(),px=vb[0]+(e.clientX-r.left)*s,py=vb[1]+(e.clientY-r.top)*s,nw=vb[2]*f;if(nw>3000||nw<100)return;vb=[px-(px-vb[0])*f,py-(py-vb[1])*f,nw,vb[3]*f];vw()},{passive:false});
+/* pages */
+const par=k=>inc(k)[0];
 function crumbs(k){const a=[];let c=k;while(c){a.unshift(c);c=par(c)}return a}
-function mini(k){
-  const ins=inc(k),outs=kids(k),H=Math.max(220,Math.max(ins.length,outs.length)*64+40),cy=H/2;
-  const bx=(id,x,y)=>`<a onclick="location.hash='#/${id}'"><rect x="${x}" y="${y}" width="170" height="48" fill="#fff"/><foreignObject x="${x}" y="${y}" width="170" height="48"><div xmlns="http://www.w3.org/1999/xhtml" style="height:48px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;color:#000;padding:4px 8px">${strip(t(N[id][3]))}</div></foreignObject></a>`;
-  let s=`<svg viewBox="0 0 700 ${H}"><path d="M265 ${cy}H435" stroke="#fff" stroke-width="5"/>`;
-  ins.forEach((id,i)=>s+=`<path d="M170 ${44+i*64}H218V${cy}" stroke="#fff" stroke-width="5" fill="none"/>`);
-  outs.forEach((id,i)=>s+=`<path d="M435 ${cy}H482V${44+i*64}H530" stroke="#fff" stroke-width="5" fill="none"/>`);
-  ins.forEach((id,i)=>s+=bx(id,0,20+i*64));outs.forEach((id,i)=>s+=bx(id,530,20+i*64));
-  return s+`<rect x="265" y="${cy-34}" width="170" height="68" fill="#fff"/><foreignObject x="265" y="${cy-34}" width="170" height="68"><div xmlns="http://www.w3.org/1999/xhtml" style="height:68px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;font-weight:700;color:#000;padding:4px 10px">${strip(t(N[k][3]))}</div></foreignObject></svg>`;
-}
-const docs = k => (DOCS[k]||[]).map(d=>`<div class="doc"><p><b>${strip(t(d.t))}</b></p>${L==1&&d.lang=="fr"?`<p>${strip(t(U.dnote))}</p>`:""}<a class="btn" href="${d.f}" target="_blank">${strip(t(U.dop))}</a><a class="btn" href="${d.f}" download>${strip(t(U.ddl))}</a><object data="${d.f}#view=FitH" type="application/pdf"><p>${strip(t(U.dfb))}</p></object></div>`).join("");
-
-function page(k){
-  const n=N[k], c=C[k]||{}, cr=crumbs(k), nx=kids(k), pv=par(k);
-  const lk=(a,lbl)=>`<a onclick="location.hash='#/${a}'">${strip(lbl)}</a>`;
-  const sec=SECTIONS.map((h,i)=>`<h2>${t(h)}</h2>`+(i==5?(c.diagram||`<div class="ph">${t(U.dph)}</div>`):`<p>${strip(t((c.s&&c.s[i])||TODO))}</p>`)+(i==2?docs(k):"")).join("");
-  $("pg").innerHTML=`<div class="bar"><a onclick="location.hash=''">${t(U.back)}</a><span class="cr">${cr.map(x=>x==k?strip(t(N[x][3])):lk(x,t(N[x][3]))).join(" &nbsp;/&nbsp; ")}</span></div>
-  <span class="tag">${t(GN[n[2]])}</span><h1>${t(n[3])}</h1><p>${strip(t(c.sum||TODO))}</p>${sec}
-  <h2>${t(U.cn)}</h2>${mini(k)}
-  <h2>${t(U.pv)} / ${t(U.nx)}</h2>${pv?`<p>${lk(pv,"← "+t(N[pv][3]))}</p>`:""}${nx.map(x=>`<p>${lk(x,"→ "+t(N[x][3]))}</p>`).join("")}`;
-}
-
-function index(){
-  $("pg").innerHTML=`<div class="bar"><a onclick="location.hash=''">${t(U.back)}</a></div><h1>${t(U.idx)}</h1>`+[1,2,3].map(g=>`<h2>${t(GN[g])}</h2><ul>${Object.keys(N).filter(k=>N[k][2]==g).map(k=>`<li onclick="location.hash='#/${k}'">${strip(t(N[k][3]))}</li>`).join("")}</ul>`).join("");
-}
-
-function route2(){
-  const k=location.hash.replace("#/",""); cur=null;
-  if(k=="index"){cur=k; index();} else if(N[k]){cur=k; page(k);}
-  $("pg").classList.toggle("show",!!cur); if(cur) $("pg").scrollTop=0;
-}
-
-/* Event Handlers */
-addEventListener("hashchange", route2);
-$("ix").onclick = () => location.hash="#/index";
-$("rs").onclick = () => { exp=new Set(["root"]); sel=null; showSel(); refresh(); };
-$("sl").onclick = e => { L=1-L; e.currentTarget.classList.toggle("on"); ui(); };
-addEventListener("keydown", e => { if(e.key=="Escape") location.hash=""; });
-addEventListener("resize", () => refresh());
-
-/* Start */
-try {
-  exp.add("root");
-  ui();
-  route2();
-} catch (e) {
-  document.body.innerHTML = `<div style="padding:40px; color:#ff4444; font-family:monospace; background:#000; height:100vh;">
-    <h2>Runtime Error</h2><pre>${e.message}</pre>
-  </div>`;
-  console.error(e);
-}
+function mini(k){const ins=inc(k),outs=kids(k),H=Math.max(220,Math.max(ins.length,outs.length)*64+40),cy=H/2;
+ const bx=(id,x,y)=>`<a onclick="location.hash='#/${id}'"><rect x="${x}" y="${y}" width="170" height="48" fill="#fff"/><foreignObject x="${x}" y="${y}" width="170" height="48"><div xmlns="http://www.w3.org/1999/xhtml" style="height:48px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;color:#000;padding:4px 8px">${t(N[id][3])}</div></foreignObject></a>`;
+ let s=`<svg viewBox="0 0 700 ${H}"><path d="M265 ${cy}H435" stroke="#fff" stroke-width="5"/>`;
+ ins.forEach((id,i)=>s+=`<path d="M170 ${44+i*64}H218V${cy}" stroke="#fff" stroke-width="5" fill="none"/>`);
+ outs.forEach((id,i)=>s+=`<path d="M435 ${cy}H482V${44+i*64}H530" stroke="#fff" stroke-width="5" fill="none"/>`);
+ ins.forEach((id,i)=>s+=bx(id,0,20+i*64));outs.forEach((id,i)=>s+=bx(id,530,20+i*64));
+ return s+`<rect x="265" y="${cy-34}" width="170" height="68" fill="#fff"/><foreignObject x="265" y="${cy-34}" width="170" height="68"><div xmlns="http://www.w3.org/1999/xhtml" style="height:68px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;font-weight:700;color:#000;padding:4px 10px">${t(N[k][3])}</div></foreignObject></svg>`}
+const docs=k=>(DOCS[k]||[]).map(d=>`<div class="doc"><p><b>${t(d.t)}</b></p>${L==1&&d.lang=="fr"?`<p>${t(U.dnote)}</p>`:""}<a class="btn" href="${d.f}" target="_blank">${t(U.dop)}</a><a class="btn" href="${d.f}" download>${t(U.ddl)}</a><object data="${d.f}#view=FitH" type="application/pdf"><p>${t(U.dfb)}</p></object></div>`).join("");
+function page(k){const n=N[k],c=C[k]||{},cr=crumbs(k),nx=kids(k),pv=par(k);
+ const lk=(a,lbl)=>`<a onclick="location.hash='#/${a}'">${lbl}</a>`;
+ const sec=SECTIONS.map((h,i)=>`<h2>${t(h)}</h2>`+(i==5?(c.diagram||`<div class="ph">${t(U.dph)}</div>`):`<p>${t((c.s&&c.s[i])||TODO)}</p>`)+(i==2?docs(k):"")).join("");
+ $("pg").innerHTML=`<div class="bar"><a onclick="location.hash=''">${t(U.back)}</a><span class="cr">${cr.map(x=>x==k?t(N[x][3]):lk(x,t(N[x][3]))).join(" &nbsp;/&nbsp; ")}</span></div>
+ <span class="tag">${t(GN[n[2]])}</span><h1>${t(n[3])}</h1><p>${t(c.sum||TODO)}</p>${sec}
+ <h2>${t(U.cn)}</h2>${mini(k)}
+ <h2>${t(U.pv)} / ${t(U.nx)}</h2>${pv?`<p>${lk(pv,"← "+t(N[pv][3]))}</p>`:""}${nx.map(x=>`<p>${lk(x,"→ "+t(N[x][3]))}</p>`).join("")}`}
+function index(){$("pg").innerHTML=`<div class="bar"><a onclick="location.hash=''">${t(U.back)}</a></div><h1>${t(U.idx)}</h1>`+[1,2,3].map(g=>`<h2>${t(GN[g])}</h2><ul>${Object.keys(N).filter(k=>N[k][2]==g).map(k=>`<li onclick="location.hash='#/${k}'">${t(N[k][3])}</li>`).join("")}</ul>`).join("")}
+function route2(){const k=location.hash.replace("#/","");cur=null;
+ if(k=="index"){cur=k;index()}else if(N[k]){cur=k;page(k)}
+ $("pg").classList.toggle("show",!!cur);if(cur)$("pg").scrollTop=0}
+addEventListener("hashchange",route2);
+$("ix").onclick=()=>location.hash="#/index";
+$("rs").onclick=()=>{exp=new Set(["root"]);sel=null;showSel();refresh()};
+$("sl").onclick=e=>{L=1-L;e.currentTarget.classList.toggle("on");ui()};
+addEventListener("keydown",e=>{if(e.key=="Escape")location.hash=""});
+addEventListener("resize",()=>refresh());
+exp.add("root");ui();route2();
 </script></body></html>

@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>S.S. United States - Mona Lisa Transport 3D Visualizer</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js & OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        :root {
+            --bg: #000000;
+            --ink: #ffffff;
+            --mut: #888888;
+            box-sizing: border-box;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            height: 100%;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 13px;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Swiss Modernist Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 50;
+            background: #000000;
+            border-bottom: 1px solid #ffffff;
+        }
+
+        header h1 {
+            font-size: 13px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            font-family: monospace, sans-serif;
+        }
+
+        /* Controls / Language Switcher */
+        .ctl {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .ctl a, .sw {
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: monospace, sans-serif;
+        }
+
+        .ctl a:hover {
+            text-decoration: underline;
+        }
+
+        .sw i {
+            width: 34px;
+            height: 18px;
+            border: 1px solid #ffffff;
+            border-radius: 9px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .sw i:after {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ffffff;
+            transition: left 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .sw.on i:after {
+            left: 19px;
+        }
+
+        /* Main Workspace Container */
+        main {
+            position: relative;
+            padding-top: 52px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 3D Viewport */
+        #viewport {
+            position: relative;
+            width: 100%;
+            height: 62vh;
+            min-height: 440px;
+            background: #000000;
+            border-bottom: 1px solid #ffffff;
+            overflow: hidden;
+        }
+
+        #webgl-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Hotspot Overlay Pins */
+        .hotspot-pin {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            margin-left: -10px;
+            margin-top: -10px;
+            cursor: pointer;
+            z-index: 30;
+            pointer-events: auto;
+        }
+
+        .hotspot-dot {
+            width: 10px;
+            height: 10px;
+            background: #ffffff;
+            border: 2px solid #000000;
+            border-radius: 50%;
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.2s;
+        }
+
+        .hotspot-pin:hover .hotspot-dot, .hotspot-pin.selected .hotspot-dot {
+            background: #000000;
+            border-color: #ffffff;
+            transform: scale(1.6);
+        }
+
+        .hotspot-pulse {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 1px solid #ffffff;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .hotspot-pin.selected .hotspot-pulse {
+            animation: ringPulse 1.5s infinite ease-out;
+        }
+
+        @keyframes ringPulse {
+            0% { transform: scale(0.5); opacity: 1; border-width: 2px; }
+            100% { transform: scale(2.2); opacity: 0; border-width: 0.5px; }
+        }
+
+        /* Navigation Preset Tabs */
+        nav.swiss-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 16px 20px 0;
+            background: #000000;
+        }
+
+        nav.swiss-nav button {
+            font-family: monospace, sans-serif;
+            background: #ffffff;
+            color: #000000;
+            border: 1px solid #ffffff;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        nav.swiss-nav button[aria-pressed="true"] {
+            background: #000000;
+            color: #ffffff;
+        }
+
+        nav.swiss-nav button:hover {
+            opacity: 0.85;
+        }
+
+        /* Control Grid */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+            gap: 16px;
+            padding: 16px 20px 32px;
+        }
+
+        @media (max-width: 820px) {
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .swiss-panel {
+            border: 1px solid #ffffff;
+            padding: 16px;
+            background: #000000;
+        }
+
+        .swiss-panel h2 {
+            font-size: 12px;
+            font-weight: 700;
+            margin: 0 0 10px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            font-family: monospace, sans-serif;
+            border-bottom: 1px solid #ffffff;
+            padding-bottom: 6px;
+        }
+
+        /* Explode Action Button */
+        .btn-explode-action {
+            width: 100%;
+            background: #ffffff;
+            color: #000000;
+            border: 1px solid #ffffff;
+            padding: 10px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: monospace, sans-serif;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-explode-action:hover {
+            background: #000000;
+            color: #ffffff;
+        }
+
+        /* Side Docked Annotation Card */
+        .annotation-card {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            width: 310px;
+            max-width: calc(100vw - 40px);
+            background: #000000;
+            border: 1px solid #ffffff;
+            padding: 16px;
+            z-index: 40;
+            box-shadow: 6px 6px 0px rgba(255, 255, 255, 0.2);
+            display: none;
+        }
+
+        .annotation-card.visible {
+            display: block;
+            animation: slideIn 0.2s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(12px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Specs Table */
+        .spec-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #222222;
+            font-size: 12px;
+            font-family: monospace, sans-serif;
+        }
+
+        .spec-row span:first-child {
+            color: #888888;
+        }
+
+        .spec-row span:last-child {
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        /* Dossier Modal */
+        #dossier-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        #dossier-modal.hidden {
+            display: none;
+        }
+
+        .modal-box {
+            background: #000000;
+            border: 1px solid #ffffff;
+            max-width: 600px;
+            width: 100%;
+            padding: 24px;
+            box-shadow: 8px 8px 0px #ffffff;
+        }
+
+        .modal-box h2 {
+            font-size: 14px;
+            font-weight: 700;
+            font-family: monospace, sans-serif;
+            margin: 0 0 12px;
+            border-bottom: 1px solid #ffffff;
+            padding-bottom: 8px;
+        }
+
+        .modal-box p {
+            line-height: 1.6;
+            font-size: 13px;
+            color: #dddddd;
+            margin: 0 0 12px;
+        }
+
+        .modal-box button {
+            background: #ffffff;
+            color: #000000;
+            border: 1px solid #ffffff;
+            padding: 8px 18px;
+            font-weight: 700;
+            font-family: monospace, sans-serif;
+            cursor: pointer;
+            float: right;
+            margin-top: 10px;
+        }
+
+        .modal-box button:hover {
+            background: #000000;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Swiss Header with Language Switcher -->
+    <header>
+        <h1 id="hdr-title">S.S. UNITED STATES // SUITE M72-M75 [1962–1963]</h1>
+        <div class="ctl">
+            <a id="btn-open-dossier">[DOSSIER HISTORIQUE]</a>
+            <div class="sw" id="lang-switch">
+                <span>FR</span>
+                <i></i>
+                <span>EN</span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Interactive 3D Viewport Area -->
+        <div id="viewport">
+            <!-- WebGL Canvas Container -->
+            <div id="webgl-canvas"></div>
+
+            <!-- Docked Side Card -->
+            <div id="annotation-card" class="annotation-card">
+                <div class="flex items-center justify-between border-b border-white pb-2 mb-2">
+                    <span id="card-tag" class="text-[10px] font-bold px-1.5 py-0.5 bg-white text-black font-mono">POINT_01</span>
+                    <button id="btn-close-card" class="text-white hover:text-gray-400 text-xs font-mono font-bold">[X]</button>
+                </div>
+                <h3 id="card-title" class="font-bold text-sm mb-1 font-mono uppercase">-</h3>
+                <p id="card-desc" class="text-xs text-gray-300 leading-relaxed mb-3">-</p>
+                <div id="card-specs" class="space-y-1"></div>
+            </div>
+
+            <!-- 2D Projected Hotspot Pins Container -->
+            <div id="hotspots-container" class="absolute inset-0 pointer-events-none z-30"></div>
+        </div>
+
+        <!-- Swiss Navigation Preset Tabs -->
+        <nav class="swiss-nav" id="view-tabs">
+            <button class="tab-btn" data-mode="all" aria-pressed="true" id="btn-mode-all">TOUT (VUE ENSEMBLE)</button>
+            <button class="tab-btn" data-mode="wool" aria-pressed="false" id="btn-mode-wool">COUVERTURES DE LAINE</button>
+            <button class="tab-btn" data-mode="vault" aria-pressed="false" id="btn-mode-vault">COFFRE BLINDÉ</button>
+            <button class="tab-btn" data-mode="crate" aria-pressed="false" id="btn-mode-crate">CAISSE INTERNE</button>
+            <button class="tab-btn" data-mode="artwork" aria-pressed="false" id="btn-mode-artwork">ŒUVRE [LA JOCONDE]</button>
+        </nav>
+
+        <!-- Swiss Controls & Specifications Grid -->
+        <div class="controls-grid">
+            <div class="swiss-panel">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 id="lbl-explode-title" class="!border-b-0 !mb-0 !pb-0">VUE ÉCLATÉE DU CAISSON</h2>
+                    <span id="lbl-explode-val" class="font-mono font-bold text-xs">[ASSEMBLÉ]</span>
+                </div>
+                <div class="py-1">
+                    <button id="btn-toggle-explode" class="btn-explode-action" aria-pressed="false">
+                        <span id="lbl-btn-explode">ÉCLATER LE CAISSON</span>
+                        <span id="lbl-btn-explode-icon"></span>
+                    </button>
+                </div>
+                <div class="flex justify-between text-[11px] font-mono text-gray-400 mt-3 border-t border-gray-800 pt-2">
+                    <span id="lbl-status-assembled">ÉTAT: ASSEMBLÉ</span>
+                    <span id="lbl-status-hint">ANIMATION 3D FLUIDE</span>
+                </div>
+            </div>
+
+            <div class="swiss-panel">
+                <h2 id="lbl-specs-title">SPÉCIFICATIONS RÈGLEMENTAIRES</h2>
+                <div class="space-y-1">
+                    <div class="spec-row">
+                        <span id="spec-lbl-ship">NAVIRE / EMPLACEMENT</span>
+                        <span>S.S. UNITED STATES // SUITE M72-M75</span>
+                    </div>
+                    <div class="spec-row">
+                        <span id="spec-lbl-date">TRAVERSÉE / DATES</span>
+                        <span>DEC 1962–JAN 1963</span>
+                    </div>
+                    <div class="spec-row">
+                        <span id="spec-lbl-orient">ORIENTATION PEINTURE</span>
+                        <span id="spec-val-orient">HORIZONTALE (À PLAT)</span>
+                    </div>
+                    <div class="spec-row">
+                        <span id="spec-lbl-security">PROTOCOLE DE SÉCURITÉ</span>
+                        <span id="spec-val-security">GARDES 24/7 + RUSE T.48</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Dossier Modal -->
+    <div id="dossier-modal" class="hidden">
+        <div class="modal-box">
+            <h2 id="modal-title">DOSSIER HISTORIQUE DE TRANSPORT</h2>
+            <div id="modal-content"></div>
+            <button id="btn-close-modal">FERMER</button>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        let currentLang = 0;
+
+        const I18N = {
+            hdrTitle: [
+                "S.S. UNITED STATES // SUITE M72-M75 [1962–1963]",
+                "S.S. UNITED STATES // SUITE M72-M75 [1962–1963]"
+            ],
+            lblDossier: ["[DOSSIER HISTORIQUE]", "[HISTORICAL LOG]"],
+            lblExplodeTitle: ["VUE ÉCLATÉE DU CAISSON", "EXPLODED VIEW INSPECTOR"],
+            lblBtnExplode: ["ÉCLATER / ASSEMBLER LE CAISSON", "EXPLODE / ASSEMBLE VAULT"],
+            lblStatusAssembled: ["ÉTAT: CONTRACTÉ", "STATUS: COLLAPSED"],
+            lblStatusExploded: ["ÉTAT: ÉCLATÉ", "STATUS: EXPLODED"],
+            lblStatusHint: ["ANIMATION 3D FLUIDE", "FLUID 3D ANIMATION"],
+            lblSpecsTitle: ["SPÉCIFICATIONS RÈGLEMENTAIRES", "REGULATORY SPECIFICATIONS"],
+            btnModeAll: ["TOUT (VUE ENSEMBLE)", "ALL (FULL ASSEMBLY)"],
+            btnModeWool: ["COUVERTURES DE LAINE", "WOOL BLANKETS"],
+            btnModeVault: ["COFFRE BLINDÉ", "FLOATING VAULT"],
+            btnModeCrate: ["CAISSE INTERNE", "INNER CRATE"],
+            btnModeArtwork: ["ŒUVRE [LA JOCONDE]", "ARTWORK [MONA LISA]"],
+            specLblShip: ["NAVIRE / EMPLACEMENT", "VESSEL / LOCATION"],
+            specLblDate: ["TRAVERSÉE / DATES", "CROSSING / DATES"],
+            specLblOrient: ["ORIENTATION PEINTURE", "PAINTING ORIENTATION"],
+            specValOrient: ["HORIZONTALE (À PLAT)", "HORIZONTAL (FLAT)"],
+            specLblSecurity: ["PROTOCOLE SÉCURITÉ", "SECURITY PROTOCOL"],
+            specValSecurity: ["GARDES 24/7 + RUSE T.48", "GUARDS 24/7 + SIZE 15 SHOES"],
+            modalTitle: ["DOSSIER HISTORIQUE DE TRANSPORT", "HISTORICAL TRANSPORTATION BRIEFING"],
+            modalText: [
+                `<p>Le transport de <em>La Joconde</em> à bord du S.S. United States en décembre 1962 représentait un défi logistique d'une ampleur inédite.</p>
+                 <p><strong>ORIENTATION HORIZONTALE:</strong> Pour éviter toute contrainte de cisaillement du panneau de peuplier sous le roulis de l'Atlantique, l'œuvre a été emballée horizontalement à plat.</p>
+                 <p><strong>ENVELOPPE DE LAINE EXTÉRIEURE:</strong> L'ensemble du conteneur était enveloppé d'épaisses couvertures en laine gris foncé pour isoler du froid hivernal.</p>
+                 <p><strong>STRATAGÈME DES CHAUSSURES:</strong> Des chaussures pointure 48 (US size 15) étaient déposées chaque soir devant la porte pour faire croire à la présence continue d'un garde colossal.</p>`,
+                `<p>Transporting Leonardo da Vinci's <em>Mona Lisa</em> aboard the ocean liner S.S. United States in December 1962 was an unprecedented engineering feat.</p>
+                 <p><strong>HORIZONTAL PACKING:</strong> Packed horizontally flat to prevent shear stress on the poplar wood panel during severe ocean swell.</p>
+                 <p><strong>OUTER WOOL BLANKETS:</strong> Wrapped on the exterior with thick dark-gray wool blankets for thermal insulation.</p>
+                 <p><strong>GUARD SHOE STRATAGEM:</strong> Escorts placed size 15 shoes outside the cabin door each night to project the illusion of a massive guard inside.</p>`
+            ],
+            closeModal: ["FERMER", "CLOSE"]
+        };
+
+        const ANNOTATIONS = {
+            'pin-cabin': {
+                pos: [-7.0, 3.2, 0],
+                tag: ["SUITE M72-M75", "SUITE M72-M75"],
+                title: ["SUITE DE PREMIÈRE CLASSE", "FIRST CLASS STATEROOM SUITE"],
+                desc: ["Appartement réservé spécialement à bord du S.S. United States pour garantir un contrôle climatique et une sécurité maximale.", "First Class stateroom suite reserved for climate control and security."],
+                specs: [["SURFACE", "105 m²"], ["PONT", "Main Deck"]]
+            },
+            'pin-wool': {
+                pos: [0, 1.6, 0],
+                tag: ["ISOLATION", "INSULATION"],
+                title: ["ENVELOPPE DE LAINE EXTÉRIEURE", "OUTER WOOL BLANKETS WRAPPING"],
+                desc: ["Épaisses couvertures de laine gris foncé enveloppant intégralement l'extérieur du coffre blindé.", "Thick dark grey wool blankets wrapped entirely around the outer vault."],
+                specs: [["MATÉRIAU", "Laine haute densité"], ["POSITION", "Extérieur complet"]]
+            },
+            'pin-outer': {
+                pos: [0, 1.2, 0],
+                tag: ["SÉCURITÉ", "SAFETY"],
+                title: ["COFFRE FLOTTANT INSUBMERSIBLE", "FLOATING VAULT CONTAINER"],
+                desc: ["Caisson étanche en acier sous pression, conçu pour flotter automatiquement en cas de naufrage.", "Waterproof airtight pressurized steel vault engineered to float automatically."],
+                specs: [["FLOTTABILITÉ", "Insubmersible"], ["PROTECTION", "Étanche & Isotherme"]]
+            },
+            'pin-crate': {
+                pos: [0, 0.9, 0],
+                tag: ["CONSERVATION", "CONSERVATION"],
+                title: ["CAISSE EN BOIS INTERNE", "INNER WOODEN CRATE"],
+                desc: ["Enveloppe de protection sur mesure confectionnée par les ateliers de restauration du Musée du Louvre.", "Custom conservator wooden protective shell constructed by Louvre restorers."],
+                specs: [["AMORTISSEMENT", "Mousse Isotherme"], ["FABRICATION", "Musée du Louvre"]]
+            },
+            'pin-giacconda': {
+                pos: [0, 0.8, 0],
+                tag: ["ŒUVRE", "ARTWORK"],
+                title: ["LA JOCONDE (HORIZONTALE)", "MONA LISA (PACKED HORIZONTALLY)"],
+                desc: ["Disposée à plat horizontalement pour éviter les déchirures par cisaillement sous la houle.", "Packed horizontally flat to prevent wood shear strain during severe ocean swell."],
+                specs: [["SUPPORT", "Panneau de peuplier"], ["ORIENTATION", "Horizontale"]]
+            },
+            'pin-bolts': {
+                pos: [0, 0.05, 1.2],
+                tag: ["ANCRAGE", "ANCHOR"],
+                title: ["BOULONS D'ANCRAGE AU PLANCHER", "DECK MOUNTING BOLTS"],
+                desc: ["Système de fixation en acier traversant entièrement le plancher du navire.", "Heavy steel bolting assembly penetrating through the ship deck floor."],
+                specs: [["MATÉRIAU", "Acier forgé"], ["ANCRAGE", "Traversant le plancher"]]
+            },
+            'pin-shoes': {
+                pos: [2.0, 0.5, 5.5],
+                tag: ["RUSE", "RUSE"],
+                title: ["CHAUSSURES DE GARDE (T.48 / US 15)", "GUARD SHOES (SIZE 15)"],
+                desc: ["Grosses chaussures pointure 48 déposées chaque soir devant la porte pour faire croire à la présence d'un colosse.", "Size 15 shoes placed outside the door each night to project the illusion of a giant guard inside."],
+                specs: [["POINTURE", "48 / US Size 15"], ["OBJECTIF", "Dissuasion"]]
+            }
+        };
+
+        // 3D Variables
+        let scene, camera, renderer, controls;
+        let woolMesh, vaultMesh, crateMesh, artworkMesh, boltsGroup;
+        let activePinId = null;
+        let isExploded = false;
+        let currentFactor = 0.0;
+        let targetFactor = 0.0;
+        let animFrameId = null;
+
+        function init3D() {
+            const container = document.getElementById('webgl-canvas');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000);
+
+            camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+            camera.position.set(13, 8, 15);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxPolarAngle = Math.PI / 2 - 0.02;
+
+            // Lighting
+            const ambient = new THREE.AmbientLight(0xffffff, 0.8);
+            scene.add(ambient);
+
+            const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.2);
+            dirLight1.position.set(10, 15, 8);
+            scene.add(dirLight1);
+
+            const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.5);
+            dirLight2.position.set(-10, 5, -8);
+            scene.add(dirLight2);
+
+            // Materials
+            const lineMat = new THREE.LineBasicMaterial({ color: 0xffffff });
+            const subtleDarkMat = new THREE.LineBasicMaterial({ color: 0x1c1c1e });
+
+            // 1. Suite Boundary & Architecture
+            const suiteGroup = new THREE.Group();
+
+            // Clean Orthogonal Room Box (15.0 x 4.5 x 9.0) with subtle dark wireframe
+            const roomGeo = new THREE.BoxGeometry(15.0, 4.5, 9.0);
+            const roomEdges = new THREE.EdgesGeometry(roomGeo);
+            const roomLines = new THREE.LineSegments(roomEdges, subtleDarkMat);
+            roomLines.position.y = 2.25;
+            suiteGroup.add(roomLines);
+
+            // Internal Partition Bulkheads with subtle dark wireframe
+            const partitionGeo = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(1.0, 0, -4.5), new THREE.Vector3(1.0, 4.5, -4.5),
+                new THREE.Vector3(1.0, 4.5, -4.5), new THREE.Vector3(1.0, 4.5, -1.5),
+                new THREE.Vector3(1.0, 4.5, -1.5), new THREE.Vector3(1.0, 2.6, -1.5),
+                new THREE.Vector3(1.0, 2.6, -1.5), new THREE.Vector3(1.0, 2.6, -3.2),
+                new THREE.Vector3(1.0, 2.6, -3.2), new THREE.Vector3(1.0, 0, -3.2)
+            ]);
+            const partitionLines = new THREE.LineSegments(partitionGeo, subtleDarkMat);
+            suiteGroup.add(partitionLines);
+
+            // Entry Door Frame near shoes (X = 2.0, Z = 4.0)
+            const doorGeo = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(1.2, 0, 4.5), new THREE.Vector3(1.2, 2.8, 4.5),
+                new THREE.Vector3(1.2, 2.8, 4.5), new THREE.Vector3(2.8, 2.8, 4.5),
+                new THREE.Vector3(2.8, 2.8, 4.5), new THREE.Vector3(2.8, 0, 4.5)
+            ]);
+            const doorLines = new THREE.LineSegments(doorGeo, subtleDarkMat);
+            suiteGroup.add(doorLines);
+
+            // Detailed Mid-Century Stateroom Furnishings
+            const furnGroup = new THREE.Group();
+
+            // Sectional Sofa
+            const sofaBaseGeo = new THREE.BoxGeometry(4.2, 0.5, 1.4);
+            const sofaBase = new THREE.LineSegments(new THREE.EdgesGeometry(sofaBaseGeo), subtleDarkMat);
+            sofaBase.position.set(-4.0, 0.25, -3.0);
+            furnGroup.add(sofaBase);
+
+            const sofaBackGeo = new THREE.BoxGeometry(4.2, 0.9, 0.3);
+            const sofaBack = new THREE.LineSegments(new THREE.EdgesGeometry(sofaBackGeo), subtleDarkMat);
+            sofaBack.position.set(-4.0, 0.95, -3.65);
+            furnGroup.add(sofaBack);
+
+            [-2.6, -4.0, -5.4].forEach(xCush => {
+                const cushGeo = new THREE.BoxGeometry(0.02, 0.45, 1.2);
+                const cushLine = new THREE.LineSegments(new THREE.EdgesGeometry(cushGeo), subtleDarkMat);
+                cushLine.position.set(xCush, 0.52, -3.0);
+                furnGroup.add(cushLine);
+            });
+
+            // Oval Coffee Table & Armchairs
+            const tableGeo = new THREE.CylinderGeometry(1.2, 1.2, 0.35, 12);
+            const tableMesh = new THREE.LineSegments(new THREE.EdgesGeometry(tableGeo), subtleDarkMat);
+            tableMesh.position.set(-4.0, 0.175, -1.2);
+            furnGroup.add(tableMesh);
+
+            [-6.2, -1.8].forEach((xPos, idx) => {
+                const chairGeo = new THREE.BoxGeometry(1.2, 0.8, 1.2);
+                const chair = new THREE.LineSegments(new THREE.EdgesGeometry(chairGeo), subtleDarkMat);
+                chair.position.set(xPos, 0.4, -1.2);
+                chair.rotation.y = idx === 0 ? Math.PI / 4 : -Math.PI / 4;
+                furnGroup.add(chair);
+            });
+
+            // Floor Lamp
+            const lampBaseGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.05, 8);
+            const lampBase = new THREE.LineSegments(new THREE.EdgesGeometry(lampBaseGeo), subtleDarkMat);
+            lampBase.position.set(-6.6, 0.025, -3.5);
+            furnGroup.add(lampBase);
+
+            const lampPoleGeo = new THREE.CylinderGeometry(0.03, 0.03, 2.8, 6);
+            const lampPole = new THREE.LineSegments(new THREE.EdgesGeometry(lampPoleGeo), subtleDarkMat);
+            lampPole.position.set(-6.6, 1.4, -3.5);
+            furnGroup.add(lampPole);
+
+            const lampShadeGeo = new THREE.CylinderGeometry(0.3, 0.5, 0.6, 8);
+            const lampShade = new THREE.LineSegments(new THREE.EdgesGeometry(lampShadeGeo), subtleDarkMat);
+            lampShade.position.set(-6.6, 2.8, -3.5);
+            furnGroup.add(lampShade);
+
+            // Bedroom Suite: Twin Beds
+            [-2.6, 0.6].forEach(zBed => {
+                const bedGeo = new THREE.BoxGeometry(2.8, 0.65, 1.6);
+                const bedMesh = new THREE.LineSegments(new THREE.EdgesGeometry(bedGeo), subtleDarkMat);
+                bedMesh.position.set(4.5, 0.325, zBed);
+                furnGroup.add(bedMesh);
+            });
+
+            const headboardPanelsGeo = new THREE.BoxGeometry(0.2, 1.8, 5.2);
+            const headboardPanels = new THREE.LineSegments(new THREE.EdgesGeometry(headboardPanelsGeo), subtleDarkMat);
+            headboardPanels.position.set(6.0, 0.9, -1.0);
+            furnGroup.add(headboardPanels);
+
+            const nightstandGeo = new THREE.BoxGeometry(1.0, 0.7, 1.0);
+            const nightstand = new THREE.LineSegments(new THREE.EdgesGeometry(nightstandGeo), subtleDarkMat);
+            nightstand.position.set(5.2, 0.35, -1.0);
+            furnGroup.add(nightstand);
+
+            // Vanity Desk & Mirror
+            const vanityGeo = new THREE.BoxGeometry(2.4, 0.9, 0.9);
+            const vanity = new THREE.LineSegments(new THREE.EdgesGeometry(vanityGeo), subtleDarkMat);
+            vanity.position.set(4.0, 0.45, 3.2);
+            furnGroup.add(vanity);
+
+            const mirrorGeo = new THREE.BoxGeometry(1.8, 1.4, 0.05);
+            const mirror = new THREE.LineSegments(new THREE.EdgesGeometry(mirrorGeo), subtleDarkMat);
+            mirror.position.set(4.0, 1.8, 3.6);
+            furnGroup.add(mirror);
+
+            suiteGroup.add(furnGroup);
+            scene.add(suiteGroup);
+
+            // 2. Vault Layers Group
+            // A. Wool Layer (Outermost) - High-polygon organic draped blanket
+            const woolGroup = new THREE.Group();
+            
+            const woolGeo = new THREE.BoxGeometry(2.85, 1.65, 2.25, 24, 16, 20);
+            const posAttr = woolGeo.attributes.position;
+            
+            for (let i = 0; i < posAttr.count; i++) {
+                let x = posAttr.getX(i);
+                let y = posAttr.getY(i);
+                let z = posAttr.getZ(i);
+
+                const waveX = Math.sin(x * 6.0) * 0.035;
+                const waveZ = Math.cos(z * 6.0) * 0.035;
+                const waveY = Math.sin(y * 5.0) * 0.025;
+                
+                if (y > 0.7) {
+                    y -= 0.03 * (1.0 - Math.pow(x / 1.425, 2)) * (1.0 - Math.pow(z / 1.125, 2));
+                    y += (waveX + waveZ) * 0.6;
+                }
+
+                if (Math.abs(x) > 1.3 && Math.abs(z) > 1.0) {
+                    const cornerDist = Math.sqrt(Math.pow(Math.abs(x) - 1.3, 2) + Math.pow(Math.abs(z) - 1.0, 2));
+                    x += Math.sign(x) * cornerDist * 0.08;
+                    z += Math.sign(z) * cornerDist * 0.08;
+                    y -= 0.04 * (1.0 - (y / 0.825));
+                }
+
+                if (Math.abs(x) > 1.3) x += Math.sign(x) * (waveY + waveZ * 0.5);
+                if (Math.abs(z) > 1.0) z += Math.sign(z) * (waveY + waveX * 0.5);
+
+                posAttr.setXYZ(i, x, y, z);
+            }
+            woolGeo.computeVertexNormals();
+
+            const woolWireframe = new THREE.LineSegments(
+                new THREE.WireframeGeometry(woolGeo), 
+                new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 })
+            );
+            woolGroup.add(woolWireframe);
+
+            const woolEdges = new THREE.LineSegments(
+                new THREE.EdgesGeometry(woolGeo, 10), 
+                new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2 })
+            );
+            woolGroup.add(woolEdges);
+
+            const quiltMat = new THREE.LineDashedMaterial({ 
+                color: 0xaaaaaa, 
+                dashSize: 0.1, 
+                gapSize: 0.05 
+            });
+
+            for (let qx = -1.2; qx <= 1.2; qx += 0.4) {
+                const stitchPoints = [];
+                for (let qz = -1.0; qz <= 1.0; qz += 0.1) {
+                    const foldY = Math.sin(qx * 6.0) * 0.035 + Math.cos(qz * 6.0) * 0.035;
+                    stitchPoints.push(new THREE.Vector3(qx, 0.83 + foldY * 0.6, qz));
+                }
+                const stitchGeo = new THREE.BufferGeometry().setFromPoints(stitchPoints);
+                const stitchLine = new THREE.Line(stitchGeo, quiltMat);
+                stitchLine.computeLineDistances();
+                woolGroup.add(stitchLine);
+            }
+
+            [-0.85, 0, 0.85].forEach(xOffset => {
+                const strapGeo = new THREE.BoxGeometry(0.06, 1.72, 2.32);
+                const strapMesh = new THREE.LineSegments(new THREE.EdgesGeometry(strapGeo), lineMat);
+                strapMesh.position.x = xOffset;
+                woolGroup.add(strapMesh);
+            });
+
+            woolGroup.position.set(0, 0.8, 0);
+            woolMesh = woolGroup;
+            scene.add(woolMesh);
+
+            // B. Outer Floating Vault
+            const vaultGeo = new THREE.BoxGeometry(2.4, 1.3, 1.8);
+            vaultMesh = new THREE.LineSegments(new THREE.EdgesGeometry(vaultGeo), lineMat);
+            vaultMesh.position.set(0, 0.8, 0);
+            scene.add(vaultMesh);
+
+            // C. Inner Wooden Crate
+            const crateGeo = new THREE.BoxGeometry(2.0, 1.0, 1.4);
+            crateMesh = new THREE.LineSegments(new THREE.EdgesGeometry(crateGeo), lineMat);
+            crateMesh.position.set(0, 0.8, 0);
+            scene.add(crateMesh);
+
+            // D. Artwork Mona Lisa (Horizontal Panel)
+            const artGeo = new THREE.BoxGeometry(1.5, 0.15, 1.0);
+            artworkMesh = new THREE.LineSegments(new THREE.EdgesGeometry(artGeo), lineMat);
+            artworkMesh.position.set(0, 0.8, 0);
+            scene.add(artworkMesh);
+
+            // E. Deck Mounting Bolts (Y=0.05)
+            boltsGroup = new THREE.Group();
+            const boltPositions = [
+                [-1.25, 0.05, -0.95],
+                [ 1.25, 0.05, -0.95],
+                [-1.25, 0.05,  0.95],
+                [ 1.25, 0.05,  0.95]
+            ];
+
+            const boltGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.35, 8);
+            const boltEdges = new THREE.EdgesGeometry(boltGeo);
+
+            const headGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.1, 6);
+            const headEdges = new THREE.EdgesGeometry(headGeo);
+
+            const washerGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.04, 12);
+            const washerEdges = new THREE.EdgesGeometry(washerGeo);
+
+            boltPositions.forEach(pos => {
+                const bGroup = new THREE.Group();
+                bGroup.position.set(...pos);
+
+                const boltLines = new THREE.LineSegments(boltEdges, lineMat);
+                boltLines.position.y = 0.175;
+
+                const headLines = new THREE.LineSegments(headEdges, lineMat);
+                headLines.position.y = 0.32;
+
+                const washerLines = new THREE.LineSegments(washerEdges, lineMat);
+                washerLines.position.y = 0.02;
+
+                bGroup.add(washerLines);
+                bGroup.add(boltLines);
+                bGroup.add(headLines);
+
+                boltsGroup.add(bGroup);
+            });
+            scene.add(boltsGroup);
+
+            // 3. Size 15 Guard Shoes outside door (X=2.0, Y=0, Z=5.5)
+            const shoeGroup = new THREE.Group();
+            shoeGroup.position.set(2.0, 0, 5.5);
+            
+            const shoeGeo1 = new THREE.BoxGeometry(0.5, 0.2, 0.22);
+            const shoeMesh1 = new THREE.LineSegments(new THREE.EdgesGeometry(shoeGeo1), lineMat);
+            shoeMesh1.position.set(-0.15, 0.1, 0);
+            shoeGroup.add(shoeMesh1);
+
+            const shoeMesh2 = shoeMesh1.clone();
+            shoeMesh2.position.set(0.15, 0.1, 0);
+            shoeGroup.add(shoeMesh2);
+
+            scene.add(shoeGroup);
+
+            createHotspots();
+
+            window.addEventListener('resize', onWindowResize);
+            animate();
+        }
+
+        function createHotspots() {
+            const container = document.getElementById('hotspots-container');
+            container.innerHTML = '';
+
+            Object.keys(ANNOTATIONS).forEach(id => {
+                const pin = document.createElement('div');
+                pin.className = 'hotspot-pin';
+                pin.id = `pin-el-${id}`;
+                pin.innerHTML = `
+                    <div class="hotspot-pulse"></div>
+                    <div class="hotspot-dot"></div>
+                `;
+
+                pin.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    document.querySelectorAll('.hotspot-pin').forEach(p => p.classList.remove('selected'));
+
+                    if (activePinId === id) {
+                        activePinId = null;
+                        document.getElementById('annotation-card').classList.remove('visible');
+                    } else {
+                        activePinId = id;
+                        pin.classList.add('selected');
+                        renderCard(id);
+                    }
+                });
+
+                container.appendChild(pin);
+            });
+        }
+
+        function updateHotspotPositions() {
+            if (!camera || !renderer) return;
+
+            const width = renderer.domElement.clientWidth;
+            const height = renderer.domElement.clientHeight;
+
+            Object.keys(ANNOTATIONS).forEach(id => {
+                const pinEl = document.getElementById(`pin-el-${id}`);
+                if (!pinEl) return;
+
+                let posArr = [...ANNOTATIONS[id].pos];
+
+                if (id === 'pin-wool') posArr[1] += currentFactor * 6.0;
+                if (id === 'pin-outer') posArr[1] += currentFactor * 4.0;
+                if (id === 'pin-crate') posArr[1] += currentFactor * 2.0;
+                if (id === 'pin-giacconda') posArr[1] += currentFactor * 0.0;
+
+                const worldVec = new THREE.Vector3(...posArr);
+                worldVec.project(camera);
+
+                if (worldVec.z > 1) {
+                    pinEl.style.display = 'none';
+                    return;
+                }
+
+                pinEl.style.display = 'block';
+                const x = (worldVec.x * 0.5 + 0.5) * width;
+                const y = (-(worldVec.y * 0.5) + 0.5) * height;
+
+                pinEl.style.left = `${x}px`;
+                pinEl.style.top = `${y}px`;
+            });
+        }
+
+        function setExplodeFactor(factor) {
+            currentFactor = factor;
+
+            if (woolMesh) woolMesh.position.y = 0.8 + factor * 6.0;
+            if (vaultMesh) vaultMesh.position.y = 0.8 + factor * 4.0;
+            if (crateMesh) crateMesh.position.y = 0.8 + factor * 2.0;
+            if (artworkMesh) artworkMesh.position.y = 0.8 + factor * 0.0;
+
+            const percent = Math.round(factor * 100);
+            document.getElementById('lbl-explode-val').textContent = percent === 0 ? `[ASSEMBLÉ]` : `[ÉCLATÉ ${percent}%]`;
+        }
+
+        function animateExplodeTo(target) {
+            targetFactor = target;
+            if (animFrameId) cancelAnimationFrame(animFrameId);
+
+            // Lerp loop with 0.04 smoothing factor
+            function step() {
+                const diff = targetFactor - currentFactor;
+                if (Math.abs(diff) < 0.001) {
+                    setExplodeFactor(targetFactor);
+                    return;
+                }
+                setExplodeFactor(currentFactor + diff * 0.04);
+                animFrameId = requestAnimationFrame(step);
+            }
+            step();
+        }
+
+        function renderCard(pinId) {
+            const data = ANNOTATIONS[pinId];
+            if (!data) return;
+
+            const L = currentLang;
+            const card = document.getElementById('annotation-card');
+            
+            document.getElementById('card-tag').textContent = data.tag[L];
+            document.getElementById('card-title').textContent = data.title[L];
+            document.getElementById('card-desc').textContent = data.desc[L];
+
+            const specsBox = document.getElementById('card-specs');
+            specsBox.innerHTML = '';
+            if (data.specs) {
+                data.specs.forEach(s => {
+                    const row = document.createElement('div');
+                    row.className = 'spec-row';
+                    row.innerHTML = `<span>${s[0]}</span><span>${s[1]}</span>`;
+                    specsBox.appendChild(row);
+                });
+            }
+
+            card.classList.add('visible');
+        }
+
+        function updateUI() {
+            const L = currentLang;
+
+            document.getElementById('hdr-title').textContent = I18N.hdrTitle[L];
+            document.getElementById('btn-open-dossier').textContent = I18N.lblDossier[L];
+            document.getElementById('lbl-explode-title').textContent = I18N.lblExplodeTitle[L];
+            document.getElementById('lbl-btn-explode').textContent = I18N.lblBtnExplode[L];
+            
+            document.getElementById('lbl-status-assembled').textContent = isExploded ? I18N.lblStatusExploded[L] : I18N.lblStatusAssembled[L];
+            document.getElementById('lbl-status-hint').textContent = I18N.lblStatusHint[L];
+            
+            document.getElementById('lbl-specs-title').textContent = I18N.lblSpecsTitle[L];
+            document.getElementById('btn-mode-all').textContent = I18N.btnModeAll[L];
+            document.getElementById('btn-mode-wool').textContent = I18N.btnModeWool[L];
+            document.getElementById('btn-mode-vault').textContent = I18N.btnModeVault[L];
+            document.getElementById('btn-mode-crate').textContent = I18N.btnModeCrate[L];
+            document.getElementById('btn-mode-artwork').textContent = I18N.btnModeArtwork[L];
+            document.getElementById('spec-lbl-ship').textContent = I18N.specLblShip[L];
+            document.getElementById('spec-lbl-date').textContent = I18N.specLblDate[L];
+            document.getElementById('spec-lbl-orient').textContent = I18N.specLblOrient[L];
+            document.getElementById('spec-val-orient').textContent = I18N.specValOrient[L];
+            document.getElementById('spec-lbl-security').textContent = I18N.specLblSecurity[L];
+            document.getElementById('spec-val-security').textContent = I18N.specValSecurity[L];
+            document.getElementById('modal-title').textContent = I18N.modalTitle[L];
+            document.getElementById('modal-content').innerHTML = I18N.modalText[L];
+            document.getElementById('btn-close-modal').textContent = I18N.closeModal[L];
+
+            if (activePinId) renderCard(activePinId);
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('webgl-canvas');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(width, height);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            updateHotspotPositions();
+            renderer.render(scene, camera);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            init3D();
+
+            const langSwitch = document.getElementById('lang-switch');
+            langSwitch.addEventListener('click', () => {
+                currentLang = currentLang === 0 ? 1 : 0;
+                langSwitch.classList.toggle('on', currentLang === 1);
+                updateUI();
+            });
+
+            document.getElementById('btn-close-card').addEventListener('click', () => {
+                document.getElementById('annotation-card').classList.remove('visible');
+                document.querySelectorAll('.hotspot-pin').forEach(p => p.classList.remove('selected'));
+                activePinId = null;
+            });
+
+            const toggleBtn = document.getElementById('btn-toggle-explode');
+            toggleBtn.addEventListener('click', () => {
+                isExploded = !isExploded;
+                toggleBtn.setAttribute('aria-pressed', isExploded ? 'true' : 'false');
+                document.getElementById('lbl-btn-explode-icon').textContent = '';
+                
+                const tabBtns = document.querySelectorAll('.tab-btn');
+                tabBtns.forEach(b => b.setAttribute('aria-pressed', 'false'));
+                if (!isExploded) document.getElementById('btn-mode-all').setAttribute('aria-pressed', 'true');
+
+                animateExplodeTo(isExploded ? 1.0 : 0.0);
+                updateUI();
+            });
+
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabBtns.forEach(b => b.setAttribute('aria-pressed', 'false'));
+                    btn.setAttribute('aria-pressed', 'true');
+
+                    const mode = btn.dataset.mode;
+                    let factor = 0;
+                    if (mode === 'all') factor = 0.0;
+                    else if (mode === 'wool') factor = 0.25;
+                    else if (mode === 'vault') factor = 0.50;
+                    else if (mode === 'crate') factor = 0.75;
+                    else if (mode === 'artwork') factor = 1.0;
+
+                    isExploded = factor > 0;
+                    toggleBtn.setAttribute('aria-pressed', isExploded ? 'true' : 'false');
+                    document.getElementById('lbl-btn-explode-icon').textContent = '';
+
+                    animateExplodeTo(factor);
+                    updateUI();
+                });
+            });
+
+            const modal = document.getElementById('dossier-modal');
+            document.getElementById('btn-open-dossier').addEventListener('click', () => modal.classList.remove('hidden'));
+            document.getElementById('btn-close-modal').addEventListener('click', () => modal.classList.add('hidden'));
+
+            updateUI();
+        });
+    </script>
+</body>
+</html>
