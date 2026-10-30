@@ -48,7 +48,9 @@ header{height:57px;border-bottom:1px solid #fff;padding:0 29px;display:flex;alig
 h1{font-size:18px;font-weight:700;margin:0;letter-spacing:0}
 main{max-width:none;padding:18px 29px 40px}
 .sub{font-size:14px;color:#fff;margin:0 0 16px}
-.bk{position:fixed;top:env(safe-area-inset-top,0px);right:29px;height:57px;display:flex;align-items:center;text-decoration:none;font-size:15px;z-index:5}
+.mainlink{position:fixed;top:env(safe-area-inset-top,0px);right:29px;height:57px;display:flex;align-items:center;color:#fff;text-decoration:none;font-size:15px;z-index:6}
+.mainlink:hover{text-decoration:underline}
+.bk{position:fixed;top:env(safe-area-inset-top,0px);right:150px;height:57px;display:flex;align-items:center;text-decoration:none;font-size:15px;z-index:5}
 .bk:hover{text-decoration:underline}
 #map{border:0}
 .pin circle{fill:#fff}
@@ -65,7 +67,7 @@ li.m{background:transparent;color:#fff;border:1px dotted #fff}
 </style>
 </head>
 <body>
-<header><h1 id="ttl">D’où viennent les œuvres ?</h1></header>
+<header><h1 id="ttl">D’où viennent les œuvres ?</h1><a class="mainlink" href="../index.html">← Diagramme</a></header>
 <main>
 <p class="sub" id="sub">Choisissez un sujet pour afficher sa carte.</p>
 <div id="home"><div class="cards"><button class="card" data-m="basel"><b>Art Basel</b><span>D’où viennent les galeries des cinq foires</span></button><button class="card" data-m="louvre"><b>Musée du Louvre</b><span>Dans quels pays le Louvre a prêté des œuvres (2023, 2024, 2025)</span></button></div></div>
