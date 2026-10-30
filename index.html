@@ -15,15 +15,16 @@ header b{font-size:14px}
 .sw.on i:after{left:20px}
 #map{position:fixed;top:48px;left:0;width:100%;height:calc(100% - 48px);cursor:grab;touch-action:none}
 .sat{cursor:pointer;transition:opacity .45s}
+.sat text.lft{text-anchor:end}
 .sat:hover .dot{transform:scale(1.5)}
 .sat:hover text{opacity:1}
-#map{background:#231f20}
+#map{background:#000}
 .shape{fill:#fff;stroke:none;transition:opacity .45s}
-.cut{fill:none;stroke:#231f20;stroke-width:.6;transition:opacity .45s}
+.cut{fill:none;stroke:#000;stroke-width:.6;transition:opacity .45s}
 .node{cursor:pointer;transition:opacity .45s}
 .node polygon,.node rect{fill:#fff}
-.meas{font-size:10px;letter-spacing:-.01em;font-family:Helvetica,"Helvetica Neue",Arial,sans-serif;opacity:0;pointer-events:none}
-.node text{fill:#231f20;font-size:10px;letter-spacing:-.01em;font-family:Helvetica,"Helvetica Neue",Arial,sans-serif}
+.meas{font-size:9px;font-family:Helvetica,"Helvetica Neue",Arial,sans-serif;opacity:0;pointer-events:none}
+.node text{fill:#000;font-size:9px;font-family:Helvetica,"Helvetica Neue",Arial,sans-serif}
 .node .in{transition:transform .15s;transform-box:view-box}
 .node:hover .in{transform:scale(1.05)}
 .satline{stroke:#fff;stroke-width:3;transition:opacity .45s}
@@ -118,7 +119,7 @@ const E="root-priv root-pret root-priv2 priv-achat achat-intl achat-dom dom-autr
 const BACK=["re2-priv2","d2-pret","re1-pret"],BACKX=["re1-pret"];
 /* BACK = lines drawn back to a node that is already on screen: shown when their start node is visible (BACKX: only once that node has been clicked) */
 /* Satellite dots: appear next to a node once it has been clicked. SAT[nodeId] = {x,y = dot position, from = point on the node it connects to, f = page to open (same tab), t = hover label "FR|EN"} (coordinates in the units of the layout SVG) */
-const SAT={pret:{x:344,y:294,from:[323.2,272.0],f:"provenances/index.html",t:"provenances|provenances"},expo:{x:464,y:478,from:[464,451.8],f:"transport/index.html",t:"transport|transport"}};
+const SAT={pret:{x:344,y:294,from:[323.2,272.0],f:"provenances/index.html",t:"provenances|provenances"},expo:{x:464,y:478,from:[464,451.8],f:"transport/index.html",t:"transport|transport"},stock:{x:470,y:212,from:[470.0,197.0],l:1,f:"modigliani/index.html",t:"affaire Modigliani|Modigliani affair"}};
 /* ================= PAGE STRUCTURE — edit here =================
  Every page uses SECTIONS. Write real text in C[id] = {sum:"FR|EN", s:["FR|EN", …one per section…], diagram:"<svg…>"} */
 const SECTIONS=["Définition|Definition","Règles et conditions|Rules and conditions","Documents requis|Required documents","Acteurs|Actors","Exemple de cas|Case example","Diagramme|Diagram","Sources|Sources"];
@@ -343,13 +344,13 @@ function build(){const l=$("L");l.innerHTML="";NP=[];NC=[];ND={};SATS={};
  GEO.cuts.forEach(c=>{const e=mk$("polyline","cut",{points:PT(c.p)});l.appendChild(e);NC.push([c.e,e])});
  for(const k in GEO.nodes){const g=GEO.nodes[k],[tx,ty,ln]=g.t,n=mk$("g","node",{});n.dataset.k=k;
   const avail=Math.max(g.bb[2]-tx-3,46);const ls=L?wrapM(t(N[k][3]),avail):ln.map(x=>x[2]);
-  const ty2=ty+(k=="root"?4.5:0),W=Math.max(...ls.map(meas)),Hh=(ls.length-1)*13.2;
-  const ext=(tx+W+3>g.bb[2]||ty2+Hh+4>g.bb[3])?`<rect x="${tx-3}" y="${ty2-9.5}" width="${W+7}" height="${Hh+14.5}"/>`:"";
+  const LH=12,ty2=ty+(k=="root"?6:0),W=Math.max(...ls.map(meas)),Hh=(ls.length-1)*LH;
+  const ext=(tx+W+4>g.bb[2]||ty2+Hh+3.5>g.bb[3])?`<rect x="${tx-3.5}" y="${ty2-8.5}" width="${W+8}" height="${Hh+13.5}"/>`:"";
   const cx=tx+Math.min(W,70)/2,cy=ty2+Hh/2-3;
-  n.innerHTML=`<g class="in" style="transform-origin:${cx}px ${cy}px"><polygon points="${PT(g.p)}"/>${ext}<text transform="translate(${tx} ${ty2})">${ls.map((x,i)=>`<tspan x="0" y="${(i*13.2).toFixed(1)}">${x}</tspan>`).join("")}</text></g>`;
+  n.innerHTML=`<g class="in" style="transform-origin:${cx}px ${cy}px"><polygon points="${PT(g.p)}"/>${ext}<text transform="translate(${tx} ${ty2})">${ls.map((x,i)=>`<tspan x="0" y="${(i*LH).toFixed(1)}">${x}</tspan>`).join("")}</text></g>`;
   l.appendChild(n);ND[k]=n}
  for(const k in SAT){const a=SAT[k],ln=mk$("line","satline",{x1:a.from[0],y1:a.from[1],x2:a.x,y2:a.y}),g=mk$("g","sat",{});g.dataset.f=a.f;
-  g.innerHTML=`<circle r="14" cx="${a.x}" cy="${a.y}" fill="transparent"/><circle class="dot" r="7" cx="${a.x}" cy="${a.y}"/><text x="${a.x+13}" y="${a.y+4}">${t(a.t)}</text>`;
+  g.innerHTML=`<circle r="14" cx="${a.x}" cy="${a.y}" fill="transparent"/><circle class="dot" r="7" cx="${a.x}" cy="${a.y}"/><text x="${a.l?a.x-13:a.x+13}" y="${a.y+4}"${a.l?' class="lft"':""}>${t(a.t)}</text>`;
   l.insertBefore(ln,l.firstChild);l.appendChild(g);SATS[k]=[ln,g]}
  refresh(0)}
 function refresh(fitIt=1){const v={};for(const k in N)v[k]=vis(k);
