@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Art Basel – d’où viennent les œuvres ?</title>
+<title>Provenance des œuvres d’art</title>
 <style>
 :root{--bg:#000;--ink:#fff;--mut:#bdbdbd;--land:#2a2a2a;--on:#6a6a6a;--maybe:#6a6a6a;--line:#000;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -76,7 +76,7 @@ li.m{background:transparent;color:#fff;border:1px dotted #fff}
 </style>
 </head>
 <body>
-<header><h1 id="ttl">D’où viennent les œuvres ?</h1><a class="mainlink" href="../index.html">← Diagramme</a></header>
+<header><h1 id="ttl">Provenance des œuvres d’art</h1><a class="mainlink" href="../index.html">← Diagramme</a></header>
 <main>
 <p class="sub" id="sub">Choisissez un sujet pour afficher sa carte.</p>
 <div id="home"><div class="cards"><button class="card" data-m="basel"><b>Art Basel</b><span>D’où viennent les galeries des cinq foires</span></button><button class="card" data-m="louvre"><b>Musée du Louvre</b><span>Dans quels pays le Louvre a prêté des œuvres (2018 à 2025)</span></button></div></div>
@@ -218,7 +218,7 @@ function go(m){
  mode=m;cur=null;
  document.getElementById("home").hidden=!!m;document.getElementById("app").hidden=!m;
  document.getElementById("aboutB").hidden=m!=="basel";document.getElementById("aboutL").hidden=m!=="louvre";
- document.getElementById("ttl").textContent=m==="louvre"?"Où le Louvre prête-t-il ses œuvres ?":m==="basel"?"D’où viennent les galeries d’Art Basel ?":"D’où viennent les œuvres ?";
+ document.getElementById("ttl").textContent=m==="louvre"?"Où le Louvre prête-t-il ses œuvres ?":m==="basel"?"D’où viennent les galeries d’Art Basel ?":"Provenance des œuvres d’art";
  document.getElementById("sub").textContent=m==="louvre"?"":m==="basel"?"":"Choisissez un sujet pour afficher sa carte.";
  if(m){setTabs();build()}
 }
