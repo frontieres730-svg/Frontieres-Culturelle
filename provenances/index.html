@@ -73,6 +73,13 @@ li.m{background:transparent;color:#fff;border:1px dotted #fff}
 @media (max-width:900px){#app{grid-template-columns:minmax(0,1fr)}#app>#map{grid-column:1;grid-row:auto;order:2}#app>section{grid-column:1;grid-row:auto;order:1;position:static;max-height:none}}
 .sig{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));display:flex;gap:4px;z-index:6;pointer-events:none}
 .sig img{width:26px;height:26px;display:block}
+.lang{position:fixed;top:env(safe-area-inset-top,0px);right:29px;height:57px;display:flex;align-items:center;gap:10px;background:none;border:0;color:#fff;font:inherit;font-size:16px;cursor:pointer;z-index:7}
+.sw{display:block;position:relative;width:42px;height:20px;border:1.5px solid #fff;border-radius:20px}
+.sw i{position:absolute;top:2px;left:3px;width:13px;height:13px;border-radius:50%;background:#fff;transition:left .2s}
+.lang.en .sw i{left:23px}
+header{padding-right:160px}
+.bk{right:170px}
+@media (max-width:600px){.bk{position:static;height:auto;margin:0 0 10px}}
 /* credits: click the two emojis to expand them into the creators */
 .sig{pointer-events:auto!important;cursor:pointer;transition:opacity .2s}
 body.cred-open .sig{opacity:0;pointer-events:none!important}
@@ -88,6 +95,7 @@ body.cred-open .sig{opacity:0;pointer-events:none!important}
 </style>
 </head>
 <body>
+<button id="lang" class="lang" role="switch" aria-checked="false" aria-label="Langue / Language"><span>FR</span><span class="sw"><i></i></span><span>EN</span></button>
 <header><h1 id="ttl">Provenance des œuvres d’art</h1><a class="mainlink" href="../index.html">← Diagramme</a></header>
 <main>
 <p class="sub" id="sub">Choisissez un sujet pour afficher sa carte.</p>
@@ -143,6 +151,16 @@ function build(){
  render();
 }
 var VS={bale:["90 000","27 500 m²","Picasso, Le peintre et son modèle dans un paysage (1963), 35 M$ (Hauser & Wirth)"],paris:["plus de 73 000 (édition 2025 ; le chiffre 2026 n’est pas encore publié)","non communiquée","pas encore publiée pour 2026 ; en 2025, Gerhard Richter, Abstraktes Bild, 23 M$ (Hauser & Wirth)"],miami:["plus de 80 000","non communiquée","Joan Mitchell, Sunflowers (1990-91), 20 M$ (David Zwirner)"],hk:["91 500","environ 14 000 m²","Picasso, Le peintre et son modèle (1964), 3,5 M€ (galerie Bastian)"],doha:["plus de 17 000","non communiquée","Matthew Wong, White Wave, Black Sand (2017), 3,5 M$ (Karma)"]};
+var lang="fr";function L(a,b){return lang==="en"?b:a}
+function nf(x){return x.toLocaleString(lang==="en"?"en-US":"fr-FR")}
+var CEN={FRA:"France",USA:"United States",GBR:"United Kingdom",DEU:"Germany",ITA:"Italy",ESP:"Spain",BEL:"Belgium",CHE:"Switzerland",AUT:"Austria",NLD:"Netherlands",DNK:"Denmark",GRC:"Greece",ROU:"Romania",CHN:"China",HKG:"Hong Kong",TWN:"Taiwan",JPN:"Japan",KOR:"South Korea",IND:"India",IDN:"Indonesia",THA:"Thailand",AUS:"Australia",GEO:"Georgia",CAN:"Canada",MEX:"Mexico",BRA:"Brazil",ARG:"Argentina",PER:"Peru",COL:"Colombia",CUB:"Cuba",UKR:"Ukraine",SAU:"Saudi Arabia",ARE:"United Arab Emirates",QAT:"Qatar",TUR:"Turkey",LBN:"Lebanon",EGY:"Egypt",MAR:"Morocco",TUN:"Tunisia",ZAF:"South Africa",NGA:"Nigeria",CIV:"Ivory Coast",POL:"Poland",MCO:"Monaco",HUN:"Hungary",IRL:"Ireland",FIN:"Finland",MLT:"Malta",LUX:"Luxembourg",MNG:"Mongolia",PRT:"Portugal",CZE:"Czechia",ISR:"Israel",ISL:"Iceland",ARM:"Armenia",AZE:"Azerbaijan",NOR:"Norway",RUS:"Russia",SWE:"Sweden",BGR:"Bulgaria",EST:"Estonia",IRN:"Iran"};
+function cn(c){return lang==="en"?CEN[c]:C[c][0]}
+var CNE={"Europe":"Europe","Asie":"Asia","Afrique":"Africa","Amérique du Nord":"North America","Amérique du Sud":"South America","Océanie":"Oceania"};
+function cnt(k){return lang==="en"?CNE[k]:k}
+var FE={bale:{n:"Basel",t:"Art Basel · Basel",d:"18–21 June 2026 · Messe Basel",g:"290 galleries"},paris:{n:"Paris",t:"Art Basel Paris",d:"23–25 October 2026 · Grand Palais",g:"211 exhibitors"},miami:{n:"Miami Beach",t:"Art Basel Miami Beach",d:"5–7 December 2025 · Miami Beach Convention Center",g:"283 galleries"},hk:{n:"Hong Kong",t:"Art Basel Hong Kong",d:"27–29 March 2026 · HKCEC",g:"240 galleries"},doha:{n:"Doha",t:"Art Basel Qatar",d:"5–7 February 2026 · M7 and Doha Design District (1st edition)",g:"87 galleries"}};
+function fx(id,k){return lang==="en"?FE[id][k]:F[id][k]}
+var VSE={bale:["90,000","27,500 m²","Picasso, The Painter and His Model in a Landscape (1963), $35M (Hauser & Wirth)"],paris:["over 73,000 (2025 edition; the 2026 figure is not yet published)","not disclosed","not yet published for 2026; in 2025, Gerhard Richter, Abstraktes Bild, $23M (Hauser & Wirth)"],miami:["over 80,000","not disclosed","Joan Mitchell, Sunflowers (1990-91), $20M (David Zwirner)"],hk:["91,500","about 14,000 m²","Picasso, The Painter and His Model (1964), €3.5M (Galerie Bastian)"],doha:["over 17,000","not disclosed","Matthew Wong, White Wave, Black Sand (2017), $3.5M (Karma)"]};
+function vs(id,i){return lang==="en"?VSE[id][i]:VS[id][i]}
 var run=0,H={bale:"CHE",paris:"FRA",miami:"USA",hk:"CHN",doha:"QAT"};
 function hosts(){return Object.keys(H).map(function(k){return H[k]})}
 function render(){
@@ -169,14 +187,14 @@ function render(){
  }
  Object.keys(F).forEach(function(id){
   var q=F[id],p=proj([q.ll[1],q.ll[0]]),pg=g.append("g").attr("class","pin").on("click",function(){pick(id)});
-  pg.append("title").text(q.t);
+  pg.append("title").text(fx(id,"t"));
   pg.append("circle").attr("cx",p[0]).attr("cy",p[1]).attr("r",16).style("fill","transparent");
   pg.append("circle").attr("cx",p[0]).attr("cy",p[1]).attr("r",id===cur?7:5);
-  pg.append("text").attr("class","lbl").attr("x",p[0]+q.o[0]).attr("y",p[1]+q.o[1]).attr("text-anchor",q.o[2]).text(q.n);
+  pg.append("text").attr("class","lbl").attr("x",p[0]+q.o[0]).attr("y",p[1]+q.o[1]).attr("text-anchor",q.o[2]).text(fx(id,"n"));
  });
  document.querySelectorAll("#tabs button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.id===cur)});
  if(!f){
-  document.getElementById("info").innerHTML="<h2>Les cinq villes d’Art Basel</h2><p class='meta'>Bâle, Paris, Miami Beach, Hong Kong et Doha. Tous les pays sont en gris foncé : ils passent en gris clair quand des œuvres venant de chez eux sont exposées lors d’une foire (le pointillé montre leur trajet).</p><p class='stat'>Cliquez sur une ville pour voir d’où viennent les galeries de sa dernière édition.</p>";
+  document.getElementById("info").innerHTML=L("<h2>Les cinq villes d’Art Basel</h2><p class='meta'>Bâle, Paris, Miami Beach, Hong Kong et Doha. Tous les pays sont en gris foncé : ils passent en gris clair quand des œuvres venant de chez eux sont exposées lors d’une foire (le pointillé montre leur trajet).</p><p class='stat'>Cliquez sur une ville pour voir d’où viennent les galeries de sa dernière édition.</p>","<h2>The five Art Basel cities</h2><p class='meta'>Basel, Paris, Miami Beach, Hong Kong and Doha. All countries are dark grey: they turn light grey when works from there are shown at a fair (the dotted line shows their route).</p><p class='stat'>Click a city to see where the galleries of its latest edition come from.</p>");
   document.getElementById("list").innerHTML="";
   document.getElementById("key").innerHTML="";
   return;
@@ -186,9 +204,9 @@ function render(){
  var ds=f.s.concat(f.m).filter(function(c){return c!==H[cur]}).map(function(c){return km(f.ll,[C[c][1],C[c][2]])}),av=Math.round(ds.reduce(function(x,y){return x+y},0)/ds.length/100)*100;
  var gn={bale:290,paris:211,miami:283,hk:240,doha:87}[cur],lo=Math.round(gn*13/100)*100,hi=Math.round(gn*19/100)*100,ar={doha:84}[cur],cc={},all=f.s.concat(f.m),cs;
  all.forEach(function(c){if(CT[c])cc[CT[c]]=(cc[CT[c]]||0)+1});
- cs=Object.keys(cc).sort(function(a,b){return cc[b]-cc[a]}).map(function(k){return k+" "+Math.round(100*cc[k]/all.filter(function(c){return CT[c]}).length)+" %"}).join(" · ");
- document.getElementById("info").innerHTML="<h2>"+f.t+"</h2><p class='meta'>"+f.d+"<br>"+f.g+"<br>Visiteurs : "+VS[cur][0]+"<br>Surface d’exposition : "+VS[cur][1]+"<br>Œuvre la plus chère vendue (déclarée) : "+VS[cur][2]+"<br>Nombre d’œuvres vendues et total des ventes : non communiqués par Art Basel<br>Œuvres exposées (estimation) : <b>environ "+lo.toLocaleString("fr-FR")+" à "+hi.toLocaleString("fr-FR")+"</b></p><p class='stat'><b>"+f.off+" pays et territoires</b> selon Art Basel ("+n+" identifiés, "+m+" probables, "+r+" non identifiés).<br><b>"+Object.keys(cc).length+" continents</b> d’origine : "+cs+".<br>Distance moyenne parcourue : <b>≈ "+av.toLocaleString("fr-FR")+" km</b> à vol d’oiseau.</p>";
- document.getElementById("list").innerHTML=f.s.map(function(c){return"<li>"+C[c][0]+"</li>"}).concat(f.m.map(function(c){return"<li class='m'>"+C[c][0]+"</li>"})).join("");
+ cs=Object.keys(cc).sort(function(a,b){return cc[b]-cc[a]}).map(function(k){return cnt(k)+" "+Math.round(100*cc[k]/all.filter(function(c){return CT[c]}).length)+" %"}).join(" · ");
+ document.getElementById("info").innerHTML="<h2>"+fx(cur,"t")+"</h2><p class='meta'>"+fx(cur,"d")+"<br>"+fx(cur,"g")+"<br>"+L("Visiteurs : ","Visitors: ")+vs(cur,0)+"<br>"+L("Surface d’exposition : ","Exhibition area: ")+vs(cur,1)+"<br>"+L("Œuvre la plus chère vendue (déclarée) : ","Most expensive work sold (reported): ")+vs(cur,2)+"<br>"+L("Nombre d’œuvres vendues et total des ventes : non communiqués par Art Basel","Number of works sold and total sales: not disclosed by Art Basel")+"<br>"+L("Œuvres exposées (estimation) : <b>environ "+nf(lo)+" à "+nf(hi)+"</b>","Works on show (estimate): <b>about "+nf(lo)+" to "+nf(hi)+"</b>")+"</p><p class='stat'>"+L("<b>"+f.off+" pays et territoires</b> selon Art Basel ("+n+" identifiés, "+m+" probables, "+r+" non identifiés).<br><b>"+Object.keys(cc).length+" continents</b> d’origine : "+cs+".<br>Distance moyenne parcourue : <b>≈ "+nf(av)+" km</b> à vol d’oiseau.","<b>"+f.off+" countries and territories</b> according to Art Basel ("+n+" identified, "+m+" probable, "+r+" unidentified).<br><b>"+Object.keys(cc).length+" continents</b> of origin: "+cs+".<br>Average distance travelled: <b>≈ "+nf(av)+" km</b> as the crow flies.")+"</p>";
+ document.getElementById("list").innerHTML=f.s.map(function(c){return"<li>"+cn(c)+"</li>"}).concat(f.m.map(function(c){return"<li class='m'>"+cn(c)+"</li>"})).join("");
  document.getElementById("key").innerHTML="";
 }
 function pick(id){cur=(cur===id)?null:id;render()}
@@ -212,32 +230,45 @@ function renderL(){
   i++;})}
  var pg=g.append("g").attr("class","pin");
  pg.append("circle").attr("cx",o[0]).attr("cy",o[1]).attr("r",6);
- pg.append("text").attr("class","lbl").attr("x",o[0]-9).attr("y",o[1]-9).attr("text-anchor","end").text("Le Louvre");
+ pg.append("text").attr("class","lbl").attr("x",o[0]-9).attr("y",o[1]-9).attr("text-anchor","end").text(L("Le Louvre","The Louvre"));
  document.querySelectorAll("#tabs button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.id===cur)});
  if(!D){
-  document.getElementById("info").innerHTML="<h2>Musée du Louvre</h2><p class='meta'>Les prêts à l’étranger, année par année.</p><p class='stat'>Cliquez sur une année pour voir dans quels pays le Louvre a prêté des œuvres. Un pays passe en gris clair quand un pointillé l’atteint. Un second clic sur la même année ramène à l’écran de départ.</p>";
+  document.getElementById("info").innerHTML=L("<h2>Musée du Louvre</h2><p class='meta'>Les prêts à l’étranger, année par année.</p><p class='stat'>Cliquez sur une année pour voir dans quels pays le Louvre a prêté des œuvres. Un pays passe en gris clair quand un pointillé l’atteint. Un second clic sur la même année ramène à l’écran de départ.</p>","<h2>Louvre Museum</h2><p class='meta'>Loans abroad, year by year.</p><p class='stat'>Click a year to see which countries the Louvre lent works to. A country turns light grey when a dotted line reaches it. A second click on the same year returns to the start screen.</p>");
   document.getElementById("list").innerHTML="";document.getElementById("key").innerHTML="";return}
  var cs=Object.keys(D),N=0,KN=0,W=0,cc={},ct;
  cs.forEach(function(c){var n=D[c];N+=n;W+=n*kmd([48.86,2.34],[C[c][1],C[c][2]]);if(CT[c]){cc[CT[c]]=(cc[CT[c]]||0)+n;KN+=n}});
- ct=Object.keys(cc).sort(function(a,b){return cc[b]-cc[a]}).map(function(q){var p=100*cc[q]/KN;return q+" "+(p<1?"< 1":Math.round(p))+" %"}).join(" · ");
+ ct=Object.keys(cc).sort(function(a,b){return cc[b]-cc[a]}).map(function(q){var p=100*cc[q]/KN;return cnt(q)+" "+(p<1?"< 1":Math.round(p))+" %"}).join(" · ");
  var cam=CAM[y],avg=Math.round(W/N/100)*100;
- document.getElementById("info").innerHTML="<h2>Musée du Louvre · "+y+"</h2><p class='meta'>Œuvres prêtées à l’étranger (rapport d’activité "+y+")</p><p class='stat'><b>"+(N+cam).toLocaleString("fr-FR")+" œuvres prêtées</b> ; "+N.toLocaleString("fr-FR")+" placées sur la carte, dans <b>"+cs.length+" pays</b>.<br><b>"+Object.keys(cc).length+" continents</b> : "+ct+".<br>Distance moyenne parcourue : <b>≈ "+avg.toLocaleString("fr-FR")+" km</b> à vol d’oiseau.</p><p class='meta' style='font-size:12.5px;margin-top:8px'>"+(cam?cam+" œuvre"+(cam>1?"s":"")+" prêtée"+(cam>1?"s":"")+" à Cambridge ne figure"+(cam>1?"nt":"")+" pas sur la carte : le rapport ne précise pas le pays. ":"")+"Les pourcentages et la distance moyenne tiennent compte du nombre d’œuvres de chaque pays. Les prêts sont comptés par ville d’exposition (une exposition itinérante compte à chaque étape). Les prêts à Abu Dhabi relèvent du partenariat avec le Louvre Abu Dhabi."+(y==="2018"?" Pour 2018, le rapport donne directement les totaux par pays.":"")+"</p>";
- document.getElementById("list").innerHTML=cs.map(function(c){return"<li>"+C[c][0]+" · "+D[c].toLocaleString("fr-FR")+"</li>"}).join("");
- document.getElementById("key").innerHTML="<b>Gris clair</b> : pays où le Louvre a prêté des œuvres. <b>Gris foncé</b> : aucun prêt cette année-là. Source : tableaux des prêts à l’étranger des rapports d’activité du Louvre.";
+ document.getElementById("info").innerHTML=L("<h2>Musée du Louvre · "+y+"</h2><p class='meta'>Œuvres prêtées à l’étranger (rapport d’activité "+y+")</p><p class='stat'><b>"+nf(N+cam)+" œuvres prêtées</b> ; "+nf(N)+" placées sur la carte, dans <b>"+cs.length+" pays</b>.<br><b>"+Object.keys(cc).length+" continents</b> : "+ct+".<br>Distance moyenne parcourue : <b>≈ "+nf(avg)+" km</b> à vol d’oiseau.</p><p class='meta' style='font-size:12.5px;margin-top:8px'>"+(cam?cam+" œuvre"+(cam>1?"s":"")+" prêtée"+(cam>1?"s":"")+" à Cambridge ne figure"+(cam>1?"nt":"")+" pas sur la carte : le rapport ne précise pas le pays. ":"")+"Les pourcentages et la distance moyenne tiennent compte du nombre d’œuvres de chaque pays. Les prêts sont comptés par ville d’exposition (une exposition itinérante compte à chaque étape). Les prêts à Abu Dhabi relèvent du partenariat avec le Louvre Abu Dhabi."+(y==="2018"?" Pour 2018, le rapport donne directement les totaux par pays.":"")+"</p>","<h2>Louvre Museum · "+y+"</h2><p class='meta'>Works lent abroad ("+y+" activity report)</p><p class='stat'><b>"+nf(N+cam)+" works lent</b>; "+nf(N)+" placed on the map, in <b>"+cs.length+" countries</b>.<br><b>"+Object.keys(cc).length+" continents</b>: "+ct+".<br>Average distance travelled: <b>≈ "+nf(avg)+" km</b> as the crow flies.</p><p class='meta' style='font-size:12.5px;margin-top:8px'>"+(cam?cam+" work"+(cam>1?"s":"")+" lent to Cambridge "+(cam>1?"do":"does")+" not appear on the map: the report does not specify the country. ":"")+"Percentages and the average distance take into account the number of works from each country. Loans are counted per exhibition city (a touring exhibition counts at each stop). Loans to Abu Dhabi come under the partnership with the Louvre Abu Dhabi."+(y==="2018"?" For 2018, the report gives totals by country directly.":"")+"</p>");
+ document.getElementById("list").innerHTML=cs.map(function(c){return"<li>"+cn(c)+" · "+nf(D[c])+"</li>"}).join("");
+ document.getElementById("key").innerHTML=L("<b>Gris clair</b> : pays où le Louvre a prêté des œuvres. <b>Gris foncé</b> : aucun prêt cette année-là. Source : tableaux des prêts à l’étranger des rapports d’activité du Louvre.","<b>Light grey</b>: countries where the Louvre lent works. <b>Dark grey</b>: no loan that year. Source: tables of loans abroad in the Louvre’s activity reports.");
 }
-function setTabs(){var t=document.getElementById("tabs");t.innerHTML="";(mode==="louvre"?["2025","2024","2023","2022","2021","2020","2019","2018"]:Object.keys(F)).forEach(function(id){var b=document.createElement("button");b.textContent=mode==="louvre"?id:F[id].n;b.dataset.id=id;b.onclick=function(){pick(id)};t.appendChild(b)})}
+function setTabs(){var t=document.getElementById("tabs");t.innerHTML="";(mode==="louvre"?["2025","2024","2023","2022","2021","2020","2019","2018"]:Object.keys(F)).forEach(function(id){var b=document.createElement("button");b.textContent=mode==="louvre"?id:fx(id,"n");b.dataset.id=id;b.onclick=function(){pick(id)};t.appendChild(b)})}
+function ui(){
+ document.documentElement.lang=lang;document.title=L("Provenance des œuvres d’art","Provenance of artworks");
+ document.getElementById("ttl").textContent=mode==="louvre"?L("Où le Louvre prête-t-il ses œuvres ?","Where does the Louvre lend its works?"):mode==="basel"?L("D’où viennent les galeries d’Art Basel ?","Where do Art Basel’s galleries come from?"):L("Provenance des œuvres d’art","Provenance of artworks");
+ document.getElementById("sub").textContent=mode?"":L("Choisissez un sujet pour afficher sa carte.","Choose a subject to display its map.");
+ var c=document.querySelectorAll(".card");
+ c[0].innerHTML="<b>Art Basel</b><span>"+L("D’où viennent les galeries des cinq foires","Where the galleries of the five fairs come from")+"</span>";
+ c[1].innerHTML="<b>"+L("Musée du Louvre","Louvre Museum")+"</b><span>"+L("Dans quels pays le Louvre a prêté des œuvres (2018 à 2025)","Which countries the Louvre has lent works to (2018 to 2025)")+"</span>";
+ document.getElementById("back").textContent=L("← Accueil","← Home");
+ document.getElementById("aboutB").innerHTML=L("<h2>Art Basel, c’est quoi ?</h2><p>Art Basel est une <b>foire d’art contemporain et moderne</b> : un grand salon où des <b>galeries</b> du monde entier viennent présenter et vendre des œuvres à des collectionneurs, des musées et au public. Ce ne sont pas les artistes qui exposent directement, mais leurs galeries, choisies par un comité de sélection.</p><p>Elle a été <b>créée en 1970 à Bâle (Suisse)</b> par trois galeristes bâlois : Ernst Beyeler, Trudl Bruckner et Balz Hilt. Elle est aujourd’hui organisée par le groupe suisse <b>MCH Group</b>, qui l’a déclinée dans d’autres villes : <b>Miami Beach</b> (2002), <b>Hong Kong</b> (2013), <b>Paris</b> (2022) et <b>Doha</b> (2026). Cela fait cinq foires.</p><p>Ici, la « provenance » d’une œuvre est le <b>pays de la galerie</b> qui l’apporte, pas forcément la nationalité de l’artiste.</p>","<h2>What is Art Basel?</h2><p>Art Basel is a <b>modern and contemporary art fair</b>: a large show where <b>galleries</b> from around the world come to present and sell works to collectors, museums and the public. It is not the artists who exhibit directly, but their galleries, chosen by a selection committee.</p><p>It was <b>founded in 1970 in Basel (Switzerland)</b> by three Basel gallerists: Ernst Beyeler, Trudl Bruckner and Balz Hilt. It is now organised by the Swiss group <b>MCH Group</b>, which has extended it to other cities: <b>Miami Beach</b> (2002), <b>Hong Kong</b> (2013), <b>Paris</b> (2022) and <b>Doha</b> (2026). That makes five fairs.</p><p>Here, the “provenance” of a work is the <b>country of the gallery</b> that brings it, not necessarily the artist’s nationality.</p>");
+ document.getElementById("aboutL").innerHTML=L("<h2>Les prêts du Louvre</h2><p>Le Louvre prête des œuvres de ses collections à des musées de France et du monde entier, pour des expositions temporaires. Cette carte montre les <b>œuvres prêtées à l’étranger</b>, d’après les tableaux de prêts à l’étranger du rapport d’activité annuel du Louvre (de 2018 à 2025).</p>","<h2>The Louvre’s loans</h2><p>The Louvre lends works from its collections to museums in France and around the world, for temporary exhibitions. This map shows the <b>works lent abroad</b>, based on the tables of loans abroad in the Louvre’s annual activity report (from 2018 to 2025).</p>");
+ var b=document.getElementById("lang");b.className="lang"+(lang==="en"?" en":"");b.setAttribute("aria-checked",lang==="en");
+}
+function setLang(l){lang=l;ui();if(mode){setTabs();render()}}
 function go(m){
  mode=m;cur=null;
  document.getElementById("home").hidden=!!m;document.getElementById("app").hidden=!m;
  document.getElementById("aboutB").hidden=m!=="basel";document.getElementById("aboutL").hidden=m!=="louvre";
- document.getElementById("ttl").textContent=m==="louvre"?"Où le Louvre prête-t-il ses œuvres ?":m==="basel"?"D’où viennent les galeries d’Art Basel ?":"Provenance des œuvres d’art";
- document.getElementById("sub").textContent=m==="louvre"?"":m==="basel"?"":"Choisissez un sujet pour afficher sa carte.";
+ ui();
  if(m){setTabs();build()}
 }
 (function(){
+ document.getElementById("lang").onclick=function(){setLang(lang==="en"?"fr":"en")};
  document.querySelectorAll(".card").forEach(function(b){b.onclick=function(){go(b.dataset.m)}});
  document.getElementById("back").onclick=function(){go(null)};
- var h=location.hash.slice(1);if(h==="basel"||h==="louvre")go(h);
+ ui();var h=location.hash.slice(1);if(h==="basel"||h==="louvre")go(h);
  var to;window.addEventListener("resize",function(){clearTimeout(to);to=setTimeout(function(){if(mode)build()},250)});
 })();
 </script>
